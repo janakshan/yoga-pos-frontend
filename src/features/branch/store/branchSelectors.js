@@ -47,21 +47,21 @@ export const selectCurrentBranch = (state) => state.currentBranch;
  * @param {Object} state - Store state
  * @returns {boolean}
  */
-export const selectBranchLoading = (state) => state.isLoading;
+export const selectBranchLoading = (state) => state.branchLoading;
 
 /**
  * Select branch error
  * @param {Object} state - Store state
  * @returns {string|null}
  */
-export const selectBranchError = (state) => state.error;
+export const selectBranchError = (state) => state.branchError;
 
 /**
  * Select branch statistics
  * @param {Object} state - Store state
  * @returns {Object}
  */
-export const selectBranchStats = (state) => state.stats;
+export const selectBranchStats = (state) => state.branchStats;
 
 /**
  * Select branch by ID

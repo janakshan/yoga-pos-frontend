@@ -12,9 +12,9 @@ import toast from 'react-hot-toast';
 export const useStaff = () => {
   const staff = useStore((state) => state.staff);
   const selectedStaff = useStore((state) => state.selectedStaff);
-  const isLoading = useStore((state) => state.isLoading);
-  const error = useStore((state) => state.error);
-  const stats = useStore((state) => state.stats);
+  const isLoading = useStore((state) => state.staffLoading);
+  const error = useStore((state) => state.staffError);
+  const stats = useStore((state) => state.staffStats);
 
   const setStaff = useStore((state) => state.setStaff);
   const addStaff = useStore((state) => state.addStaff);

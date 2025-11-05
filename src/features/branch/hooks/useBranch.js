@@ -19,9 +19,9 @@ export const useBranch = () => {
   const branches = useStore((state) => state.branches);
   const selectedBranch = useStore((state) => state.selectedBranch);
   const currentBranch = useStore((state) => state.currentBranch);
-  const isLoading = useStore((state) => state.isLoading);
-  const error = useStore((state) => state.error);
-  const stats = useStore((state) => state.stats);
+  const isLoading = useStore((state) => state.branchLoading);
+  const error = useStore((state) => state.branchError);
+  const stats = useStore((state) => state.branchStats);
 
   const setBranches = useStore((state) => state.setBranches);
   const addBranch = useStore((state) => state.addBranch);
@@ -29,10 +29,10 @@ export const useBranch = () => {
   const removeBranch = useStore((state) => state.removeBranch);
   const selectBranch = useStore((state) => state.selectBranch);
   const setCurrentBranch = useStore((state) => state.setCurrentBranch);
-  const setLoading = useStore((state) => state.setLoading);
-  const setError = useStore((state) => state.setError);
-  const clearError = useStore((state) => state.clearError);
-  const setStats = useStore((state) => state.setStats);
+  const setLoading = useStore((state) => state.setBranchLoading);
+  const setError = useStore((state) => state.setBranchError);
+  const clearError = useStore((state) => state.clearBranchError);
+  const setStats = useStore((state) => state.setBranchStats);
   const bulkUpdateBranchStatus = useStore((state) => state.bulkUpdateBranchStatus);
 
   /**

@@ -15,9 +15,9 @@ export const createStaffSlice = (set, get) => ({
   // State
   staff: [],
   selectedStaff: null,
-  isLoading: false,
-  error: null,
-  stats: {
+  staffLoading: false,
+  staffError: null,
+  staffStats: {
     totalStaff: 0,
     activeStaff: 0,
     inactiveStaff: 0,
@@ -102,7 +102,7 @@ export const createStaffSlice = (set, get) => ({
    */
   setStaffLoading: (isLoading) =>
     set((state) => {
-      state.isLoading = isLoading;
+      state.staffLoading = isLoading;
     }),
 
   /**
@@ -111,7 +111,7 @@ export const createStaffSlice = (set, get) => ({
    */
   setStaffError: (error) =>
     set((state) => {
-      state.error = error;
+      state.staffError = error;
     }),
 
   /**
@@ -119,7 +119,7 @@ export const createStaffSlice = (set, get) => ({
    */
   clearStaffError: () =>
     set((state) => {
-      state.error = null;
+      state.staffError = null;
     }),
 
   /**
@@ -128,7 +128,7 @@ export const createStaffSlice = (set, get) => ({
    */
   setStaffStats: (stats) =>
     set((state) => {
-      state.stats = stats;
+      state.staffStats = stats;
     }),
 
   /**
@@ -186,9 +186,9 @@ export const createStaffSlice = (set, get) => ({
     set((state) => {
       state.staff = [];
       state.selectedStaff = null;
-      state.isLoading = false;
-      state.error = null;
-      state.stats = {
+      state.staffLoading = false;
+      state.staffError = null;
+      state.staffStats = {
         totalStaff: 0,
         activeStaff: 0,
         inactiveStaff: 0,

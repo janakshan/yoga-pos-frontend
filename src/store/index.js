@@ -56,9 +56,11 @@ export const useStore = create(
           // Branch (persist branches and current branch selection)
           branches: state.branches,
           currentBranch: state.currentBranch,
+          branchStats: state.branchStats,
 
           // Staff (persist staff list)
           staff: state.staff,
+          staffStats: state.staffStats,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),
