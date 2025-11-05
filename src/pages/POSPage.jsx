@@ -8,19 +8,19 @@ import { ProductSelector, Cart, CheckoutPanel } from '../features/pos/components
  */
 const POSPage = () => {
   return (
-    <div className="h-full flex flex-col bg-gray-100">
+    <div className="h-full flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-        <h1 className="text-2xl font-bold text-gray-900">Point of Sale</h1>
-        <p className="text-sm text-gray-500 mt-1">
+      <div className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Point of Sale</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Select products and complete transactions
         </p>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
-        <div className="h-full px-4 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+        <div className="h-full px-2 sm:px-4 py-4 sm:py-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 h-full">
             {/* Product Selector - Left Side */}
             <div className="lg:col-span-7 h-full overflow-hidden">
               <ProductSelector />
@@ -29,7 +29,7 @@ const POSPage = () => {
             {/* Cart and Checkout - Right Side */}
             <div className="lg:col-span-5 h-full flex flex-col gap-4 overflow-y-auto">
               {/* Cart */}
-              <div className="flex-1 min-h-[400px]">
+              <div className="flex-1 min-h-[300px] sm:min-h-[400px]">
                 <Cart />
               </div>
 
