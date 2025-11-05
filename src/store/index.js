@@ -6,6 +6,8 @@ import {
   createCartSlice,
   createUISlice,
   createSettingsSlice,
+  createBranchSlice,
+  createStaffSlice,
 } from './slices';
 
 /**
@@ -21,6 +23,8 @@ export const useStore = create(
         ...createCartSlice(set, get, api),
         ...createUISlice(set, get, api),
         ...createSettingsSlice(set, get, api),
+        ...createBranchSlice(set, get, api),
+        ...createStaffSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -48,6 +52,13 @@ export const useStore = create(
           soundEnabled: state.soundEnabled,
           receiptFooter: state.receiptFooter,
           businessInfo: state.businessInfo,
+
+          // Branch (persist branches and current branch selection)
+          branches: state.branches,
+          currentBranch: state.currentBranch,
+
+          // Staff (persist staff list)
+          staff: state.staff,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),
