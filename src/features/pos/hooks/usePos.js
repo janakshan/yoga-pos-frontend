@@ -12,6 +12,7 @@ export const usePos = () => {
   const cartItems = useStore((state) => state.cartItems);
   const transactions = useStore((state) => state.transactions);
   const currentTransaction = useStore((state) => state.currentTransaction);
+  const selectedCustomerId = useStore((state) => state.selectedCustomerId);
   const customerInfo = useStore((state) => state.customerInfo);
   const paymentMethod = useStore((state) => state.paymentMethod);
   const paymentStatus = useStore((state) => state.paymentStatus);
@@ -28,6 +29,7 @@ export const usePos = () => {
   const removeFromCart = useStore((state) => state.removeFromCart);
   const updateCartItemQuantity = useStore((state) => state.updateCartItemQuantity);
   const clearCart = useStore((state) => state.clearCart);
+  const setSelectedCustomerId = useStore((state) => state.setSelectedCustomerId);
   const setCustomerInfo = useStore((state) => state.setCustomerInfo);
   const setPaymentMethod = useStore((state) => state.setPaymentMethod);
   const setPaymentStatus = useStore((state) => state.setPaymentStatus);
@@ -133,6 +135,7 @@ export const usePos = () => {
 
         const saleData = {
           items: cartItems,
+          customerId: selectedCustomerId,
           customerName: customerInfo.name,
           customerEmail: customerInfo.email,
           customerPhone: customerInfo.phone,
@@ -159,6 +162,7 @@ export const usePos = () => {
     },
     [
       cartItems,
+      selectedCustomerId,
       customerInfo,
       paymentMethod,
       discountPercentage,
@@ -319,6 +323,17 @@ export const usePos = () => {
   }, []);
 
   /**
+   * Update selected customer ID
+   * @param {string|null} customerId - Customer ID
+   */
+  const updateSelectedCustomerId = useCallback(
+    (customerId) => {
+      setSelectedCustomerId(customerId);
+    },
+    [setSelectedCustomerId]
+  );
+
+  /**
    * Update customer information
    * @param {Object} info - Customer information
    */
@@ -396,6 +411,7 @@ export const usePos = () => {
     cartItems,
     transactions,
     currentTransaction,
+    selectedCustomerId,
     customerInfo,
     paymentMethod,
     paymentStatus,
@@ -424,6 +440,7 @@ export const usePos = () => {
     getSalesReport,
 
     // Updates
+    updateSelectedCustomerId,
     updateCustomerInfo,
     updatePaymentMethod,
     updateDiscountPercentage,

@@ -4,18 +4,25 @@
  * Manages customer/member information, memberships, and customer relationships
  *
  * Public API:
- * - Components: CustomerList, CustomerForm, CustomerProfile, etc.
- * - Hooks: useCustomers, useCustomerCRUD, useMemberships, etc.
- * - Services: customerService, membershipService
+ * - Components: CustomerList, CustomerForm
+ * - Hooks: useCustomers, useCustomerForm
+ * - Services: customerService
+ * - Store: createCustomerSlice, customerSelectors
+ * - Types: Customer types and constants
  */
 
 // Export components
-// export { CustomerList } from './components/CustomerList';
-// export { CustomerForm } from './components/CustomerForm';
+export { CustomerList, CustomerForm } from './components/index.js';
 
 // Export hooks
-// export { useCustomers } from './hooks/useCustomers';
-// export { useMemberships } from './hooks/useMemberships';
+export { useCustomers, useCustomerForm } from './hooks/index.js';
 
 // Export services
-// export { customerService } from './services/customerService';
+export { customerService } from './services/index.js';
+
+// Export store
+export { createCustomerSlice } from './store/index.js';
+export * from './store/customerSelectors.js';
+
+// Export types
+export * from './types/index.js';

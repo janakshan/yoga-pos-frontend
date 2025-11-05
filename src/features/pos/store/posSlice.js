@@ -12,6 +12,7 @@ export const createPosSlice = (set, get) => ({
   transactions: [],
   currentTransaction: null,
   selectedProduct: null,
+  selectedCustomerId: null,
   customerInfo: {
     name: '',
     email: '',
@@ -101,6 +102,7 @@ export const createPosSlice = (set, get) => ({
   clearCart: () =>
     set((state) => {
       state.cartItems = [];
+      state.selectedCustomerId = null;
       state.customerInfo = { name: '', email: '', phone: '' };
       state.discountPercentage = 0;
       state.notes = '';
@@ -110,6 +112,15 @@ export const createPosSlice = (set, get) => ({
     }),
 
   // Customer & Payment Mutations
+
+  /**
+   * Set selected customer ID
+   * @param {string|null} customerId - Customer ID
+   */
+  setSelectedCustomerId: (customerId) =>
+    set((state) => {
+      state.selectedCustomerId = customerId;
+    }),
 
   /**
    * Set customer information
@@ -332,6 +343,7 @@ export const createPosSlice = (set, get) => ({
       state.transactions = [];
       state.currentTransaction = null;
       state.selectedProduct = null;
+      state.selectedCustomerId = null;
       state.customerInfo = { name: '', email: '', phone: '' };
       state.paymentMethod = PAYMENT_METHODS.CASH;
       state.paymentStatus = PAYMENT_STATUS.PENDING;
