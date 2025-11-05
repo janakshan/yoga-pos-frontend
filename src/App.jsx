@@ -1,7 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
-import { HomePage, LoginPage, UnauthorizedPage } from './pages';
+import { LoginPage, UnauthorizedPage } from './pages';
+import MainLayout from './layouts/MainLayout';
+import BranchPage from './pages/BranchPage';
+import StaffPage from './pages/StaffPage';
+import DashboardPage from './pages/DashboardPage';
 import './App.css';
 
 function App() {
@@ -39,20 +43,59 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-        {/* Protected Routes */}
+        {/* Protected Routes with MainLayout */}
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <MainLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          {/* Dashboard - Default Route */}
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
 
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Branch Management */}
+          <Route path="branches" element={<BranchPage />} />
+
+          {/* Staff Management */}
+          <Route path="staff" element={<StaffPage />} />
+
+          {/* Placeholder routes for other modules */}
+          <Route path="pos" element={<PlaceholderPage module="POS" />} />
+          <Route path="products" element={<PlaceholderPage module="Products" />} />
+          <Route path="customers" element={<PlaceholderPage module="Customers" />} />
+          <Route path="inventory" element={<PlaceholderPage module="Inventory" />} />
+          <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
+          <Route path="payments" element={<PlaceholderPage module="Payments" />} />
+          <Route path="reports" element={<PlaceholderPage module="Reports" />} />
+          <Route path="settings" element={<PlaceholderPage module="Settings" />} />
+        </Route>
+
+        {/* Catch all - redirect to dashboard */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
+  );
+}
+
+/**
+ * Placeholder component for modules not yet implemented
+ */
+function PlaceholderPage({ module }) {
+  return (
+    <div className="w-full">
+      <div className="bg-white rounded-lg shadow p-8 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">{module} Module</h1>
+        <p className="text-gray-600 mb-4">
+          The {module} module is coming soon!
+        </p>
+        <p className="text-sm text-gray-500">
+          This module is currently under development.
+        </p>
+      </div>
+    </div>
   );
 }
 
