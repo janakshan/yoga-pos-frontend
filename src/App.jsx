@@ -8,6 +8,7 @@ import StaffPage from './pages/StaffPage';
 import DashboardPage from './pages/DashboardPage';
 import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
+import ProductsPage from './pages/ProductsPage';
 import './App.css';
 
 function App() {
@@ -68,9 +69,11 @@ function App() {
           <Route path="users" element={<UsersPage />} />
           <Route path="roles" element={<RolesPage />} />
 
+          {/* Products Management */}
+          <Route path="products" element={<ProductsPage />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="pos" element={<PlaceholderPage module="POS" />} />
-          <Route path="products" element={<PlaceholderPage module="Products" />} />
           <Route path="customers" element={<PlaceholderPage module="Customers" />} />
           <Route path="inventory" element={<PlaceholderPage module="Inventory" />} />
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />

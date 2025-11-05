@@ -11,6 +11,7 @@ import {
   createPermissionSlice,
   createRoleSlice,
   createUserSlice,
+  createProductSlice,
 } from './slices';
 
 /**
@@ -31,6 +32,7 @@ export const useStore = create(
         ...createPermissionSlice(set, get, api),
         ...createRoleSlice(set, get, api),
         ...createUserSlice(set, get, api),
+        ...createProductSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -79,6 +81,10 @@ export const useStore = create(
           // Users (persist users list)
           users: state.users,
           userStats: state.userStats,
+
+          // Products (persist products list)
+          products: state.products,
+          productStats: state.productStats,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),

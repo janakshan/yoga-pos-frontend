@@ -7,3 +7,4 @@ export { createStaffSlice } from '@/features/staff/store/staffSlice';
 export { createPermissionSlice } from '@/features/permissions/store/permissionSlice';
 export { createRoleSlice } from '@/features/roles/store/roleSlice';
 export { createUserSlice } from '@/features/users/store/userSlice';
+export { createProductSlice } from '@/features/products/store/productSlice';
