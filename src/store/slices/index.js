@@ -4,3 +4,6 @@ export { createUISlice } from './uiSlice';
 export { createSettingsSlice } from './settingsSlice';
 export { createBranchSlice } from '@/features/branch/store/branchSlice';
 export { createStaffSlice } from '@/features/staff/store/staffSlice';
+export { createPermissionSlice } from '@/features/permissions/store/permissionSlice';
+export { createRoleSlice } from '@/features/roles/store/roleSlice';
+export { createUserSlice } from '@/features/users/store/userSlice';

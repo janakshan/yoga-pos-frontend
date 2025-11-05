@@ -6,6 +6,8 @@ import MainLayout from './layouts/MainLayout';
 import BranchPage from './pages/BranchPage';
 import StaffPage from './pages/StaffPage';
 import DashboardPage from './pages/DashboardPage';
+import RolesPage from './pages/RolesPage';
+import UsersPage from './pages/UsersPage';
 import './App.css';
 
 function App() {
@@ -61,6 +63,10 @@ function App() {
 
           {/* Staff Management */}
           <Route path="staff" element={<StaffPage />} />
+
+          {/* User & Role Management */}
+          <Route path="users" element={<UsersPage />} />
+          <Route path="roles" element={<RolesPage />} />
 
           {/* Placeholder routes for other modules */}
           <Route path="pos" element={<PlaceholderPage module="POS" />} />
