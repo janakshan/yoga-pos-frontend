@@ -1,12 +1,12 @@
 import React from 'react';
-import { useAuthStore } from '@/store/authSlice';
+import { useStore, selectUser } from '@/store';
 
 /**
  * DashboardPage Component
  * Main dashboard page showing overview and stats
  */
 const DashboardPage = () => {
-  const { user } = useAuthStore();
+  const user = useStore(selectUser);
 
   return (
     <div className="w-full">
