@@ -16,9 +16,9 @@ export const createBranchSlice = (set, get) => ({
   branches: [],
   selectedBranch: null,
   currentBranch: null, // The branch the user is currently operating in
-  isLoading: false,
-  error: null,
-  stats: {
+  branchLoading: false,
+  branchError: null,
+  branchStats: {
     totalBranches: 0,
     activeBranches: 0,
     inactiveBranches: 0,
@@ -125,35 +125,35 @@ export const createBranchSlice = (set, get) => ({
    * Set loading state
    * @param {boolean} isLoading - Loading state
    */
-  setLoading: (isLoading) =>
+  setBranchLoading: (isLoading) =>
     set((state) => {
-      state.isLoading = isLoading;
+      state.branchLoading = isLoading;
     }),
 
   /**
    * Set error state
    * @param {string|null} error - Error message
    */
-  setError: (error) =>
+  setBranchError: (error) =>
     set((state) => {
-      state.error = error;
+      state.branchError = error;
     }),
 
   /**
    * Clear error state
    */
-  clearError: () =>
+  clearBranchError: () =>
     set((state) => {
-      state.error = null;
+      state.branchError = null;
     }),
 
   /**
    * Set branch statistics
    * @param {Object} stats - Statistics object
    */
-  setStats: (stats) =>
+  setBranchStats: (stats) =>
     set((state) => {
-      state.stats = stats;
+      state.branchStats = stats;
     }),
 
   /**
@@ -218,9 +218,9 @@ export const createBranchSlice = (set, get) => ({
       state.branches = [];
       state.selectedBranch = null;
       state.currentBranch = null;
-      state.isLoading = false;
-      state.error = null;
-      state.stats = {
+      state.branchLoading = false;
+      state.branchError = null;
+      state.branchStats = {
         totalBranches: 0,
         activeBranches: 0,
         inactiveBranches: 0,
