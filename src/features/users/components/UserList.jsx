@@ -4,7 +4,7 @@ import { useUsers } from '../hooks/useUsers';
 import { useRoles } from '../../roles/hooks/useRoles';
 import UserForm from './UserForm';
 
-const UserList = () => {
+const UserList = ({ staffOnly = false }) => {
   const { users, isLoading, error, stats, fetchUsers, fetchStats, deleteUser, clearError } = useUsers();
   const { roles, fetchRoles } = useRoles();
 
@@ -59,10 +59,17 @@ const UserList = () => {
 
   // Filter users
   const filteredUsers = users.filter((user) => {
+    // Filter by staffOnly prop
+    if (staffOnly && !user.staffProfile) {
+      return false;
+    }
+
     const matchesSearch =
       user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.fullName.toLowerCase().includes(searchTerm.toLowerCase());
+      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.staffProfile?.employeeId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.staffProfile?.position || '').toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === 'all' || user.status === filterStatus;
@@ -164,6 +171,7 @@ const UserList = () => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Contact</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Role</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Branch</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Staff Info</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
             </tr>
@@ -193,6 +201,20 @@ const UserList = () => {
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
                   {user.branchName || '-'}
+                </td>
+                <td className="px-6 py-4 text-sm">
+                  {user.staffProfile ? (
+                    <div>
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {user.staffProfile.employeeId}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {user.staffProfile.position}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="px-6 py-4">
                   <span

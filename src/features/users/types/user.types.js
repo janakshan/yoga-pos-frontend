@@ -33,6 +33,7 @@ export const UserStatus = {
  * @property {Date|string} [passwordChangedAt] - Last password change
  * @property {boolean} [mustChangePassword] - Require password change on next login
  * @property {Object} [preferences] - User preferences (theme, language, etc.)
+ * @property {StaffProfile} [staffProfile] - Optional staff/employee profile (for employees only)
  * @property {Date|string} createdAt - Creation timestamp
  * @property {Date|string} updatedAt - Last update timestamp
  * @property {string} createdBy - User ID who created this account
@@ -50,6 +51,7 @@ export const UserStatus = {
  * @property {UserStatus} [status=active] - Initial account status
  * @property {string} [branchId] - Associated branch ID
  * @property {boolean} [mustChangePassword=true] - Require password change on first login
+ * @property {StaffProfile} [staffProfile] - Optional staff profile (for employees)
  */
 
 /**
@@ -62,6 +64,7 @@ export const UserStatus = {
  * @property {string[]} [roles] - Array of role IDs
  * @property {UserStatus} [status] - Account status
  * @property {string} [branchId] - Associated branch ID
+ * @property {StaffProfile} [staffProfile] - Optional staff profile (for employees)
  */
 
 /**
@@ -107,4 +110,88 @@ export const UserStatus = {
  * @property {string} [ipAddress] - IP address
  * @property {string} [userAgent] - User agent string
  * @property {Date|string} timestamp - When action occurred
+ */
+
+/**
+ * Employment type
+ * @readonly
+ * @enum {string}
+ */
+export const EmploymentType = {
+  FULL_TIME: 'full_time',
+  PART_TIME: 'part_time',
+  CONTRACT: 'contract',
+  INTERN: 'intern',
+};
+
+/**
+ * Employment status
+ * @readonly
+ * @enum {string}
+ */
+export const EmploymentStatus = {
+  EMPLOYED: 'employed',
+  ON_LEAVE: 'on_leave',
+  TERMINATED: 'terminated',
+};
+
+/**
+ * Compensation type
+ * @readonly
+ * @enum {string}
+ */
+export const CompensationType = {
+  SALARY: 'salary',
+  HOURLY: 'hourly',
+};
+
+/**
+ * @typedef {Object} DaySchedule
+ * @property {boolean} working - Whether staff works this day
+ * @property {string} [startTime] - Start time (HH:mm format)
+ * @property {string} [endTime] - End time (HH:mm format)
+ */
+
+/**
+ * @typedef {Object} WeekSchedule
+ * @property {DaySchedule} monday - Monday schedule
+ * @property {DaySchedule} tuesday - Tuesday schedule
+ * @property {DaySchedule} wednesday - Wednesday schedule
+ * @property {DaySchedule} thursday - Thursday schedule
+ * @property {DaySchedule} friday - Friday schedule
+ * @property {DaySchedule} saturday - Saturday schedule
+ * @property {DaySchedule} sunday - Sunday schedule
+ */
+
+/**
+ * @typedef {Object} EmergencyContact
+ * @property {string} name - Contact name
+ * @property {string} phone - Contact phone
+ * @property {string} [relationship] - Relationship to employee
+ */
+
+/**
+ * @typedef {Object} Address
+ * @property {string} street - Street address
+ * @property {string} city - City
+ * @property {string} state - State/province
+ * @property {string} zipCode - ZIP/postal code
+ * @property {string} country - Country
+ */
+
+/**
+ * @typedef {Object} StaffProfile
+ * @property {string} employeeId - Unique employee ID/number
+ * @property {string} position - Job position/title
+ * @property {string} department - Department (e.g., 'Instructors', 'Reception', 'Management')
+ * @property {EmploymentType} employmentType - Employment type
+ * @property {Date|string} hireDate - Date of hire
+ * @property {Date|string} [terminationDate] - Termination date (if applicable)
+ * @property {EmploymentStatus} employmentStatus - Employment status
+ * @property {CompensationType} compensationType - Compensation type (salary or hourly)
+ * @property {number} [salary] - Annual salary (for salaried employees)
+ * @property {number} [hourlyRate] - Hourly rate (for hourly employees)
+ * @property {WeekSchedule} [schedule] - Work schedule
+ * @property {EmergencyContact} [emergencyContact] - Emergency contact information
+ * @property {Address} [address] - Physical address
  */

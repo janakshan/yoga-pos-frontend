@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Briefcase } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useRoles } from '../../roles/hooks/useRoles';
-import { UserStatus } from '../types/user.types';
+import { UserStatus, EmploymentType, EmploymentStatus, CompensationType } from '../types/user.types';
 
 const UserForm = ({ user, mode, onClose }) => {
   const { createUser, updateUserById, isLoading } = useUsers();
   const { roles, fetchRoles } = useRoles();
 
+  const [isStaff, setIsStaff] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -17,6 +18,7 @@ const UserForm = ({ user, mode, onClose }) => {
     phone: '',
     roles: [],
     status: UserStatus.ACTIVE,
+    staffProfile: null,
   });
 
   const [errors, setErrors] = useState({});
@@ -27,6 +29,9 @@ const UserForm = ({ user, mode, onClose }) => {
 
   useEffect(() => {
     if (user && mode === 'edit') {
+      const hasStaffProfile = user.staffProfile != null;
+      setIsStaff(hasStaffProfile);
+
       setFormData({
         username: user.username || '',
         email: user.email || '',
@@ -36,9 +41,65 @@ const UserForm = ({ user, mode, onClose }) => {
         phone: user.phone || '',
         roles: user.roles || [],
         status: user.status || UserStatus.ACTIVE,
+        staffProfile: hasStaffProfile ? user.staffProfile : null,
       });
     }
   }, [user, mode]);
+
+  const handleStaffToggle = (checked) => {
+    setIsStaff(checked);
+    if (checked && !formData.staffProfile) {
+      // Initialize staff profile with defaults
+      setFormData(prev => ({
+        ...prev,
+        staffProfile: {
+          employeeId: '',
+          position: '',
+          department: '',
+          employmentType: EmploymentType.FULL_TIME,
+          hireDate: new Date().toISOString().split('T')[0],
+          employmentStatus: EmploymentStatus.EMPLOYED,
+          compensationType: CompensationType.SALARY,
+          salary: 0,
+          hourlyRate: 0,
+          schedule: {
+            monday: { working: false, startTime: '09:00', endTime: '17:00' },
+            tuesday: { working: false, startTime: '09:00', endTime: '17:00' },
+            wednesday: { working: false, startTime: '09:00', endTime: '17:00' },
+            thursday: { working: false, startTime: '09:00', endTime: '17:00' },
+            friday: { working: false, startTime: '09:00', endTime: '17:00' },
+            saturday: { working: false, startTime: '09:00', endTime: '17:00' },
+            sunday: { working: false, startTime: '09:00', endTime: '17:00' },
+          },
+          emergencyContact: {
+            name: '',
+            phone: '',
+            relationship: '',
+          },
+          address: {
+            street: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: 'USA',
+          },
+        },
+      }));
+    } else if (!checked) {
+      // Remove staff profile
+      setFormData(prev => ({ ...prev, staffProfile: null }));
+    }
+  };
+
+  const handleStaffFieldChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      staffProfile: {
+        ...prev.staffProfile,
+        [field]: value,
+      },
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -235,6 +296,142 @@ const UserForm = ({ user, mode, onClose }) => {
             <option value={UserStatus.SUSPENDED}>Suspended</option>
             <option value={UserStatus.PENDING}>Pending</option>
           </select>
+        </div>
+
+        {/* Staff Profile Section */}
+        <div className="border-t pt-4">
+          <label className="flex items-center gap-2 cursor-pointer mb-4">
+            <input
+              type="checkbox"
+              checked={isStaff}
+              onChange={(e) => handleStaffToggle(e.target.checked)}
+              className="w-4 h-4 text-blue-600 rounded"
+            />
+            <Briefcase className="w-5 h-5 text-gray-600" />
+            <span className="text-sm font-medium">This user is an employee (add staff profile)</span>
+          </label>
+
+          {isStaff && formData.staffProfile && (
+            <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+              <h3 className="font-semibold text-gray-900 dark:text-white">Employment Information</h3>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Employee ID</label>
+                  <input
+                    type="text"
+                    value={formData.staffProfile.employeeId || ''}
+                    onChange={(e) => handleStaffFieldChange('employeeId', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                    placeholder="Auto-generated if empty"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Position</label>
+                  <input
+                    type="text"
+                    value={formData.staffProfile.position || ''}
+                    onChange={(e) => handleStaffFieldChange('position', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Department</label>
+                  <input
+                    type="text"
+                    value={formData.staffProfile.department || ''}
+                    onChange={(e) => handleStaffFieldChange('department', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Employment Type</label>
+                  <select
+                    value={formData.staffProfile.employmentType || EmploymentType.FULL_TIME}
+                    onChange={(e) => handleStaffFieldChange('employmentType', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  >
+                    <option value={EmploymentType.FULL_TIME}>Full Time</option>
+                    <option value={EmploymentType.PART_TIME}>Part Time</option>
+                    <option value={EmploymentType.CONTRACT}>Contract</option>
+                    <option value={EmploymentType.INTERN}>Intern</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Hire Date</label>
+                  <input
+                    type="date"
+                    value={formData.staffProfile.hireDate || ''}
+                    onChange={(e) => handleStaffFieldChange('hireDate', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Employment Status</label>
+                  <select
+                    value={formData.staffProfile.employmentStatus || EmploymentStatus.EMPLOYED}
+                    onChange={(e) => handleStaffFieldChange('employmentStatus', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  >
+                    <option value={EmploymentStatus.EMPLOYED}>Employed</option>
+                    <option value={EmploymentStatus.ON_LEAVE}>On Leave</option>
+                    <option value={EmploymentStatus.TERMINATED}>Terminated</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Compensation Type</label>
+                  <select
+                    value={formData.staffProfile.compensationType || CompensationType.SALARY}
+                    onChange={(e) => handleStaffFieldChange('compensationType', e.target.value)}
+                    className="w-full px-4 py-2 border rounded-lg"
+                  >
+                    <option value={CompensationType.SALARY}>Salary</option>
+                    <option value={CompensationType.HOURLY}>Hourly</option>
+                  </select>
+                </div>
+
+                {formData.staffProfile.compensationType === CompensationType.SALARY && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Annual Salary ($)</label>
+                    <input
+                      type="number"
+                      value={formData.staffProfile.salary || 0}
+                      onChange={(e) => handleStaffFieldChange('salary', parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-2 border rounded-lg"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
+                )}
+
+                {formData.staffProfile.compensationType === CompensationType.HOURLY && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Hourly Rate ($)</label>
+                    <input
+                      type="number"
+                      value={formData.staffProfile.hourlyRate || 0}
+                      onChange={(e) => handleStaffFieldChange('hourlyRate', parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-2 border rounded-lg"
+                      min="0"
+                      step="0.5"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="text-xs text-gray-500 italic">
+                Note: Schedule, emergency contact, and address can be updated after user creation.
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3 pt-4 border-t">
