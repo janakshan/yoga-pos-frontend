@@ -13,6 +13,7 @@ import {
   createUserSlice,
   createProductSlice,
   createInventorySlice,
+  createPosSlice,
 } from './slices';
 
 /**
@@ -35,6 +36,7 @@ export const useStore = create(
         ...createUserSlice(set, get, api),
         ...createProductSlice(set, get, api),
         ...createInventorySlice(set, get, api),
+        ...createPosSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -92,6 +94,10 @@ export const useStore = create(
           inventoryTransactions: state.inventoryTransactions,
           stockLevels: state.stockLevels,
           inventoryStats: state.inventoryStats,
+
+          // POS (persist transactions history and stats, but not cart)
+          transactions: state.transactions,
+          posStats: state.posStats,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),
