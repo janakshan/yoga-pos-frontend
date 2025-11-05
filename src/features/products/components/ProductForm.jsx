@@ -470,7 +470,7 @@ export const ProductForm = ({
         {/* Image URL */}
         <div>
           <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700">
-            Image URL
+            Product Image
           </label>
           <input
             type="text"
@@ -488,6 +488,23 @@ export const ProductForm = ({
           />
           {hasError('imageUrl') && (
             <p className="mt-1 text-sm text-red-600">{getError('imageUrl')}</p>
+          )}
+
+          {/* Image Preview */}
+          {formData.imageUrl && (
+            <div className="mt-3">
+              <p className="text-xs text-gray-500 mb-2">Image Preview:</p>
+              <div className="w-full max-w-xs h-48 bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                <img
+                  src={formData.imageUrl}
+                  alt="Product preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = 'https://via.placeholder.com/400x300?text=Invalid+Image+URL';
+                  }}
+                />
+              </div>
+            </div>
           )}
         </div>
 

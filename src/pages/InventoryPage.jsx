@@ -11,7 +11,7 @@ const InventoryPage = () => {
   const [activeTab, setActiveTab] = useState('transactions');
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="h-full px-6 py-6 overflow-auto">
       {/* Tab Navigation */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
