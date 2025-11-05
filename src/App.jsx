@@ -10,6 +10,7 @@ import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
 import ProductsPage from './pages/ProductsPage';
 import InventoryPage from './pages/InventoryPage';
+import POSPage from './pages/POSPage';
 import './App.css';
 
 function App() {
@@ -76,8 +77,10 @@ function App() {
           {/* Inventory Management */}
           <Route path="inventory" element={<InventoryPage />} />
 
+          {/* POS (Point of Sale) */}
+          <Route path="pos" element={<POSPage />} />
+
           {/* Placeholder routes for other modules */}
-          <Route path="pos" element={<PlaceholderPage module="POS" />} />
           <Route path="customers" element={<PlaceholderPage module="Customers" />} />
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
           <Route path="payments" element={<PlaceholderPage module="Payments" />} />
