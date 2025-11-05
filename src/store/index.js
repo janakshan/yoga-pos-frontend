@@ -15,6 +15,7 @@ import {
   createInventorySlice,
   createPosSlice,
   createCustomerSlice,
+  createReportSlice,
 } from './slices';
 
 /**
@@ -39,6 +40,7 @@ export const useStore = create(
         ...createInventorySlice(set, get, api),
         ...createPosSlice(set, get, api),
         ...createCustomerSlice(set, get, api),
+        ...createReportSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -104,6 +106,10 @@ export const useStore = create(
           // Customers (persist customers list)
           customers: state.customers,
           customerStats: state.customerStats,
+
+          // Reports (persist reports list)
+          reports: state.reports,
+          reportStats: state.reportStats,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),
