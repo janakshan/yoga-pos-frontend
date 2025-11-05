@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation';
-import { useAuthStore } from '@/store/authSlice';
+import { useAuthStore } from '@/store/slices/authSlice';
 
 /**
  * MainLayout Component
