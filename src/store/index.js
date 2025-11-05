@@ -8,6 +8,9 @@ import {
   createSettingsSlice,
   createBranchSlice,
   createStaffSlice,
+  createPermissionSlice,
+  createRoleSlice,
+  createUserSlice,
 } from './slices';
 
 /**
@@ -25,6 +28,9 @@ export const useStore = create(
         ...createSettingsSlice(set, get, api),
         ...createBranchSlice(set, get, api),
         ...createStaffSlice(set, get, api),
+        ...createPermissionSlice(set, get, api),
+        ...createRoleSlice(set, get, api),
+        ...createUserSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -61,6 +67,18 @@ export const useStore = create(
           // Staff (persist staff list)
           staff: state.staff,
           staffStats: state.staffStats,
+
+          // Permissions (persist permissions list)
+          permissions: state.permissions,
+          permissionGroups: state.permissionGroups,
+
+          // Roles (persist roles list)
+          roles: state.roles,
+          roleStats: state.roleStats,
+
+          // Users (persist users list)
+          users: state.users,
+          userStats: state.userStats,
 
           // Cart is NOT persisted (cleared on page refresh)
         }),

@@ -11,13 +11,17 @@ import {
   Cog6ToothIcon,
   CreditCardIcon,
   CalendarIcon,
-  ArchiveBoxIcon
+  ArchiveBoxIcon,
+  ShieldCheckIcon,
+  UsersIcon
 } from '@heroicons/react/24/outline';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
   { name: 'Branches', path: '/branches', icon: BuildingStorefrontIcon },
   { name: 'Staff', path: '/staff', icon: UserGroupIcon },
+  { name: 'Users', path: '/users', icon: UsersIcon },
+  { name: 'Roles', path: '/roles', icon: ShieldCheckIcon },
   { name: 'POS', path: '/pos', icon: ShoppingCartIcon },
   { name: 'Products', path: '/products', icon: CubeIcon },
   { name: 'Customers', path: '/customers', icon: UserIcon },
