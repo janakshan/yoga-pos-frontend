@@ -1,7 +1,8 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { Sidebar } from '@/components/navigation';
-import { useAuthStore } from '@/store/slices/authSlice';
+import { useStore } from '@/store';
+import { selectUser, selectIsAuthenticated } from '@/store/selectors';
 
 /**
  * MainLayout Component
@@ -13,7 +14,8 @@ import { useAuthStore } from '@/store/slices/authSlice';
  * - Main content area with Outlet for nested routes
  */
 const MainLayout = () => {
-  const { user, isAuthenticated } = useAuthStore();
+  const user = useStore(selectUser);
+  const isAuthenticated = useStore(selectIsAuthenticated);
 
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
