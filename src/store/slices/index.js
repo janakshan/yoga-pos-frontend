@@ -8,3 +8,4 @@ export { createPermissionSlice } from '@/features/permissions/store/permissionSl
 export { createRoleSlice } from '@/features/roles/store/roleSlice';
 export { createUserSlice } from '@/features/users/store/userSlice';
 export { createProductSlice } from '@/features/products/store/productSlice';
+export { createInventorySlice } from '@/features/inventory/store/inventorySlice';
