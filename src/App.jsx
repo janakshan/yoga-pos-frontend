@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
-import { HomePage, LoginPage, UnauthorizedPage } from './pages';
+import { HomePage, LoginPage, UnauthorizedPage, BranchesPage, StaffPage } from './pages';
+import { MainLayout } from './components/layout';
 import './App.css';
 
 function App() {
@@ -39,12 +40,34 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-        {/* Protected Routes */}
+        {/* Protected Routes with Layout */}
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <MainLayout>
+                <HomePage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/branches"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <BranchesPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <StaffPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />

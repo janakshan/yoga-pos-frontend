@@ -3,100 +3,150 @@
  * Main dashboard/home page for authenticated users
  */
 
+import { Link } from 'react-router-dom';
 import { useAuth } from '../features/auth';
-import { LogOut, User } from 'lucide-react';
+import { Building2, Users, Package, ShoppingCart, Calendar, UserCircle2 } from 'lucide-react';
 
 export const HomePage = () => {
-  const { user, logout, isLoading } = useAuth();
+  const { user } = useAuth();
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
+  const quickActions = [
+    {
+      name: 'Branches',
+      description: 'Manage your yoga studio branches',
+      icon: Building2,
+      href: '/branches',
+      color: 'bg-blue-500',
+    },
+    {
+      name: 'Staff',
+      description: 'Manage staff members and permissions',
+      icon: Users,
+      href: '/staff',
+      color: 'bg-green-500',
+    },
+    {
+      name: 'Products',
+      description: 'Manage products and inventory',
+      icon: Package,
+      href: '/products',
+      color: 'bg-purple-500',
+    },
+    {
+      name: 'POS',
+      description: 'Process sales and transactions',
+      icon: ShoppingCart,
+      href: '/pos',
+      color: 'bg-orange-500',
+    },
+    {
+      name: 'Bookings',
+      description: 'Manage class bookings and schedules',
+      icon: Calendar,
+      href: '/bookings',
+      color: 'bg-pink-500',
+    },
+    {
+      name: 'Customers',
+      description: 'Manage customer information',
+      icon: UserCircle2,
+      href: '/customers',
+      color: 'bg-indigo-500',
+    },
+  ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Yoga POS</h1>
-              <p className="text-sm text-gray-600">Point of Sale System</p>
+    <div className="p-6">
+      {/* Welcome Section */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Welcome back, {user?.name}! 👋
+        </h1>
+        <p className="text-gray-600">
+          Here's what's happening with your yoga studio today.
+        </p>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-blue-100 rounded-lg">
+              <Building2 className="h-6 w-6 text-blue-600" />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3 px-4 py-2 bg-gray-100 rounded-lg">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-600 text-white font-semibold">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <div className="text-left">
-                  <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-600 capitalize">{user?.role}</p>
-                </div>
-              </div>
-              <button
-                onClick={handleLogout}
-                disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">3</h3>
+          <p className="text-sm text-gray-600">Active Branches</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-green-100 rounded-lg">
+              <Users className="h-6 w-6 text-green-600" />
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">4</h3>
+          <p className="text-sm text-gray-600">Staff Members</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-purple-100 rounded-lg">
+              <Calendar className="h-6 w-6 text-purple-600" />
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">12</h3>
+          <p className="text-sm text-gray-600">Today's Bookings</p>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="p-3 bg-orange-100 rounded-lg">
+              <ShoppingCart className="h-6 w-6 text-orange-600" />
+            </div>
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900">$1,250</h3>
+          <p className="text-sm text-gray-600">Today's Sales</p>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {quickActions.map((action) => {
+            const Icon = action.icon;
+            return (
+              <Link
+                key={action.name}
+                to={action.href}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
               >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </button>
-            </div>
-          </div>
+                <div className="flex items-start">
+                  <div className={`p-3 ${action.color} rounded-lg mr-4`}>
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      {action.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">{action.description}</p>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-4">
-              <User className="h-10 w-10 text-green-600" />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome, {user?.name}! 👋
-            </h2>
-            <p className="text-gray-600">You are successfully logged in</p>
-          </div>
-
-          {/* User Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Email</p>
-              <p className="text-base font-medium text-gray-900">{user?.email}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Role</p>
-              <p className="text-base font-medium text-gray-900 capitalize">{user?.role}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">User ID</p>
-              <p className="text-base font-medium text-gray-900">{user?.id}</p>
-            </div>
-            <div className="bg-gray-50 rounded-lg p-4">
-              <p className="text-sm text-gray-600 mb-1">Last Login</p>
-              <p className="text-base font-medium text-gray-900">
-                {user?.lastLogin
-                  ? new Date(user.lastLogin).toLocaleString()
-                  : 'First time login'}
-              </p>
-            </div>
-          </div>
-
-          {/* Info Box */}
-          <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Note:</strong> This is a demo authentication module with mock API. The real API
-              integration will be done later. Currently using mock credentials with instant
-              validation.
-            </p>
-          </div>
-        </div>
-      </main>
+      {/* Info Box */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> You are logged in as <strong>{user?.role}</strong>.
+          The Branch and Staff modules are fully functional with mock data.
+          Other modules are placeholders and will be implemented later.
+        </p>
+      </div>
     </div>
   );
 };
