@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
 import ProductsPage from './pages/ProductsPage';
+import InventoryPage from './pages/InventoryPage';
 import './App.css';
 
 function App() {
@@ -72,10 +73,12 @@ function App() {
           {/* Products Management */}
           <Route path="products" element={<ProductsPage />} />
 
+          {/* Inventory Management */}
+          <Route path="inventory" element={<InventoryPage />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="pos" element={<PlaceholderPage module="POS" />} />
           <Route path="customers" element={<PlaceholderPage module="Customers" />} />
-          <Route path="inventory" element={<PlaceholderPage module="Inventory" />} />
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
           <Route path="payments" element={<PlaceholderPage module="Payments" />} />
           <Route path="reports" element={<PlaceholderPage module="Reports" />} />
