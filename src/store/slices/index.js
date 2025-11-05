@@ -10,3 +10,4 @@ export { createUserSlice } from '@/features/users/store/userSlice';
 export { createProductSlice } from '@/features/products/store/productSlice';
 export { createInventorySlice } from '@/features/inventory/store/inventorySlice';
 export { createPosSlice } from '@/features/pos/store/posSlice';
+export { createCustomerSlice } from '@/features/customers/store/customerSlice';
