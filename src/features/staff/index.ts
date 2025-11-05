@@ -4,18 +4,22 @@
  * Staff and employee management, roles, and permissions
  *
  * Public API:
- * - Components: StaffList, StaffForm, RoleManager, etc.
- * - Hooks: useStaff, useRoles, usePermissions, etc.
- * - Services: staffService, roleService
+ * - Components: StaffList, StaffForm, StaffCard, etc.
+ * - Hooks: useStaff, useStaffForm, etc.
+ * - Services: staffService
  */
 
 // Export components
-// export { StaffList } from './components/StaffList';
-// export { StaffForm } from './components/StaffForm';
+export * from './components';
 
 // Export hooks
-// export { useStaff } from './hooks/useStaff';
-// export { useRoles } from './hooks/useRoles';
+export * from './hooks';
 
 // Export services
-// export { staffService } from './services/staffService';
+export * from './services';
+
+// Export types
+export * from './types';
+
+// Export store
+export * from './store';
