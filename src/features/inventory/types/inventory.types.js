@@ -4,7 +4,7 @@
  */
 
 /**
- * @typedef {'purchase'|'sale'|'adjustment'|'return'|'damage'|'transfer_in'|'transfer_out'|'production'|'consumption'} TransactionType
+ * @typedef {'purchase'|'sale'|'adjustment'|'return'|'damage'|'write_off'|'transfer_in'|'transfer_out'|'production'|'consumption'} TransactionType
  * Type of inventory transaction
  */
 
@@ -25,6 +25,7 @@
  * @property {number} totalCost - Total cost (quantity * unitCost)
  * @property {number} balanceAfter - Stock balance after this transaction
  * @property {string} [batchNumber] - Batch/lot number (optional)
+ * @property {string} [serialNumber] - Serial number for individual item tracking (optional)
  * @property {Date|string} [expiryDate] - Expiry date for batch (optional)
  * @property {string} [locationId] - Location/branch ID
  * @property {string} [locationName] - Location name (denormalized)
@@ -158,6 +159,7 @@ export const TRANSACTION_TYPES = {
   ADJUSTMENT: 'adjustment',
   RETURN: 'return',
   DAMAGE: 'damage',
+  WRITE_OFF: 'write_off',
   TRANSFER_IN: 'transfer_in',
   TRANSFER_OUT: 'transfer_out',
   PRODUCTION: 'production',
@@ -176,6 +178,7 @@ export const TRANSACTION_TYPE_LABELS = {
   adjustment: 'Adjustment',
   return: 'Return',
   damage: 'Damage',
+  write_off: 'Write-Off',
   transfer_in: 'Transfer In',
   transfer_out: 'Transfer Out',
   production: 'Production',
@@ -204,6 +207,171 @@ export const STOCK_IN_TYPES = [
 export const STOCK_OUT_TYPES = [
   TRANSACTION_TYPES.SALE,
   TRANSACTION_TYPES.DAMAGE,
+  TRANSACTION_TYPES.WRITE_OFF,
   TRANSACTION_TYPES.TRANSFER_OUT,
   TRANSACTION_TYPES.CONSUMPTION
 ];
+
+/**
+ * @typedef {Object} SerialNumber
+ * @property {string} id - Unique serial number ID
+ * @property {string} serialNumber - Serial number value
+ * @property {string} productId - Product ID
+ * @property {string} productName - Product name
+ * @property {string} productSku - Product SKU
+ * @property {string} batchNumber - Associated batch number
+ * @property {string} locationId - Current location ID
+ * @property {string} locationName - Current location name
+ * @property {Date|string} [expiryDate] - Expiry date (optional)
+ * @property {'in_stock'|'sold'|'damaged'|'written_off'|'transferred'} status - Serial number status
+ * @property {Date|string} receivedDate - Date received
+ * @property {Date|string} [soldDate] - Date sold (if applicable)
+ * @property {string} [soldTo] - Customer ID/name (if sold)
+ * @property {Date|string} createdAt - Creation timestamp
+ * @property {Date|string} updatedAt - Last update timestamp
+ */
+
+/**
+ * @typedef {Object} InventoryAlert
+ * @property {string} id - Alert ID
+ * @property {'low_stock'|'out_of_stock'|'reorder_point'|'expiring_soon'|'expired'|'overstock'} type - Alert type
+ * @property {'pending'|'acknowledged'|'resolved'|'dismissed'} status - Alert status
+ * @property {'low'|'medium'|'high'|'critical'} priority - Alert priority
+ * @property {string} productId - Product ID
+ * @property {string} productName - Product name
+ * @property {string} productSku - Product SKU
+ * @property {string} [locationId] - Location ID (optional)
+ * @property {string} [locationName] - Location name (optional)
+ * @property {string} [batchNumber] - Batch number (for expiry alerts)
+ * @property {number} [currentQuantity] - Current stock quantity
+ * @property {number} [threshold] - Threshold that triggered alert
+ * @property {Date|string} [expiryDate] - Expiry date (for expiry alerts)
+ * @property {string} message - Alert message
+ * @property {Date|string} triggeredAt - When alert was triggered
+ * @property {Date|string} [acknowledgedAt] - When alert was acknowledged
+ * @property {Date|string} [resolvedAt] - When alert was resolved
+ * @property {string} [acknowledgedBy] - User who acknowledged
+ * @property {string} [resolvedBy] - User who resolved
+ * @property {Date|string} createdAt - Creation timestamp
+ * @property {Date|string} updatedAt - Last update timestamp
+ */
+
+/**
+ * @typedef {Object} CycleCount
+ * @property {string} id - Cycle count ID
+ * @property {string} name - Cycle count name/description
+ * @property {'scheduled'|'in_progress'|'completed'|'cancelled'} status - Cycle count status
+ * @property {string} locationId - Location ID
+ * @property {string} locationName - Location name
+ * @property {Date|string} scheduledDate - Scheduled date
+ * @property {Date|string} [startDate] - Actual start date
+ * @property {Date|string} [endDate] - Actual end date
+ * @property {string} [assignedTo] - User ID assigned to perform count
+ * @property {string} [assignedToName] - User name assigned
+ * @property {CycleCountItem[]} items - Items to count
+ * @property {number} totalItems - Total items to count
+ * @property {number} countedItems - Items already counted
+ * @property {number} varianceCount - Number of items with variance
+ * @property {string} notes - Notes
+ * @property {Date|string} createdAt - Creation timestamp
+ * @property {Date|string} updatedAt - Last update timestamp
+ * @property {string} createdBy - User who created
+ * @property {string} [completedBy] - User who completed
+ */
+
+/**
+ * @typedef {Object} CycleCountItem
+ * @property {string} id - Item ID
+ * @property {string} productId - Product ID
+ * @property {string} productName - Product name
+ * @property {string} productSku - Product SKU
+ * @property {number} systemQuantity - Quantity in system
+ * @property {number} [countedQuantity] - Actual counted quantity
+ * @property {number} [variance] - Difference (counted - system)
+ * @property {string} [batchNumber] - Batch number (optional)
+ * @property {Date|string} [expiryDate] - Expiry date (optional)
+ * @property {'pending'|'counted'|'verified'} status - Item count status
+ * @property {string} notes - Notes for this item
+ * @property {Date|string} [countedAt] - When counted
+ * @property {string} [countedBy] - Who counted
+ */
+
+/**
+ * @typedef {Object} PhysicalInventory
+ * @property {string} id - Physical inventory ID
+ * @property {string} name - Inventory name/description
+ * @property {'scheduled'|'in_progress'|'completed'|'cancelled'} status - Inventory status
+ * @property {string} locationId - Location ID
+ * @property {string} locationName - Location name
+ * @property {Date|string} scheduledDate - Scheduled date
+ * @property {Date|string} [startDate] - Actual start date
+ * @property {Date|string} [endDate] - Actual end date
+ * @property {string[]} assignedTeam - User IDs assigned
+ * @property {PhysicalInventoryItem[]} items - All items in inventory
+ * @property {number} totalItems - Total items
+ * @property {number} countedItems - Items counted
+ * @property {number} varianceCount - Items with variance
+ * @property {number} totalVarianceValue - Total value of variances
+ * @property {boolean} requireApproval - Whether variances need approval
+ * @property {boolean} [approved] - Whether approved (if required)
+ * @property {string} [approvedBy] - Who approved
+ * @property {Date|string} [approvedAt] - When approved
+ * @property {string} notes - Notes
+ * @property {Date|string} createdAt - Creation timestamp
+ * @property {Date|string} updatedAt - Last update timestamp
+ * @property {string} createdBy - User who created
+ * @property {string} [completedBy] - User who completed
+ */
+
+/**
+ * @typedef {Object} PhysicalInventoryItem
+ * @property {string} id - Item ID
+ * @property {string} productId - Product ID
+ * @property {string} productName - Product name
+ * @property {string} productSku - Product SKU
+ * @property {number} systemQuantity - Quantity in system
+ * @property {number} [countedQuantity] - Actual counted quantity
+ * @property {number} [variance] - Difference (counted - system)
+ * @property {number} unitCost - Unit cost
+ * @property {number} [varianceValue] - Value of variance
+ * @property {string} [batchNumber] - Batch number (optional)
+ * @property {Date|string} [expiryDate] - Expiry date (optional)
+ * @property {'pending'|'counted'|'verified'|'approved'} status - Item status
+ * @property {string} notes - Notes for this item
+ * @property {Date|string} [countedAt] - When counted
+ * @property {string} [countedBy] - Who counted
+ */
+
+/**
+ * @typedef {Object} ReorderNotification
+ * @property {string} id - Notification ID
+ * @property {string} productId - Product ID
+ * @property {string} productName - Product name
+ * @property {string} productSku - Product SKU
+ * @property {string} locationId - Location ID
+ * @property {string} locationName - Location name
+ * @property {number} currentQuantity - Current stock quantity
+ * @property {number} reorderPoint - Reorder point threshold
+ * @property {number} reorderQuantity - Suggested reorder quantity
+ * @property {number} averageDailySales - Average daily sales
+ * @property {number} leadTimeDays - Lead time in days
+ * @property {string} [supplier] - Preferred supplier
+ * @property {number} estimatedCost - Estimated reorder cost
+ * @property {'pending'|'ordered'|'dismissed'} status - Notification status
+ * @property {string} [purchaseOrderId] - Created PO ID (if ordered)
+ * @property {Date|string} triggeredAt - When notification was triggered
+ * @property {Date|string} [orderedAt] - When order was placed
+ * @property {Date|string} [dismissedAt] - When dismissed
+ * @property {string} [orderedBy] - User who placed order
+ * @property {Date|string} createdAt - Creation timestamp
+ * @property {Date|string} updatedAt - Last update timestamp
+ */
+
+/**
+ * @typedef {Object} StockAlert
+ * @property {string} id - Alert ID
+ * @property {string} type - Alert type
+ * @property {string} message - Alert message
+ * @property {string} priority - Alert priority
+ * @property {Date|string} createdAt - Creation timestamp
+ */

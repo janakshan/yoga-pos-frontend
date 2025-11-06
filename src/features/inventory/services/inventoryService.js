@@ -518,6 +518,7 @@ export const inventoryService = {
       totalCost: normalizedQuantity * parseFloat(data.unitCost),
       balanceAfter,
       batchNumber: data.batchNumber || null,
+      serialNumber: data.serialNumber || null,
       expiryDate: data.expiryDate || null,
       locationId: data.locationId || null,
       locationName: data.locationName || (data.locationId ? `Location ${data.locationId}` : null),
@@ -751,6 +752,116 @@ export const inventoryService = {
       notes: `${adjustment.reason}: ${adjustment.notes}`,
       transactionDate: new Date()
     });
+  },
+
+  /**
+   * Create a write-off transaction
+   * @param {Object} writeOff - Write-off data
+   * @returns {Promise<Object>} Created transaction
+   */
+  async createWriteOff(writeOff) {
+    return this.createTransaction({
+      productId: writeOff.productId,
+      productName: writeOff.productName,
+      productSku: writeOff.productSku,
+      type: TRANSACTION_TYPES.WRITE_OFF,
+      quantity: writeOff.quantity,
+      unitCost: writeOff.unitCost || 0,
+      locationId: writeOff.locationId,
+      locationName: writeOff.locationName,
+      batchNumber: writeOff.batchNumber || null,
+      serialNumber: writeOff.serialNumber || null,
+      notes: `Write-off: ${writeOff.reason} - ${writeOff.notes || ''}`,
+      transactionDate: new Date()
+    });
+  },
+
+  /**
+   * Get transactions by batch number
+   * @param {string} batchNumber - Batch number
+   * @returns {Promise<Array>} Transactions for the batch
+   */
+  async getTransactionsByBatch(batchNumber) {
+    await delay(300);
+    return MOCK_TRANSACTIONS.filter((t) => t.batchNumber === batchNumber);
+  },
+
+  /**
+   * Get transactions by serial number
+   * @param {string} serialNumber - Serial number
+   * @returns {Promise<Array>} Transactions for the serial number
+   */
+  async getTransactionsBySerial(serialNumber) {
+    await delay(300);
+    return MOCK_TRANSACTIONS.filter((t) => t.serialNumber === serialNumber);
+  },
+
+  /**
+   * Get expiring batches
+   * @param {number} daysThreshold - Days until expiry (default 30)
+   * @returns {Promise<Array>} Batches expiring soon
+   */
+  async getExpiringBatches(daysThreshold = 30) {
+    await delay(300);
+
+    const today = new Date();
+    const thresholdDate = new Date();
+    thresholdDate.setDate(today.getDate() + daysThreshold);
+
+    const expiringBatches = MOCK_TRANSACTIONS
+      .filter((t) => t.expiryDate && t.batchNumber)
+      .filter((t) => {
+        const expiryDate = new Date(t.expiryDate);
+        return expiryDate <= thresholdDate && expiryDate >= today;
+      })
+      .map((t) => ({
+        batchNumber: t.batchNumber,
+        productId: t.productId,
+        productName: t.productName,
+        productSku: t.productSku,
+        expiryDate: t.expiryDate,
+        locationId: t.locationId,
+        locationName: t.locationName,
+        daysUntilExpiry: Math.ceil((new Date(t.expiryDate) - today) / (1000 * 60 * 60 * 24))
+      }));
+
+    // Remove duplicates by batch number
+    const uniqueBatches = Array.from(
+      new Map(expiringBatches.map((batch) => [batch.batchNumber, batch])).values()
+    );
+
+    return uniqueBatches.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
+  },
+
+  /**
+   * Get expired batches
+   * @returns {Promise<Array>} Expired batches
+   */
+  async getExpiredBatches() {
+    await delay(300);
+
+    const today = new Date();
+
+    const expiredBatches = MOCK_TRANSACTIONS
+      .filter((t) => t.expiryDate && t.batchNumber)
+      .filter((t) => new Date(t.expiryDate) < today)
+      .map((t) => ({
+        batchNumber: t.batchNumber,
+        productId: t.productId,
+        productName: t.productName,
+        productSku: t.productSku,
+        expiryDate: t.expiryDate,
+        locationId: t.locationId,
+        locationName: t.locationName,
+        daysExpired: Math.ceil((today - new Date(t.expiryDate)) / (1000 * 60 * 60 * 24))
+      }));
+
+    // Remove duplicates by batch number
+    const uniqueBatches = Array.from(
+      new Map(expiredBatches.map((batch) => [batch.batchNumber, batch])).values()
+    );
+
+    return uniqueBatches.sort((a, b) => b.daysExpired - a.daysExpired);
   },
 
   /**
