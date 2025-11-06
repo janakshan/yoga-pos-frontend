@@ -14,7 +14,9 @@ import {
   ArchiveBoxIcon,
   ShieldCheckIcon,
   UsersIcon,
-  BeakerIcon
+  BeakerIcon,
+  TruckIcon,
+  BuildingOffice2Icon,
 } from '@heroicons/react/24/outline';
 
 const navigationItems = [
@@ -27,6 +29,8 @@ const navigationItems = [
   { name: 'Products', path: '/products', icon: CubeIcon },
   { name: 'Customers', path: '/customers', icon: UserIcon },
   { name: 'Inventory', path: '/inventory', icon: ArchiveBoxIcon },
+  { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
+  { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
   { name: 'Bookings', path: '/bookings', icon: CalendarIcon },
   { name: 'Payments', path: '/payments', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
