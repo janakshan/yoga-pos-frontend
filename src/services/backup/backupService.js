@@ -471,8 +471,8 @@ class BackupService {
 class GoogleDriveProvider {
   constructor() {
     this.config = {
-      clientId: process.env.VITE_GOOGLE_CLIENT_ID || 'demo-client-id',
-      apiKey: process.env.VITE_GOOGLE_API_KEY || 'demo-api-key',
+      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'demo-client-id',
+      apiKey: import.meta.env.VITE_GOOGLE_API_KEY || 'demo-api-key',
     };
   }
 
@@ -504,7 +504,7 @@ class GoogleDriveProvider {
 class DropboxProvider {
   constructor() {
     this.config = {
-      accessToken: process.env.VITE_DROPBOX_ACCESS_TOKEN || 'demo-token',
+      accessToken: import.meta.env.VITE_DROPBOX_ACCESS_TOKEN || 'demo-token',
     };
   }
 
@@ -536,11 +536,11 @@ class DropboxProvider {
 class AWSProvider {
   constructor() {
     this.config = {
-      accessKeyId: process.env.VITE_AWS_ACCESS_KEY_ID || 'demo-key',
+      accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY_ID || 'demo-key',
       secretAccessKey:
-        process.env.VITE_AWS_SECRET_ACCESS_KEY || 'demo-secret',
-      bucket: process.env.VITE_AWS_BUCKET || 'yoga-pos-backups',
-      region: process.env.VITE_AWS_REGION || 'us-east-1',
+        import.meta.env.VITE_AWS_SECRET_ACCESS_KEY || 'demo-secret',
+      bucket: import.meta.env.VITE_AWS_BUCKET || 'yoga-pos-backups',
+      region: import.meta.env.VITE_AWS_REGION || 'us-east-1',
     };
   }
 
