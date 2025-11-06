@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
@@ -19,9 +20,25 @@ import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
 import FinancialDashboard from './pages/FinancialDashboard';
 import SettingsPage from './features/settings/components/SettingsPage';
+import autoBackupScheduler from './services/backup/autoBackupScheduler';
+import { useStore } from './store';
 import './App.css';
 
 function App() {
+  const backupSettings = useStore((state) => state.backupSettings);
+
+  // Initialize auto-backup scheduler on app start
+  useEffect(() => {
+    if (backupSettings?.autoBackup) {
+      autoBackupScheduler.init(backupSettings.autoBackup);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      autoBackupScheduler.stop();
+    };
+  }, []);
+
   return (
     <Router>
       {/* Toast Notifications */}
