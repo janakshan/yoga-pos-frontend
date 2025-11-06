@@ -17,6 +17,7 @@ import ReportsPage from './pages/ReportsPage';
 import DemoDataPage from './pages/DemoDataPage';
 import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
+import FinancialDashboard from './pages/FinancialDashboard';
 import './App.css';
 
 function App() {
@@ -99,9 +100,15 @@ function App() {
           {/* Demo Data Overview */}
           <Route path="demo-data" element={<DemoDataPage />} />
 
+          {/* Financial Management */}
+          <Route path="financial" element={<FinancialDashboard />} />
+          <Route path="invoices" element={<FinancialDashboard />} />
+          <Route path="payments" element={<FinancialDashboard />} />
+          <Route path="expenses" element={<FinancialDashboard />} />
+          <Route path="financial-reports" element={<FinancialDashboard />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
-          <Route path="payments" element={<PlaceholderPage module="Payments" />} />
           <Route path="settings" element={<PlaceholderPage module="Settings" />} />
         </Route>
 

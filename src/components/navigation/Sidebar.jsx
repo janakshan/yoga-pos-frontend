@@ -32,7 +32,7 @@ const navigationItems = [
   { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
   { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
   { name: 'Bookings', path: '/bookings', icon: CalendarIcon },
-  { name: 'Payments', path: '/payments', icon: CreditCardIcon },
+  { name: 'Financial', path: '/financial', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
   { name: 'Settings', path: '/settings', icon: Cog6ToothIcon },
 ];
