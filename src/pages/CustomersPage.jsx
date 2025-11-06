@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useCustomers } from '../features/customers/hooks/useCustomers.js';
 import { CustomerForm } from '../features/customers/components/CustomerForm.jsx';
 import { CustomerList } from '../features/customers/components/CustomerList.jsx';
-import { Plus, Search, Filter, Download, Users } from 'lucide-react';
+import { CustomerProfile } from '../features/customers/components';
+import { Plus, Search, Filter, Download, Users, Eye } from 'lucide-react';
 import {
   CUSTOMER_TYPES,
   CUSTOMER_STATUS,
@@ -26,6 +27,7 @@ const CustomersPage = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [viewingCustomer, setViewingCustomer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     status: '',
@@ -96,6 +98,20 @@ const CustomersPage = () => {
   const handleCancelForm = () => {
     setShowForm(false);
     setEditingCustomer(null);
+  };
+
+  const handleViewProfile = (customer) => {
+    setViewingCustomer(customer);
+  };
+
+  const handleCloseProfile = () => {
+    setViewingCustomer(null);
+  };
+
+  const handleProfileUpdate = async (updatedCustomer) => {
+    setViewingCustomer(updatedCustomer);
+    await fetchCustomers();
+    await fetchCustomerStats();
   };
 
   const clearFilters = () => {
@@ -283,11 +299,21 @@ const CustomersPage = () => {
               customers={filteredCustomers}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onViewProfile={handleViewProfile}
               isLoading={isLoading}
             />
           </div>
         )}
       </div>
+
+      {/* Customer Profile Modal */}
+      {viewingCustomer && (
+        <CustomerProfile
+          customer={viewingCustomer}
+          onClose={handleCloseProfile}
+          onUpdate={handleProfileUpdate}
+        />
+      )}
     </div>
   );
 };
