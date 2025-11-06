@@ -77,6 +77,7 @@ export const useStore = create(
           currency: state.currency,
           currencySymbol: state.currencySymbol,
           locale: state.locale,
+          language: state.language,
           dateFormat: state.dateFormat,
           timeFormat: state.timeFormat,
           defaultTaxRate: state.defaultTaxRate,
@@ -84,7 +85,13 @@ export const useStore = create(
           printReceipt: state.printReceipt,
           soundEnabled: state.soundEnabled,
           receiptFooter: state.receiptFooter,
+          receiptHeader: state.receiptHeader,
           businessInfo: state.businessInfo,
+          currencies: state.currencies,
+          baseCurrency: state.baseCurrency,
+          enableMultiCurrency: state.enableMultiCurrency,
+          branding: state.branding,
+          hardware: state.hardware,
 
           // Branch (persist branches and current branch selection)
           branches: state.branches,
