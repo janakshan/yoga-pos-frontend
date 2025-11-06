@@ -91,12 +91,12 @@ const RoleForm = ({ role, mode, onClose }) => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-bold text-gray-900">
           {mode === 'edit' ? 'Edit Role' : 'Create New Role'}
         </h2>
         <button
           onClick={() => onClose(false)}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="text-gray-400 hover:text-gray-600"
         >
           <X className="w-6 h-6" />
         </button>
@@ -104,7 +104,7 @@ const RoleForm = ({ role, mode, onClose }) => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Role Name *
           </label>
           <input
@@ -112,14 +112,14 @@ const RoleForm = ({ role, mode, onClose }) => {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900"
             placeholder="e.g., Assistant Manager"
           />
           {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Role Code *
           </label>
           <input
@@ -128,7 +128,7 @@ const RoleForm = ({ role, mode, onClose }) => {
             value={formData.code}
             onChange={handleChange}
             disabled={mode === 'edit'}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed"
             placeholder="e.g., assistant_manager"
           />
           <p className="mt-1 text-xs text-gray-500">Lowercase letters and underscores only</p>
@@ -136,7 +136,7 @@ const RoleForm = ({ role, mode, onClose }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Description *
           </label>
           <textarea
@@ -144,7 +144,7 @@ const RoleForm = ({ role, mode, onClose }) => {
             value={formData.description}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900"
             placeholder="Describe the role and its responsibilities..."
           />
           {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
@@ -158,12 +158,12 @@ const RoleForm = ({ role, mode, onClose }) => {
             onChange={handleChange}
             className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
           />
-          <label className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+          <label className="ml-2 text-sm text-gray-700">
             Active (role can be assigned to users)
           </label>
         </div>
 
-        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex gap-3 pt-4 border-t border-gray-200">
           <button
             type="submit"
             disabled={isLoading}
@@ -174,7 +174,7 @@ const RoleForm = ({ role, mode, onClose }) => {
           <button
             type="button"
             onClick={() => onClose(false)}
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors"
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg transition-colors"
           >
             Cancel
           </button>

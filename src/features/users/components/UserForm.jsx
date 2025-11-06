@@ -178,7 +178,7 @@ const UserForm = ({ user, mode, onClose }) => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-bold text-gray-900">
           {mode === 'edit' ? 'Edit User' : 'Create New User'}
         </h2>
         <button onClick={() => onClose(false)} className="text-gray-400 hover:text-gray-600">
@@ -312,8 +312,8 @@ const UserForm = ({ user, mode, onClose }) => {
           </label>
 
           {isStaff && formData.staffProfile && (
-            <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-              <h3 className="font-semibold text-gray-900 dark:text-white">Employment Information</h3>
+            <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+              <h3 className="font-semibold text-gray-900">Employment Information</h3>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

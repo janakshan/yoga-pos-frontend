@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Sidebar } from '@/components/navigation';
-import { ThemeToggle } from '@/components/ui';
 import { useStore } from '@/store';
 import { selectUser, selectIsAuthenticated } from '@/store/selectors';
 
@@ -12,7 +11,6 @@ import { selectUser, selectIsAuthenticated } from '@/store/selectors';
  *
  * Features:
  * - Sidebar navigation with mobile drawer
- * - Dark/Light theme support
  * - Protected route wrapper
  * - Main content area with Outlet for nested routes
  * - Responsive design for mobile devices
@@ -28,7 +26,7 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+    <div className="flex h-screen bg-gray-50 overflow-hidden">
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
@@ -46,12 +44,12 @@ const MainLayout = () => {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4 shadow-sm flex-shrink-0">
+        <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="lg:hidden p-2 rounded-lg text-gray-600 hover:bg-gray-100"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? (
@@ -63,11 +61,11 @@ const MainLayout = () => {
 
             {/* User Info */}
             <div className="flex-1 lg:flex-initial">
-              <h2 className="text-lg sm:text-2xl font-semibold text-gray-800 dark:text-gray-100">
+              <h2 className="text-lg sm:text-2xl font-semibold text-gray-800">
                 Welcome back, {user.firstName || user.name}
               </h2>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1 hidden sm:block">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200">
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 hidden sm:block">
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                   {user.role}
                 </span>
                 <span className="ml-2">{user.email}</span>
@@ -76,16 +74,15 @@ const MainLayout = () => {
 
             {/* Header Actions */}
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden md:block">
+              <span className="text-xs sm:text-sm text-gray-500 hidden md:block">
                 Last login: {new Date(user.lastLogin).toLocaleString()}
               </span>
-              <ThemeToggle />
             </div>
           </div>
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto bg-gray-50 dark:bg-gray-900">
+        <div className="flex-1 overflow-auto bg-gray-50">
           <Outlet />
         </div>
       </main>

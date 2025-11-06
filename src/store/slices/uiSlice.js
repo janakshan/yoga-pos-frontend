@@ -1,6 +1,6 @@
 /**
  * UI Store Slice
- * Manages UI state including modals, sidebars, notifications, and theme
+ * Manages UI state including modals, sidebars, and notifications
  */
 
 export const createUISlice = (set, get) => ({
@@ -9,7 +9,6 @@ export const createUISlice = (set, get) => ({
   isSidebarCollapsed: false,
   activeModal: null,
   modalData: null,
-  theme: 'light', // 'light' or 'dark'
   notifications: [],
 
   // Actions
@@ -43,33 +42,6 @@ export const createUISlice = (set, get) => ({
     set((state) => {
       state.activeModal = null;
       state.modalData = null;
-    }),
-
-  setTheme: (theme) =>
-    set((state) => {
-      state.theme = theme;
-      // Update HTML class for Tailwind dark mode
-      if (typeof document !== 'undefined') {
-        if (theme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
-    }),
-
-  toggleTheme: () =>
-    set((state) => {
-      const newTheme = state.theme === 'light' ? 'dark' : 'light';
-      state.theme = newTheme;
-      // Update HTML class for Tailwind dark mode
-      if (typeof document !== 'undefined') {
-        if (newTheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      }
     }),
 
   addNotification: (notification) =>

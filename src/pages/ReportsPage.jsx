@@ -167,15 +167,15 @@ const ReportsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Reports</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Reports</h1>
+          <p className="text-gray-600 mt-1">
             Generate and manage business intelligence reports
           </p>
         </div>
         {view === 'list' && (
           <button
             onClick={() => setView('generate')}
-            className="px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 flex items-center justify-center"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center"
           >
             <Plus className="w-4 h-4 mr-2" />
             Generate Report
@@ -186,58 +186,58 @@ const ReportsPage = () => {
       {/* Stats Cards */}
       {view === 'list' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Total Reports</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p className="text-sm text-gray-600">Total Reports</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
                   {stats.totalReports}
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                <FileText className="w-6 h-6 text-blue-600 dark:text-blue-300" />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <FileText className="w-6 h-6 text-blue-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Today</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p className="text-sm text-gray-600">Today</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
                   {stats.todayReports}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
-                <Calendar className="w-6 h-6 text-green-600 dark:text-green-300" />
+              <div className="p-3 bg-green-100 rounded-lg">
+                <Calendar className="w-6 h-6 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">This Week</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p className="text-sm text-gray-600">This Week</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
                   {stats.weekReports}
                 </p>
               </div>
-              <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-300" />
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-purple-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
+          <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">This Month</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mt-1">
+                <p className="text-sm text-gray-600">This Month</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900 mt-1">
                   {stats.monthReports}
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
-                <BarChart3 className="w-6 h-6 text-orange-600 dark:text-orange-300" />
+              <div className="p-3 bg-orange-100 rounded-lg">
+                <BarChart3 className="w-6 h-6 text-orange-600" />
               </div>
             </div>
           </div>
@@ -246,17 +246,17 @@ const ReportsPage = () => {
 
       {/* Search and Filters */}
       {view === 'list' && (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex flex-col md:flex-row gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search reports..."
                 value={searchTerm}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -265,8 +265,8 @@ const ReportsPage = () => {
               onClick={() => setShowFilters(!showFilters)}
               className={`px-4 py-2 border rounded-md flex items-center justify-center ${
                 showFilters
-                  ? 'bg-blue-50 dark:bg-blue-900 border-blue-500 dark:border-blue-600 text-blue-700 dark:text-blue-300'
-                  : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600'
+                  ? 'bg-blue-50 border-blue-500 text-blue-700'
+                  : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
             >
               <Filter className="w-4 h-4 mr-2" />
@@ -276,17 +276,17 @@ const ReportsPage = () => {
 
           {/* Filter Options */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-4 pt-4 border-t border-gray-200">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Type Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Report Type
                   </label>
                   <select
                     value={filters.type || ''}
                     onChange={(e) => handleFilterChange('type', e.target.value || null)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">All Types</option>
                     {Object.entries(REPORT_TYPES).map(([key, value]) => (
@@ -299,7 +299,7 @@ const ReportsPage = () => {
 
                 {/* Status Filter */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Status
                   </label>
                   <select
@@ -307,7 +307,7 @@ const ReportsPage = () => {
                     onChange={(e) =>
                       handleFilterChange('status', e.target.value || null)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">All Status</option>
                     {Object.entries(REPORT_STATUS).map(([key, value]) => (
@@ -322,7 +322,7 @@ const ReportsPage = () => {
                 <div className="flex items-end">
                   <button
                     onClick={handleClearFilters}
-                    className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                    className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
                   >
                     Clear Filters
                   </button>
