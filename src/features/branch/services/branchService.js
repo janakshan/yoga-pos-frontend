@@ -23,6 +23,11 @@ let MOCK_BRANCHES = [
     managerName: 'Sarah Manager',
     isActive: true,
     staffCount: 8,
+    monthlyRevenue: 45800,
+    transactionCount: 342,
+    averageTicketSize: 133.92,
+    customerCount: 285,
+    inventoryValue: 12450,
     settings: {
       timezone: 'America/Los_Angeles',
       currency: 'USD',
@@ -57,6 +62,11 @@ let MOCK_BRANCHES = [
     managerName: 'Mike Johnson',
     isActive: true,
     staffCount: 6,
+    monthlyRevenue: 38200,
+    transactionCount: 298,
+    averageTicketSize: 128.19,
+    customerCount: 234,
+    inventoryValue: 9800,
     settings: {
       timezone: 'America/Los_Angeles',
       currency: 'USD',
@@ -91,6 +101,11 @@ let MOCK_BRANCHES = [
     managerName: null,
     isActive: false,
     staffCount: 0,
+    monthlyRevenue: 0,
+    transactionCount: 0,
+    averageTicketSize: 0,
+    customerCount: 0,
+    inventoryValue: 0,
     settings: {
       timezone: 'America/Los_Angeles',
       currency: 'USD',
@@ -100,6 +115,84 @@ let MOCK_BRANCHES = [
     },
     createdAt: '2024-03-10T10:00:00Z',
     updatedAt: '2024-09-01T09:00:00Z',
+    createdBy: 'user-001',
+  },
+  {
+    id: 'branch-004',
+    name: 'Oakland Yoga Center',
+    code: 'BR004',
+    address: '321 Broadway',
+    city: 'Oakland',
+    state: 'CA',
+    zipCode: '94612',
+    country: 'USA',
+    phone: '+1 (510) 555-0100',
+    email: 'oakland@yoga.com',
+    managerId: 'user-004',
+    managerName: 'Lisa Chen',
+    isActive: true,
+    staffCount: 7,
+    monthlyRevenue: 52300,
+    transactionCount: 385,
+    averageTicketSize: 135.84,
+    customerCount: 312,
+    inventoryValue: 14200,
+    settings: {
+      timezone: 'America/Los_Angeles',
+      currency: 'USD',
+      taxRate: 0.0975,
+      allowWalkins: true,
+      operatingHours: {
+        monday: { open: '06:00', close: '21:00' },
+        tuesday: { open: '06:00', close: '21:00' },
+        wednesday: { open: '06:00', close: '21:00' },
+        thursday: { open: '06:00', close: '21:00' },
+        friday: { open: '06:00', close: '21:00' },
+        saturday: { open: '08:00', close: '19:00' },
+        sunday: { open: '08:00', close: '19:00' },
+      },
+    },
+    createdAt: '2024-04-10T10:00:00Z',
+    updatedAt: '2024-11-02T14:00:00Z',
+    createdBy: 'user-001',
+  },
+  {
+    id: 'branch-005',
+    name: 'Berkeley Wellness Studio',
+    code: 'BR005',
+    address: '567 University Avenue',
+    city: 'Berkeley',
+    state: 'CA',
+    zipCode: '94704',
+    country: 'USA',
+    phone: '+1 (510) 555-0200',
+    email: 'berkeley@yoga.com',
+    managerId: 'user-005',
+    managerName: 'David Park',
+    isActive: true,
+    staffCount: 5,
+    monthlyRevenue: 32500,
+    transactionCount: 245,
+    averageTicketSize: 132.65,
+    customerCount: 198,
+    inventoryValue: 8650,
+    settings: {
+      timezone: 'America/Los_Angeles',
+      currency: 'USD',
+      taxRate: 0.0975,
+      allowWalkins: true,
+      operatingHours: {
+        monday: { open: '07:00', close: '20:00' },
+        tuesday: { open: '07:00', close: '20:00' },
+        wednesday: { open: '07:00', close: '20:00' },
+        thursday: { open: '07:00', close: '20:00' },
+        friday: { open: '07:00', close: '20:00' },
+        saturday: { open: '09:00', close: '18:00' },
+        sunday: { open: '09:00', close: '18:00' },
+      },
+    },
+    createdAt: '2024-05-15T10:00:00Z',
+    updatedAt: '2024-11-03T10:30:00Z',
     createdBy: 'user-001',
   },
 ];
@@ -431,6 +524,145 @@ export const bulkUpdateStatus = async (branchIds, isActive) => {
   };
 };
 
+/**
+ * Get consolidated performance data across all branches
+ * @param {Object} filters - Date range and other filters
+ * @returns {Promise<Object>}
+ */
+export const getConsolidatedPerformance = async (filters = {}) => {
+  await mockDelay(600);
+
+  const branches = await getList({ isActive: true });
+
+  return {
+    totalRevenue: branches.reduce((sum, b) => sum + (b.monthlyRevenue || 0), 0),
+    totalTransactions: branches.reduce((sum, b) => sum + (b.transactionCount || 0), 0),
+    averageTicketSize: branches.reduce((sum, b) => sum + (b.averageTicketSize || 0), 0) / branches.length,
+    topPerformingBranches: branches
+      .sort((a, b) => (b.monthlyRevenue || 0) - (a.monthlyRevenue || 0))
+      .slice(0, 5)
+      .map(b => ({
+        id: b.id,
+        name: b.name,
+        revenue: b.monthlyRevenue || 0,
+        transactions: b.transactionCount || 0,
+      })),
+    branchPerformance: branches.map(b => ({
+      branchId: b.id,
+      branchName: b.name,
+      revenue: b.monthlyRevenue || 0,
+      transactions: b.transactionCount || 0,
+      averageTicketSize: b.averageTicketSize || 0,
+      staffCount: b.staffCount,
+    })),
+  };
+};
+
+/**
+ * Get branch comparison metrics
+ * @param {Array<string>} branchIds - Branch IDs to compare
+ * @returns {Promise<Object>}
+ */
+export const compareBranches = async (branchIds) => {
+  await mockDelay(500);
+
+  const branches = await Promise.all(branchIds.map(id => getById(id)));
+
+  return {
+    branches: branches.map(b => ({
+      id: b.id,
+      name: b.name,
+      code: b.code,
+      metrics: {
+        revenue: b.monthlyRevenue || 0,
+        transactions: b.transactionCount || 0,
+        staffCount: b.staffCount,
+        customerCount: b.customerCount || 0,
+        inventoryValue: b.inventoryValue || 0,
+      },
+    })),
+    comparison: {
+      highestRevenue: branches.reduce((max, b) =>
+        (b.monthlyRevenue || 0) > (max.monthlyRevenue || 0) ? b : max
+      ),
+      mostTransactions: branches.reduce((max, b) =>
+        (b.transactionCount || 0) > (max.transactionCount || 0) ? b : max
+      ),
+      largestStaff: branches.reduce((max, b) =>
+        b.staffCount > max.staffCount ? b : max
+      ),
+    },
+  };
+};
+
+/**
+ * Update branch-specific settings
+ * @param {string} branchId - Branch ID
+ * @param {Object} settings - Settings to update
+ * @returns {Promise<Object>}
+ */
+export const updateBranchSettings = async (branchId, settings) => {
+  await mockDelay(500);
+
+  const branch = MOCK_BRANCHES.find(b => b.id === branchId);
+  if (!branch) {
+    throw new Error(`Branch with ID ${branchId} not found`);
+  }
+
+  branch.settings = {
+    ...branch.settings,
+    ...settings,
+  };
+  branch.updatedAt = new Date().toISOString();
+
+  return branch;
+};
+
+/**
+ * Get all unique cities where branches are located
+ * @returns {Promise<Array<string>>}
+ */
+export const getCities = async () => {
+  await mockDelay(200);
+  const cities = [...new Set(MOCK_BRANCHES.map(b => b.city).filter(Boolean))];
+  return cities.sort();
+};
+
+/**
+ * Get all unique states where branches are located
+ * @returns {Promise<Array<string>>}
+ */
+export const getStates = async () => {
+  await mockDelay(200);
+  const states = [...new Set(MOCK_BRANCHES.map(b => b.state).filter(Boolean))];
+  return states.sort();
+};
+
+/**
+ * Clone branch settings from one branch to another
+ * @param {string} sourceBranchId - Source branch ID
+ * @param {string} targetBranchId - Target branch ID
+ * @returns {Promise<Object>}
+ */
+export const cloneBranchSettings = async (sourceBranchId, targetBranchId) => {
+  await mockDelay(500);
+
+  const sourceBranch = MOCK_BRANCHES.find(b => b.id === sourceBranchId);
+  const targetBranch = MOCK_BRANCHES.find(b => b.id === targetBranchId);
+
+  if (!sourceBranch) {
+    throw new Error(`Source branch with ID ${sourceBranchId} not found`);
+  }
+  if (!targetBranch) {
+    throw new Error(`Target branch with ID ${targetBranchId} not found`);
+  }
+
+  targetBranch.settings = { ...sourceBranch.settings };
+  targetBranch.updatedAt = new Date().toISOString();
+
+  return targetBranch;
+};
+
 // Export as a service object
 export const branchService = {
   getList,
@@ -441,4 +673,10 @@ export const branchService = {
   getStats,
   assignManager,
   bulkUpdateStatus,
+  getConsolidatedPerformance,
+  compareBranches,
+  updateBranchSettings,
+  getCities,
+  getStates,
+  cloneBranchSettings,
 };

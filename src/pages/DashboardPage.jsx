@@ -1,10 +1,11 @@
 import React from 'react';
 import { useStore, selectUser } from '@/store';
+import { MultiBranchOverview } from '../components/dashboard/MultiBranchOverview.jsx';
 
 /**
  * DashboardPage Component
  * Main dashboard page showing overview and stats
- * Features: Dark mode support, mobile responsive layout
+ * Features: Dark mode support, mobile responsive layout, Multi-branch overview
  */
 const DashboardPage = () => {
   const user = useStore(selectUser);
@@ -16,6 +17,11 @@ const DashboardPage = () => {
         <p className="text-gray-600">
           Welcome to your Yoga POS management system
         </p>
+      </div>
+
+      {/* Multi-Branch Overview */}
+      <div className="mb-8">
+        <MultiBranchOverview />
       </div>
 
       {/* Quick Stats */}
