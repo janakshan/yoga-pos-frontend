@@ -8,7 +8,7 @@ import { ProductList } from '../features/products/components/ProductList.jsx';
  */
 const ProductsPage = () => {
   return (
-    <div className="h-full px-6 py-6 overflow-auto">
+    <div className="h-full px-4 sm:px-6 py-4 sm:py-6 overflow-auto bg-gray-50 dark:bg-gray-900">
       <ProductList />
     </div>
   );
