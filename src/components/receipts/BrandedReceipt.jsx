@@ -24,7 +24,8 @@ const BrandedReceipt = ({ transaction, className = '' }) => {
 
   return (
     <div
-      className={`bg-white max-w-sm mx-auto ${className}`}
+      className={`printable-receipt bg-white max-w-sm mx-auto ${className}`}
+      id="printable-receipt"
       style={{
         fontFamily: 'monospace',
         '--primary-color': branding.primaryColor,

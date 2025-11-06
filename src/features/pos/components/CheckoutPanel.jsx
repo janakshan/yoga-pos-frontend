@@ -5,6 +5,8 @@ import { useCustomers } from '../../customers/hooks/useCustomers';
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABELS } from '../types';
 import { formatCurrency, calculateChange } from '../utils/calculations';
 import toast from 'react-hot-toast';
+import BrandedReceipt from '../../../components/receipts/BrandedReceipt';
+import PrintModal from '../../../components/common/PrintModal';
 
 /**
  * CheckoutPanel Component
@@ -112,6 +114,9 @@ export const CheckoutPanel = () => {
 
   const handlePrintReceipt = () => {
     window.print();
+  };
+
+  const handleCloseReceipt = () => {
     setShowReceipt(false);
     setLastTransaction(null);
   };
@@ -123,68 +128,78 @@ export const CheckoutPanel = () => {
 
   if (showReceipt && lastTransaction) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <div className="text-center mb-6">
-          <Receipt className="h-16 w-16 text-green-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Transaction Complete!
-          </h2>
-          <p className="text-gray-600">
-            Transaction #{lastTransaction.transactionNumber}
-          </p>
-        </div>
+      <>
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="text-center mb-6">
+            <Receipt className="h-16 w-16 text-green-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Transaction Complete!
+            </h2>
+            <p className="text-gray-600">
+              Transaction #{lastTransaction.transactionNumber}
+            </p>
+          </div>
 
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Total:</span>
-              <span className="font-bold text-gray-900">
-                {formatCurrency(lastTransaction.total)}
-              </span>
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Total:</span>
+                <span className="font-bold text-gray-900">
+                  {formatCurrency(lastTransaction.total)}
+                </span>
+              </div>
+              {paymentMethod === PAYMENT_METHODS.CASH && (
+                <>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Cash Received:</span>
+                    <span className="font-medium text-gray-900">
+                      {formatCurrency(parseFloat(cashReceived))}
+                    </span>
+                  </div>
+                  <div className="flex justify-between border-t pt-2">
+                    <span className="text-gray-600">Change:</span>
+                    <span className="font-bold text-green-600">
+                      {formatCurrency(change)}
+                    </span>
+                  </div>
+                </>
+              )}
+              <div className="flex justify-between border-t pt-2">
+                <span className="text-gray-600">Payment Method:</span>
+                <span className="font-medium text-gray-900">
+                  {PAYMENT_METHOD_LABELS[lastTransaction.paymentMethod]}
+                </span>
+              </div>
             </div>
-            {paymentMethod === PAYMENT_METHODS.CASH && (
-              <>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Cash Received:</span>
-                  <span className="font-medium text-gray-900">
-                    {formatCurrency(parseFloat(cashReceived))}
-                  </span>
-                </div>
-                <div className="flex justify-between border-t pt-2">
-                  <span className="text-gray-600">Change:</span>
-                  <span className="font-bold text-green-600">
-                    {formatCurrency(change)}
-                  </span>
-                </div>
-              </>
-            )}
-            <div className="flex justify-between border-t pt-2">
-              <span className="text-gray-600">Payment Method:</span>
-              <span className="font-medium text-gray-900">
-                {PAYMENT_METHOD_LABELS[lastTransaction.paymentMethod]}
-              </span>
-            </div>
+          </div>
+
+          <div className="space-y-3">
+            <button
+              onClick={handlePrintReceipt}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            >
+              Print Receipt
+            </button>
+            <button
+              onClick={handleCloseReceipt}
+              className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+            >
+              New Transaction
+            </button>
           </div>
         </div>
 
-        <div className="space-y-3">
-          <button
-            onClick={handlePrintReceipt}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-          >
-            Print Receipt
-          </button>
-          <button
-            onClick={() => {
-              setShowReceipt(false);
-              setLastTransaction(null);
-            }}
-            className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
-          >
-            New Transaction
-          </button>
-        </div>
-      </div>
+        {/* Hidden Receipt for Printing */}
+        <PrintModal
+          isOpen={showReceipt}
+          onClose={handleCloseReceipt}
+          title="Receipt"
+          onPrint={handlePrintReceipt}
+          showActions={false}
+        >
+          <BrandedReceipt transaction={lastTransaction} />
+        </PrintModal>
+      </>
     );
   }
 

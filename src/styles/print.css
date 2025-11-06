@@ -1,0 +1,405 @@
+/**
+ * Print Styles for POS System
+ * Handles printing for receipts, invoices, and reports
+ * Hides UI elements and optimizes layout for printing
+ */
+
+@media print {
+  /* Reset page margins and layout */
+  @page {
+    margin: 0.5cm;
+    size: auto;
+  }
+
+  /* Hide all non-printable elements */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Show only printable content */
+  .printable-receipt,
+  .printable-receipt *,
+  .printable-invoice,
+  .printable-invoice *,
+  .printable-report,
+  .printable-report * {
+    visibility: visible;
+  }
+
+  /* Position printable content at top of page */
+  .printable-receipt,
+  .printable-invoice,
+  .printable-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white;
+  }
+
+  /* Hide navigation, sidebars, headers, and buttons */
+  nav,
+  aside,
+  header,
+  footer,
+  .sidebar,
+  .navigation,
+  .nav,
+  .header,
+  .footer,
+  .no-print,
+  button,
+  .btn,
+  input,
+  select,
+  textarea,
+  .modal-backdrop,
+  .modal-header,
+  .modal-footer {
+    display: none !important;
+  }
+
+  /* Hide specific UI elements */
+  .cart,
+  .product-selector,
+  .checkout-panel,
+  .toolbar,
+  .search-bar,
+  .filters {
+    display: none !important;
+  }
+
+  /* Receipt-specific print styles */
+  .printable-receipt {
+    max-width: 80mm; /* Standard thermal printer width */
+    margin: 0 auto;
+    padding: 10mm;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+
+  .printable-receipt .receipt-logo {
+    max-height: 40mm;
+    width: auto;
+  }
+
+  .printable-receipt .receipt-header {
+    text-align: center;
+    margin-bottom: 5mm;
+  }
+
+  .printable-receipt .receipt-items {
+    margin: 5mm 0;
+  }
+
+  .printable-receipt .receipt-totals {
+    margin-top: 5mm;
+    border-top: 1px dashed #000;
+    padding-top: 3mm;
+  }
+
+  .printable-receipt .receipt-footer {
+    text-align: center;
+    margin-top: 5mm;
+    font-size: 10pt;
+  }
+
+  /* Invoice-specific print styles */
+  .printable-invoice {
+    max-width: 210mm; /* A4 width */
+    margin: 0 auto;
+    padding: 15mm;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+
+  .printable-invoice .invoice-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10mm;
+    border-bottom: 2px solid #000;
+    padding-bottom: 5mm;
+  }
+
+  .printable-invoice .invoice-logo {
+    max-height: 50mm;
+    width: auto;
+  }
+
+  .printable-invoice .invoice-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm;
+    margin-bottom: 10mm;
+  }
+
+  .printable-invoice .invoice-items {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10mm;
+  }
+
+  .printable-invoice .invoice-items th,
+  .printable-invoice .invoice-items td {
+    padding: 3mm;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .printable-invoice .invoice-items th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+  }
+
+  .printable-invoice .invoice-items .item-price,
+  .printable-invoice .invoice-items .item-total {
+    text-align: right;
+  }
+
+  .printable-invoice .invoice-totals {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10mm;
+  }
+
+  .printable-invoice .invoice-totals-table {
+    min-width: 60mm;
+  }
+
+  .printable-invoice .invoice-totals-table .total-row {
+    font-weight: bold;
+    font-size: 13pt;
+    border-top: 2px solid #000;
+    padding-top: 2mm;
+  }
+
+  .printable-invoice .invoice-footer {
+    margin-top: 15mm;
+    padding-top: 5mm;
+    border-top: 1px solid #ddd;
+    font-size: 9pt;
+    text-align: center;
+  }
+
+  .printable-invoice .invoice-notes {
+    margin-top: 10mm;
+    padding: 5mm;
+    background-color: #f9f9f9;
+    border-left: 3px solid #000;
+  }
+
+  /* Report-specific print styles */
+  .printable-report {
+    max-width: 210mm; /* A4 width */
+    margin: 0 auto;
+    padding: 15mm;
+    font-family: Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+
+  .printable-report .report-header {
+    text-align: center;
+    margin-bottom: 10mm;
+    border-bottom: 2px solid #000;
+    padding-bottom: 5mm;
+  }
+
+  .printable-report .report-title {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 3mm;
+  }
+
+  .printable-report .report-subtitle {
+    font-size: 12pt;
+    color: #666;
+  }
+
+  .printable-report .report-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5mm;
+    margin-bottom: 10mm;
+    padding: 5mm;
+    background-color: #f5f5f5;
+  }
+
+  .printable-report .report-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40mm, 1fr));
+    gap: 5mm;
+    margin-bottom: 10mm;
+  }
+
+  .printable-report .stat-card {
+    padding: 5mm;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+
+  .printable-report .stat-value {
+    font-size: 16pt;
+    font-weight: bold;
+    display: block;
+    margin-top: 2mm;
+  }
+
+  .printable-report .report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10mm;
+  }
+
+  .printable-report .report-table th,
+  .printable-report .report-table td {
+    padding: 3mm;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .printable-report .report-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+
+  .printable-report .report-table .number-column {
+    text-align: right;
+  }
+
+  .printable-report .report-chart {
+    page-break-inside: avoid;
+    margin-bottom: 10mm;
+  }
+
+  .printable-report .report-footer {
+    margin-top: 15mm;
+    padding-top: 5mm;
+    border-top: 1px solid #ddd;
+    font-size: 8pt;
+    text-align: center;
+    color: #666;
+  }
+
+  /* General print optimizations */
+  .printable-receipt,
+  .printable-invoice,
+  .printable-report {
+    color: #000;
+    background: #fff;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break {
+    page-break-after: always;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+
+  /* Remove shadows and effects for print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure links are visible */
+  a[href]:after {
+    content: none;
+  }
+
+  /* Optimize colors for black and white printing */
+  .printable-receipt,
+  .printable-invoice,
+  .printable-report {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Barcode and QR code optimization */
+  .barcode,
+  .qrcode {
+    image-rendering: crisp-edges;
+    page-break-inside: avoid;
+  }
+}
+
+/* Screen-only styles for print preview button */
+@media screen {
+  .print-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 12px 24px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+  }
+
+  .print-button:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .print-button:active {
+    transform: translateY(1px);
+  }
+
+  /* Print preview container */
+  .print-preview-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .print-preview-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  .print-preview-actions button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .print-preview-actions .btn-print {
+    background-color: #10b981;
+    color: white;
+  }
+
+  .print-preview-actions .btn-print:hover {
+    background-color: #059669;
+  }
+
+  .print-preview-actions .btn-close {
+    background-color: #6b7280;
+    color: white;
+  }
+
+  .print-preview-actions .btn-close:hover {
+    background-color: #4b5563;
+  }
+}
