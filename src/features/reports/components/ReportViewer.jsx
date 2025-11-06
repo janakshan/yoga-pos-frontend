@@ -1,4 +1,5 @@
-import { X, Download, Calendar, Database, Clock } from 'lucide-react';
+import { useState } from 'react';
+import { X, Download, Calendar, Database, Clock, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   REPORT_TYPE_LABELS,
@@ -6,15 +7,27 @@ import {
   EXPORT_FORMATS,
   EXPORT_FORMAT_LABELS,
 } from '../types';
+import PrintModal from '../../../components/common/PrintModal';
+import PrintableReport from '../../../components/reports/PrintableReport';
 
 /**
  * ReportViewer Component
  * Displays report details and data in a readable format
  */
 export const ReportViewer = ({ report, onClose, onExport, isLoading = false }) => {
+  const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+
   if (!report) {
     return null;
   }
+
+  const handlePrint = () => {
+    setIsPrintModalOpen(true);
+  };
+
+  const handlePrintAction = () => {
+    window.print();
+  };
 
   // Get status badge color
   const getStatusColor = (status) => {
@@ -404,6 +417,14 @@ export const ReportViewer = ({ report, onClose, onExport, isLoading = false }) =
             Processing time: {report.metadata?.processingTime || 0}ms
           </p>
           <div className="flex gap-2">
+            <button
+              onClick={handlePrint}
+              className="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center"
+              disabled={isLoading}
+            >
+              <Printer className="w-4 h-4 mr-1.5" />
+              Print
+            </button>
             {Object.entries(EXPORT_FORMATS).map(([key, value]) => (
               <button
                 key={key}
@@ -418,6 +439,16 @@ export const ReportViewer = ({ report, onClose, onExport, isLoading = false }) =
           </div>
         </div>
       </div>
+
+      {/* Print Modal */}
+      <PrintModal
+        isOpen={isPrintModalOpen}
+        onClose={() => setIsPrintModalOpen(false)}
+        title={`Print ${report.title}`}
+        onPrint={handlePrintAction}
+      >
+        <PrintableReport report={report} />
+      </PrintModal>
     </div>
   );
 };
