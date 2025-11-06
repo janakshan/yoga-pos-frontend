@@ -194,6 +194,59 @@ export const createProductSlice = (set, get) => ({
   },
 
   /**
+   * Get bundle products
+   * @returns {Array} Products that are bundles
+   */
+  getBundleProducts: () => {
+    const state = get();
+    return state.products.filter((p) => p.isBundle === true);
+  },
+
+  /**
+   * Get products by subcategory
+   * @param {string} subcategoryId - Subcategory ID
+   * @returns {Array} Products in subcategory
+   */
+  getProductsBySubcategory: (subcategoryId) => {
+    const state = get();
+    return state.products.filter((p) => p.subcategory === subcategoryId);
+  },
+
+  /**
+   * Get products with specific attribute
+   * @param {string} attributeName - Attribute name
+   * @param {string} attributeValue - Attribute value (optional)
+   * @returns {Array} Products with the attribute
+   */
+  getProductsByAttribute: (attributeName, attributeValue = null) => {
+    const state = get();
+    return state.products.filter((p) => {
+      if (!p.attributes || p.attributes.length === 0) return false;
+      return p.attributes.some((attr) => {
+        if (attributeValue) {
+          return attr.name === attributeName && attr.value === attributeValue;
+        }
+        return attr.name === attributeName;
+      });
+    });
+  },
+
+  /**
+   * Get product price for specific tier
+   * @param {string} productId - Product ID
+   * @param {string} tier - Pricing tier (retail, wholesale, member)
+   * @returns {number|null} Price for tier or null if not found
+   */
+  getProductPriceByTier: (productId, tier = 'retail') => {
+    const state = get();
+    const product = state.products.find((p) => p.id === productId);
+    if (!product) return null;
+
+    // Return pricing tier if available, otherwise return legacy price
+    return product.pricing?.[tier] || product.price || 0;
+  },
+
+  /**
    * Clear product error
    */
   clearProductError: () =>
