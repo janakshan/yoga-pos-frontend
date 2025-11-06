@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
@@ -14,48 +13,33 @@ import InventoryPage from './pages/InventoryPage';
 import POSPage from './pages/POSPage';
 import CustomersPage from './pages/CustomersPage';
 import ReportsPage from './pages/ReportsPage';
-import { useStore } from './store';
 import './App.css';
 
 function App() {
-  const theme = useStore((state) => state.theme);
-  const setTheme = useStore((state) => state.setTheme);
-
-  // Initialize theme from localStorage on mount
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-  }, [setTheme]);
-
-  // Save theme to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme]);
-
   return (
     <Router>
-      {/* Toast Notifications with theme support */}
+      {/* Toast Notifications */}
       <Toaster
         position="top-right"
         toastOptions={{
           duration: 3000,
           style: {
-            background: theme === 'dark' ? '#374151' : '#ffffff',
-            color: theme === 'dark' ? '#f3f4f6' : '#1f2937',
-            border: `1px solid ${theme === 'dark' ? '#4b5563' : '#e5e7eb'}`,
+            background: '#ffffff',
+            color: '#1f2937',
+            border: '1px solid #e5e7eb',
           },
           success: {
             duration: 3000,
             iconTheme: {
-              primary: theme === 'dark' ? '#34d399' : '#10b981',
-              secondary: theme === 'dark' ? '#1f2937' : '#ffffff',
+              primary: '#10b981',
+              secondary: '#ffffff',
             },
           },
           error: {
             duration: 4000,
             iconTheme: {
-              primary: theme === 'dark' ? '#f87171' : '#ef4444',
-              secondary: theme === 'dark' ? '#1f2937' : '#ffffff',
+              primary: '#ef4444',
+              secondary: '#ffffff',
             },
           },
         }}
@@ -124,12 +108,12 @@ function App() {
 function PlaceholderPage({ module }) {
   return (
     <div className="w-full p-4 sm:p-6 lg:p-8">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-900/50 p-6 sm:p-8 text-center border border-gray-100 dark:border-gray-700">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-4">{module} Module</h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
+      <div className="bg-white rounded-lg shadow-md p-6 sm:p-8 text-center border border-gray-100">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{module} Module</h1>
+        <p className="text-gray-600 mb-4">
           The {module} module is coming soon!
         </p>
-        <p className="text-sm text-gray-500 dark:text-gray-500">
+        <p className="text-sm text-gray-500">
           This module is currently under development.
         </p>
       </div>

@@ -52,8 +52,7 @@ export const useStore = create(
           refreshToken: state.refreshToken,
           isAuthenticated: state.isAuthenticated,
 
-          // UI (persist theme and sidebar preferences)
-          theme: state.theme,
+          // UI (persist sidebar preferences)
           isSidebarCollapsed: state.isSidebarCollapsed,
 
           // Settings (persist all settings)

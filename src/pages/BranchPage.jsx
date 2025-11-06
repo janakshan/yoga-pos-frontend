@@ -12,7 +12,7 @@ import { BranchList } from '@/features/branch';
  */
 const BranchPage = () => {
   return (
-    <div className="w-full bg-gray-50 dark:bg-gray-900 min-h-full">
+    <div className="w-full bg-gray-50 min-h-full">
       <BranchList />
     </div>
   );

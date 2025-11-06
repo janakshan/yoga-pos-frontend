@@ -7,6 +7,4 @@ export const selectIsSidebarOpen = (state) => state.isSidebarOpen;
 export const selectIsSidebarCollapsed = (state) => state.isSidebarCollapsed;
 export const selectActiveModal = (state) => state.activeModal;
 export const selectModalData = (state) => state.modalData;
-export const selectTheme = (state) => state.theme;
 export const selectNotifications = (state) => state.notifications;
-export const selectIsDarkMode = (state) => state.theme === 'dark';

@@ -56,23 +56,23 @@ const RolePermissionsModal = ({ role, onClose }) => {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-gray-900">
             Manage Permissions
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             Role: {role?.name}
           </p>
         </div>
         <button
           onClick={() => onClose(false)}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+          className="text-gray-400 hover:text-gray-600"
         >
           <X className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className="text-sm text-blue-800 dark:text-blue-300">
+      <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+        <p className="text-sm text-blue-800">
           {selectedPermissions.size} permission(s) selected
         </p>
       </div>
@@ -84,9 +84,9 @@ const RolePermissionsModal = ({ role, onClose }) => {
           const someSelected = categoryPerms.some((p) => selectedPermissions.has(p.name));
 
           return (
-            <div key={group.category} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div key={group.category} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <Shield className="w-5 h-5" />
                   {group.displayName}
                 </h3>
@@ -112,7 +112,7 @@ const RolePermissionsModal = ({ role, onClose }) => {
                 {categoryPerms.map((permission) => (
                   <label
                     key={permission.id}
-                    className="flex items-start gap-2 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                    className="flex items-start gap-2 p-2 rounded hover:bg-gray-50 cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -121,10 +121,10 @@ const RolePermissionsModal = ({ role, onClose }) => {
                       className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                      <div className="text-sm font-medium text-gray-900">
                         {permission.displayName}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <div className="text-xs text-gray-500">
                         {permission.description}
                       </div>
                     </div>
@@ -136,7 +136,7 @@ const RolePermissionsModal = ({ role, onClose }) => {
         })}
       </div>
 
-      <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="flex gap-3 pt-4 border-t border-gray-200">
         <button
           onClick={handleSave}
           disabled={isLoading}
@@ -146,7 +146,7 @@ const RolePermissionsModal = ({ role, onClose }) => {
         </button>
         <button
           onClick={() => onClose(false)}
-          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors"
+          className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded-lg transition-colors"
         >
           Cancel
         </button>

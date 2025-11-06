@@ -89,34 +89,34 @@ const UserList = ({ staffOnly = false }) => {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Total Users</div>
-          <div className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Total Users</div>
+          <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Active</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Active</div>
           <div className="text-2xl font-bold text-green-600">{stats.active}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Inactive</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Inactive</div>
           <div className="text-2xl font-bold text-gray-600">{stats.inactive}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Suspended</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Suspended</div>
           <div className="text-2xl font-bold text-red-600">{stats.suspended}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Pending</div>
           <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
         </div>
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
-          <div className="text-sm text-gray-600 dark:text-gray-400">Online Today</div>
+        <div className="bg-white p-4 rounded-lg shadow-sm border">
+          <div className="text-sm text-gray-600">Online Today</div>
           <div className="text-2xl font-bold text-blue-600">{stats.loggedInToday}</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-sm border">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -163,28 +163,28 @@ const UserList = ({ staffOnly = false }) => {
       )}
 
       {/* Users Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50 dark:bg-gray-700">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Contact</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Role</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Branch</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Staff Info</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff Info</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="divide-y divide-gray-200">
             {filteredUsers.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <tr key={user.id} className="hover:bg-gray-50">
                 <td className="px-6 py-4">
-                  <div className="font-medium text-gray-900 dark:text-white">{user.fullName}</div>
+                  <div className="font-medium text-gray-900">{user.fullName}</div>
                   <div className="text-sm text-gray-500">@{user.username}</div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="text-sm text-gray-900 dark:text-white">{user.email}</div>
+                  <div className="text-sm text-gray-900">{user.email}</div>
                   <div className="text-sm text-gray-500">{user.phone}</div>
                 </td>
                 <td className="px-6 py-4">
@@ -192,20 +192,20 @@ const UserList = ({ staffOnly = false }) => {
                     {user.roles.map((roleId) => (
                       <span
                         key={roleId}
-                        className="px-2 py-1 text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded"
+                        className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-600 rounded"
                       >
                         {getRoleName(roleId)}
                       </span>
                     ))}
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm text-gray-900 dark:text-white">
+                <td className="px-6 py-4 text-sm text-gray-900">
                   {user.branchName || '-'}
                 </td>
                 <td className="px-6 py-4 text-sm">
                   {user.staffProfile ? (
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-white">
+                      <div className="font-medium text-gray-900">
                         {user.staffProfile.employeeId}
                       </div>
                       <div className="text-xs text-gray-500">
@@ -256,7 +256,7 @@ const UserList = ({ staffOnly = false }) => {
       {/* User Form Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <UserForm user={selectedUser} mode={mode} onClose={handleFormClose} />
           </div>
         </div>

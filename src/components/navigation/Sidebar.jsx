@@ -35,7 +35,7 @@ const navigationItems = [
 /**
  * Sidebar navigation component
  * Displays navigation links for all modules in the application
- * Supports light/dark theme and mobile drawer functionality
+ * Supports mobile drawer functionality
  */
 const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) => {
   const handleLinkClick = () => {
@@ -49,21 +49,21 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
     <aside
       className={`
         w-64 min-h-screen flex flex-col shadow-xl
-        bg-white dark:bg-gray-800
-        border-r border-gray-200 dark:border-gray-700
+        bg-white
+        border-r border-gray-200
         fixed lg:static inset-y-0 left-0 z-50
         transform transition-transform duration-300 ease-in-out
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}
     >
       {/* Logo/Brand */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-600 dark:to-purple-700">
+      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-indigo-500 to-purple-600">
         <h1 className="text-2xl font-bold text-white tracking-tight">Yoga POS</h1>
         <p className="text-sm text-indigo-100 mt-1">Management System</p>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white dark:bg-gray-800">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -74,8 +74,8 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
               className={({ isActive }) =>
                 `flex items-center px-4 py-3 rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-indigo-600 dark:bg-indigo-700 text-white shadow-md'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-indigo-600'
                 }`
               }
             >
@@ -87,8 +87,8 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+      <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <p className="text-xs text-gray-500 text-center">
           © 2025 Yoga POS System
         </p>
       </div>
