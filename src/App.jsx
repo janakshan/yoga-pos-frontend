@@ -18,6 +18,7 @@ import DemoDataPage from './pages/DemoDataPage';
 import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
 import FinancialDashboard from './pages/FinancialDashboard';
+import { SettingsPage } from './features/settings';
 import './App.css';
 
 function App() {
@@ -107,9 +108,11 @@ function App() {
           <Route path="expenses" element={<FinancialDashboard />} />
           <Route path="financial-reports" element={<FinancialDashboard />} />
 
+          {/* Settings */}
+          <Route path="settings" element={<SettingsPage />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
-          <Route path="settings" element={<PlaceholderPage module="Settings" />} />
         </Route>
 
         {/* Catch all - redirect to dashboard */}
