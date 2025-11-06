@@ -6,6 +6,8 @@ import {
   createCartSlice,
   createUISlice,
   createSettingsSlice,
+  createNotificationSlice,
+  createBackupSlice,
   createBranchSlice,
   createPermissionSlice,
   createRoleSlice,
@@ -41,6 +43,8 @@ export const useStore = create(
         ...createCartSlice(set, get, api),
         ...createUISlice(set, get, api),
         ...createSettingsSlice(set, get, api),
+        ...createNotificationSlice(set, get, api),
+        ...createBackupSlice(set, get, api),
         ...createBranchSlice(set, get, api),
         ...createPermissionSlice(set, get, api),
         ...createRoleSlice(set, get, api),
@@ -174,6 +178,16 @@ export const useStore = create(
           // Financial - General
           bankAccounts: state.bankAccounts,
           eodReports: state.eodReports,
+
+          // Notifications
+          notificationSettings: state.notificationSettings,
+          notificationHistory: state.notificationHistory,
+          notificationStats: state.notificationStats,
+
+          // Backup
+          backupSettings: state.backupSettings,
+          backupStatus: state.backupStatus,
+          backupStats: state.backupStats,
         }),
       }
     ),

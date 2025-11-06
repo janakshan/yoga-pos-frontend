@@ -5,6 +5,8 @@ import GeneralSettings from './GeneralSettings';
 import LocalizationSettings from './LocalizationSettings';
 import BrandingSettings from './BrandingSettings';
 import HardwareSettings from './HardwareSettings';
+import NotificationSettings from './NotificationSettings';
+import BackupSettings from './BackupSettings';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage = () => {
@@ -16,6 +18,8 @@ const SettingsPage = () => {
     { id: 'localization', label: t('settings.localization'), icon: '🌍' },
     { id: 'branding', label: t('settings.branding'), icon: '🎨' },
     { id: 'hardware', label: t('settings.hardware'), icon: '🖨️' },
+    { id: 'notifications', label: 'Notifications', icon: '🔔' },
+    { id: 'backup', label: 'Backup & Security', icon: '💾' },
   ];
 
   return (
@@ -55,6 +59,8 @@ const SettingsPage = () => {
           {activeTab === 'localization' && <LocalizationSettings />}
           {activeTab === 'branding' && <BrandingSettings />}
           {activeTab === 'hardware' && <HardwareSettings />}
+          {activeTab === 'notifications' && <NotificationSettings />}
+          {activeTab === 'backup' && <BackupSettings />}
         </div>
       </div>
     </div>

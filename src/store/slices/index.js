@@ -2,6 +2,8 @@ export { createAuthSlice } from './authSlice';
 export { createCartSlice } from './cartSlice';
 export { createUISlice } from './uiSlice';
 export { createSettingsSlice } from './settingsSlice';
+export { createNotificationSlice } from './notificationSlice';
+export { createBackupSlice } from './backupSlice';
 export { createBranchSlice } from '@/features/branch/store/branchSlice';
 export { createPermissionSlice } from '@/features/permissions/store/permissionSlice';
 export { createRoleSlice } from '@/features/roles/store/roleSlice';
