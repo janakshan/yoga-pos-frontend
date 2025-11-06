@@ -1,8 +1,10 @@
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_STATUSES,
-  UNIT_TYPES
+  UNIT_TYPES,
+  PRODUCT_SUBCATEGORIES
 } from '../types/product.types.js';
+import { generateBarcode } from '../utils/barcodeUtils.js';
 
 /**
  * Mock delay to simulate network latency
@@ -27,20 +29,40 @@ let MOCK_PRODUCTS = [
     name: 'Premium Yoga Mat - Ocean Blue',
     description: 'High-quality non-slip yoga mat perfect for all types of yoga practice. Made from eco-friendly TPE material.',
     category: PRODUCT_CATEGORIES.YOGA_MAT,
-    price: 49.99,
+    subcategory: 'yoga_mat_premium',
+    price: 49.99, // Backwards compatibility - defaults to retail price
+    pricing: {
+      retail: 49.99,
+      wholesale: 39.99,
+      member: 44.99
+    },
     cost: 25.00,
     stockQuantity: 45,
     lowStockThreshold: 10,
     unit: UNIT_TYPES.PIECE,
+    unitConversions: [],
     barcode: '1234567890123',
     imageUrl: '/images/products/yoga-mat-blue.jpg',
+    imageUrls: ['/images/products/yoga-mat-blue.jpg', '/images/products/yoga-mat-blue-2.jpg'],
     status: PRODUCT_STATUSES.ACTIVE,
     tags: ['yoga', 'mat', 'premium', 'eco-friendly', 'non-slip'],
+    attributes: [
+      { id: 'attr_001', name: 'Color', value: 'Ocean Blue', isVariant: false },
+      { id: 'attr_002', name: 'Material', value: 'TPE', isVariant: false },
+      { id: 'attr_003', name: 'Thickness', value: '6mm', isVariant: false },
+      { id: 'attr_004', name: 'Length', value: '183cm', isVariant: false }
+    ],
     trackInventory: true,
     allowBackorder: false,
     taxRate: 10,
     supplier: 'Yoga Supplies Co.',
+    supplierId: 'sup_001',
     variants: [],
+    isBundle: false,
+    customFields: {
+      weight: '1.2kg',
+      dimensions: '183cm x 61cm x 0.6cm'
+    },
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15'),
     createdBy: 'user_001',
@@ -307,6 +329,11 @@ let MOCK_PRODUCTS = [
     description: '$100 gift card redeemable for any products or services.',
     category: PRODUCT_CATEGORIES.GIFT_CARDS,
     price: 100.00,
+    pricing: {
+      retail: 100.00,
+      wholesale: 100.00,
+      member: 100.00
+    },
     cost: 0,
     stockQuantity: 999,
     lowStockThreshold: 0,
@@ -320,8 +347,112 @@ let MOCK_PRODUCTS = [
     taxRate: 0,
     supplier: '',
     variants: [],
+    isBundle: false,
     createdAt: new Date('2024-01-01'),
     updatedAt: new Date('2024-01-01'),
+    createdBy: 'user_001',
+    updatedBy: 'user_001'
+  },
+  {
+    id: 'prod_013',
+    sku: 'BDL-001-START',
+    name: 'Yoga Starter Kit Bundle',
+    description: 'Complete starter kit for beginners including mat, blocks, and strap. Save $15 when purchased as a bundle!',
+    category: PRODUCT_CATEGORIES.EQUIPMENT,
+    subcategory: 'equipment_kits',
+    price: 84.97, // Bundle price (calculated from bundle.bundlePrice)
+    pricing: {
+      retail: 84.97,
+      wholesale: 74.97,
+      member: 79.97
+    },
+    cost: 43.00,
+    stockQuantity: 25,
+    lowStockThreshold: 5,
+    unit: UNIT_TYPES.SET,
+    barcode: '1234567890132',
+    imageUrl: '/images/products/yoga-starter-kit.jpg',
+    imageUrls: ['/images/products/yoga-starter-kit.jpg'],
+    status: PRODUCT_STATUSES.ACTIVE,
+    tags: ['bundle', 'kit', 'starter', 'beginner', 'yoga'],
+    attributes: [
+      { id: 'attr_bundle_001', name: 'Bundle Type', value: 'Starter Kit', isVariant: false },
+      { id: 'attr_bundle_002', name: 'Items Included', value: '4 pieces', isVariant: false }
+    ],
+    trackInventory: true,
+    allowBackorder: false,
+    taxRate: 10,
+    supplier: 'Yoga Supplies Co.',
+    supplierId: 'sup_001',
+    variants: [],
+    isBundle: true,
+    bundle: {
+      id: 'bundle_001',
+      name: 'Yoga Starter Kit',
+      description: 'Everything you need to start your yoga journey',
+      items: [
+        { productId: 'prod_001', quantity: 1, discount: 0 }, // Premium Yoga Mat
+        { productId: 'prod_003', quantity: 1, discount: 0 }, // Cork Blocks Set
+        { productId: 'prod_004', quantity: 1, discount: 0 }  // Yoga Strap
+      ],
+      bundlePrice: 84.97, // Original total: 49.99 + 24.99 + 14.99 = 89.97, Save $5
+      savings: 5.00
+    },
+    customFields: {
+      bundleDiscount: '6%',
+      totalValue: '$89.97'
+    },
+    createdAt: new Date('2024-03-01'),
+    updatedAt: new Date('2024-03-01'),
+    createdBy: 'user_001',
+    updatedBy: 'user_001'
+  },
+  {
+    id: 'prod_014',
+    sku: 'SUP-002-PRO-CHOC',
+    name: 'Plant-Based Protein Powder - Chocolate',
+    description: 'Organic plant-based protein powder in rich chocolate flavor. 30 servings per container.',
+    category: PRODUCT_CATEGORIES.SUPPLEMENTS,
+    subcategory: 'supplements_protein',
+    price: 44.99,
+    pricing: {
+      retail: 44.99,
+      wholesale: 34.99,
+      member: 39.99
+    },
+    cost: 22.00,
+    stockQuantity: 35,
+    lowStockThreshold: 10,
+    unit: UNIT_TYPES.PIECE,
+    unitConversions: [
+      { fromUnit: 'piece', toUnit: 'g', conversionFactor: 900, formula: '1 container = 900g' },
+      { fromUnit: 'g', toUnit: 'piece', conversionFactor: 0.001111, formula: '900g = 1 container' }
+    ],
+    barcode: '1234567890133',
+    imageUrl: '/images/products/protein-chocolate.jpg',
+    imageUrls: ['/images/products/protein-chocolate.jpg'],
+    status: PRODUCT_STATUSES.ACTIVE,
+    tags: ['supplement', 'protein', 'vegan', 'organic', 'chocolate'],
+    attributes: [
+      { id: 'attr_014_001', name: 'Flavor', value: 'Chocolate', isVariant: true },
+      { id: 'attr_014_002', name: 'Size', value: '900g', isVariant: false },
+      { id: 'attr_014_003', name: 'Servings', value: '30', isVariant: false },
+      { id: 'attr_014_004', name: 'Dietary', value: 'Vegan', isVariant: false }
+    ],
+    trackInventory: true,
+    allowBackorder: true,
+    taxRate: 10,
+    supplier: 'Wellness Nutrition',
+    supplierId: 'sup_002',
+    variants: [],
+    isBundle: false,
+    customFields: {
+      servingSize: '30g',
+      proteinPerServing: '20g',
+      allergenInfo: 'May contain traces of nuts'
+    },
+    createdAt: new Date('2024-03-05'),
+    updatedAt: new Date('2024-03-05'),
     createdBy: 'user_001',
     updatedBy: 'user_001'
   }
@@ -517,26 +648,42 @@ export const productService = {
       throw new Error(`Product with SKU ${data.sku} already exists`);
     }
 
+    // Set up pricing tiers
+    const pricing = data.pricing || {
+      retail: parseFloat(data.price),
+      wholesale: parseFloat(data.price) * 0.85,
+      member: parseFloat(data.price) * 0.92
+    };
+
     const newProduct = {
       id: generateId(),
       sku: data.sku,
       name: data.name,
       description: data.description || '',
       category: data.category,
-      price: parseFloat(data.price),
+      subcategory: data.subcategory || null,
+      price: parseFloat(data.price), // Backwards compatibility
+      pricing,
       cost: parseFloat(data.cost),
       stockQuantity: parseInt(data.stockQuantity) || 0,
       lowStockThreshold: parseInt(data.lowStockThreshold) || 10,
       unit: data.unit || UNIT_TYPES.PIECE,
+      unitConversions: Array.isArray(data.unitConversions) ? data.unitConversions : [],
       barcode: data.barcode || '',
       imageUrl: data.imageUrl || '',
+      imageUrls: Array.isArray(data.imageUrls) ? data.imageUrls : (data.imageUrl ? [data.imageUrl] : []),
       status: data.status || PRODUCT_STATUSES.ACTIVE,
       tags: Array.isArray(data.tags) ? data.tags : [],
+      attributes: Array.isArray(data.attributes) ? data.attributes : [],
       trackInventory: data.trackInventory !== false,
       allowBackorder: data.allowBackorder || false,
       taxRate: parseFloat(data.taxRate) || 0,
       supplier: data.supplier || '',
+      supplierId: data.supplierId || null,
       variants: Array.isArray(data.variants) ? data.variants : [],
+      isBundle: data.isBundle || false,
+      bundle: data.bundle || null,
+      customFields: data.customFields || {},
       createdAt: new Date(),
       updatedAt: new Date(),
       createdBy: 'current_user',
@@ -692,6 +839,213 @@ export const productService = {
       product.status === PRODUCT_STATUSES.ACTIVE &&
       product.stockQuantity === 0
     );
+  },
+
+  /**
+   * Get all bundle products
+   * @returns {Promise<Array>} Bundle products
+   */
+  async getBundles() {
+    await delay(300);
+    return MOCK_PRODUCTS.filter((product) => product.isBundle === true);
+  },
+
+  /**
+   * Calculate bundle price from items
+   * @param {Array} bundleItems - Array of bundle items
+   * @returns {Promise<Object>} Calculated bundle info
+   */
+  async calculateBundlePrice(bundleItems) {
+    await delay(200);
+
+    let totalPrice = 0;
+    let totalCost = 0;
+    const items = [];
+
+    for (const item of bundleItems) {
+      const product = MOCK_PRODUCTS.find((p) => p.id === item.productId);
+      if (!product) {
+        throw new Error(`Product ${item.productId} not found`);
+      }
+
+      const itemPrice = product.pricing?.retail || product.price;
+      const itemCost = product.cost;
+      const discount = item.discount || 0;
+
+      const discountedPrice = itemPrice * (1 - discount / 100);
+
+      totalPrice += discountedPrice * item.quantity;
+      totalCost += itemCost * item.quantity;
+
+      items.push({
+        ...item,
+        product: {
+          id: product.id,
+          name: product.name,
+          sku: product.sku,
+          price: itemPrice,
+          cost: itemCost
+        },
+        itemTotal: discountedPrice * item.quantity
+      });
+    }
+
+    return {
+      items,
+      totalPrice: parseFloat(totalPrice.toFixed(2)),
+      totalCost: parseFloat(totalCost.toFixed(2)),
+      regularPrice: items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0)
+    };
+  },
+
+  /**
+   * Get products by subcategory
+   * @param {string} subcategoryId - Subcategory ID
+   * @returns {Promise<Array>} Products in subcategory
+   */
+  async getBySubcategory(subcategoryId) {
+    await delay(300);
+    return MOCK_PRODUCTS.filter((product) => product.subcategory === subcategoryId);
+  },
+
+  /**
+   * Get all subcategories for a category
+   * @param {string} category - Category name
+   * @returns {Promise<Array>} Subcategories
+   */
+  async getSubcategories(category) {
+    await delay(200);
+    return PRODUCT_SUBCATEGORIES[category] || [];
+  },
+
+  /**
+   * Generate barcode for a product
+   * @param {Object} options - Barcode generation options
+   * @returns {Promise<string>} Generated barcode
+   */
+  async generateProductBarcode(options = {}) {
+    await delay(200);
+    return generateBarcode({
+      type: options.type || 'EAN13',
+      prefix: options.prefix || '200',
+      sku: options.sku || '',
+      productId: options.productId || ''
+    });
+  },
+
+  /**
+   * Search products by attributes
+   * @param {Object} attributeFilters - Attribute filters
+   * @returns {Promise<Array>} Matching products
+   */
+  async searchByAttributes(attributeFilters) {
+    await delay(300);
+
+    return MOCK_PRODUCTS.filter((product) => {
+      if (!product.attributes || product.attributes.length === 0) {
+        return false;
+      }
+
+      return Object.entries(attributeFilters).every(([attrName, attrValue]) => {
+        return product.attributes.some(
+          (attr) =>
+            attr.name.toLowerCase() === attrName.toLowerCase() &&
+            attr.value.toLowerCase().includes(attrValue.toLowerCase())
+        );
+      });
+    });
+  },
+
+  /**
+   * Get products by pricing tier
+   * @param {string} tier - Pricing tier (retail, wholesale, member)
+   * @param {number} minPrice - Minimum price
+   * @param {number} maxPrice - Maximum price
+   * @returns {Promise<Array>} Filtered products
+   */
+  async getByPricingTier(tier, minPrice, maxPrice) {
+    await delay(300);
+
+    return MOCK_PRODUCTS.filter((product) => {
+      const price = product.pricing?.[tier] || product.price;
+      if (minPrice !== undefined && price < minPrice) return false;
+      if (maxPrice !== undefined && price > maxPrice) return false;
+      return true;
+    });
+  },
+
+  /**
+   * Update pricing tiers for a product
+   * @param {string} id - Product ID
+   * @param {Object} pricingTiers - New pricing tiers
+   * @returns {Promise<Object>} Updated product
+   */
+  async updatePricing(id, pricingTiers) {
+    await delay(400);
+
+    const index = MOCK_PRODUCTS.findIndex((p) => p.id === id);
+    if (index === -1) {
+      throw new Error(`Product with ID ${id} not found`);
+    }
+
+    MOCK_PRODUCTS[index].pricing = {
+      ...MOCK_PRODUCTS[index].pricing,
+      ...pricingTiers
+    };
+
+    // Update the legacy price field to match retail
+    if (pricingTiers.retail !== undefined) {
+      MOCK_PRODUCTS[index].price = pricingTiers.retail;
+    }
+
+    MOCK_PRODUCTS[index].updatedAt = new Date();
+    MOCK_PRODUCTS[index].updatedBy = 'current_user';
+
+    return { ...MOCK_PRODUCTS[index] };
+  },
+
+  /**
+   * Add custom field to a product
+   * @param {string} id - Product ID
+   * @param {string} fieldName - Field name
+   * @param {any} fieldValue - Field value
+   * @returns {Promise<Object>} Updated product
+   */
+  async addCustomField(id, fieldName, fieldValue) {
+    await delay(300);
+
+    const index = MOCK_PRODUCTS.findIndex((p) => p.id === id);
+    if (index === -1) {
+      throw new Error(`Product with ID ${id} not found`);
+    }
+
+    if (!MOCK_PRODUCTS[index].customFields) {
+      MOCK_PRODUCTS[index].customFields = {};
+    }
+
+    MOCK_PRODUCTS[index].customFields[fieldName] = fieldValue;
+    MOCK_PRODUCTS[index].updatedAt = new Date();
+
+    return { ...MOCK_PRODUCTS[index] };
+  },
+
+  /**
+   * Get all unique attribute names across products
+   * @returns {Promise<Array>} Unique attribute names
+   */
+  async getAvailableAttributes() {
+    await delay(200);
+
+    const attributeNames = new Set();
+    MOCK_PRODUCTS.forEach((product) => {
+      if (product.attributes) {
+        product.attributes.forEach((attr) => {
+          attributeNames.add(attr.name);
+        });
+      }
+    });
+
+    return Array.from(attributeNames).sort();
   }
 };
 
