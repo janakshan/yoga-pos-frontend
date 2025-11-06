@@ -10,6 +10,8 @@ import UsersPage from './pages/UsersPage';
 import ProductsPage from './pages/ProductsPage';
 import InventoryPage from './pages/InventoryPage';
 import POSPage from './pages/POSPage';
+import FastCheckoutPOS from './pages/FastCheckoutPOS';
+import CustomerDisplayPage from './pages/CustomerDisplayPage';
 import CustomersPage from './pages/CustomersPage';
 import ReportsPage from './pages/ReportsPage';
 import DemoDataPage from './pages/DemoDataPage';
@@ -50,6 +52,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/customer-display" element={<CustomerDisplayPage />} />
 
         {/* Protected Routes with MainLayout */}
         <Route
@@ -79,6 +82,7 @@ function App() {
 
           {/* POS (Point of Sale) */}
           <Route path="pos" element={<POSPage />} />
+          <Route path="pos/fast-checkout" element={<FastCheckoutPOS />} />
 
           {/* Customers Management */}
           <Route path="customers" element={<CustomersPage />} />
