@@ -4,9 +4,9 @@ import {
   STATUS_LABELS,
   LOYALTY_TIER_LABELS,
 } from '../types/customer.types.js';
-import { User, Mail, Phone, Star, Edit, Trash2 } from 'lucide-react';
+import { User, Mail, Phone, Star, Edit, Trash2, Eye } from 'lucide-react';
 
-export const CustomerList = ({ customers, onEdit, onDelete, isLoading = false }) => {
+export const CustomerList = ({ customers, onEdit, onDelete, onViewProfile, isLoading = false }) => {
   const [selectedCustomers, setSelectedCustomers] = useState([]);
 
   const handleSelectAll = (e) => {
@@ -194,6 +194,15 @@ export const CustomerList = ({ customers, onEdit, onDelete, isLoading = false })
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                   <div className="flex items-center justify-end space-x-2">
+                    {onViewProfile && (
+                      <button
+                        onClick={() => onViewProfile(customer)}
+                        className="text-purple-600 hover:text-purple-900"
+                        title="View full profile"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                    )}
                     <button
                       onClick={() => onEdit(customer)}
                       className="text-blue-600 hover:text-blue-900"

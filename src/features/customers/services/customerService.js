@@ -2,7 +2,13 @@ import {
   CUSTOMER_TYPES,
   CUSTOMER_STATUS,
   GENDER,
-  LOYALTY_TIERS
+  LOYALTY_TIERS,
+  CREDIT_STATUS,
+  NOTE_TYPES,
+  CONTACT_METHODS,
+  COMMUNICATION_FREQUENCY,
+  LANGUAGES,
+  LOYALTY_TIER_THRESHOLDS,
 } from '../types/customer.types.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -18,6 +24,7 @@ let MOCK_CUSTOMERS = [
     lastName: 'Johnson',
     email: 'sarah.johnson@email.com',
     phone: '+1-555-0101',
+    alternatePhone: '+1-555-0201',
     dateOfBirth: '1990-05-15',
     gender: GENDER.FEMALE,
     address: {
@@ -29,24 +36,54 @@ let MOCK_CUSTOMERS = [
     },
     customerType: CUSTOMER_TYPES.VIP,
     status: CUSTOMER_STATUS.ACTIVE,
+    segments: ['seg_vip', 'seg_high_value'],
     loyaltyInfo: {
-      points: 1500,
+      points: 5500,
       tier: LOYALTY_TIERS.GOLD,
       joinedDate: new Date('2023-01-15'),
+      lastEarnedDate: new Date('2025-11-01'),
+      lastRedeemedDate: new Date('2025-10-15'),
+      lifetimePoints: 8200,
+      redeemedPoints: 2700,
+    },
+    creditInfo: {
+      creditLimit: 5000,
+      currentBalance: 0,
+      availableCredit: 5000,
+      creditStatus: CREDIT_STATUS.GOOD,
+      lastPaymentDate: new Date('2025-10-25'),
+      lastPaymentAmount: 500,
+      nextPaymentDue: null,
+    },
+    storeCredit: {
+      balance: 150.00,
+      lastUpdated: new Date('2025-10-15'),
+      expiryDate: new Date('2026-10-15'),
     },
     preferences: {
       emailNotifications: true,
       smsNotifications: false,
+      marketingEmails: true,
+      promotionalSms: false,
+      preferredContactMethod: CONTACT_METHODS.EMAIL,
+      preferredLanguage: LANGUAGES.ENGLISH,
       interests: ['yoga', 'meditation', 'wellness'],
+      communicationFrequency: COMMUNICATION_FREQUENCY.WEEKLY,
     },
     stats: {
       totalPurchases: 45,
       totalSpent: 2850.75,
       lastPurchaseDate: new Date('2025-11-01'),
       averageOrderValue: 63.35,
+      firstPurchaseDate: new Date('2023-01-20'),
+      yearlySpent: 1850.75,
+      monthlySpent: 320.50,
+      returnRate: 2.5,
     },
     notes: 'Regular customer, prefers morning classes',
     tags: ['regular', 'yoga-enthusiast'],
+    referredBy: null,
+    referralCount: 3,
     createdAt: new Date('2023-01-15'),
     updatedAt: new Date('2025-11-01'),
     createdBy: 'admin',
@@ -206,6 +243,192 @@ let MOCK_CUSTOMERS = [
     createdAt: new Date('2023-03-12'),
     updatedAt: new Date('2025-11-04'),
     createdBy: 'admin',
+  },
+];
+
+// Mock customer segments
+let MOCK_SEGMENTS = [
+  {
+    id: 'seg_vip',
+    name: 'VIP Customers',
+    description: 'High-value VIP customers with premium benefits',
+    criteria: {
+      type: 'automatic',
+      rules: {
+        customerType: CUSTOMER_TYPES.VIP,
+        minSpent: 2000,
+      },
+    },
+    customerIds: ['cust_001', 'cust_005'],
+    customerCount: 2,
+    createdAt: new Date('2023-01-01'),
+    updatedAt: new Date('2025-11-01'),
+    createdBy: 'admin',
+  },
+  {
+    id: 'seg_high_value',
+    name: 'High Value Customers',
+    description: 'Customers who have spent more than $2000',
+    criteria: {
+      type: 'automatic',
+      rules: {
+        minSpent: 2000,
+      },
+    },
+    customerIds: ['cust_001', 'cust_003', 'cust_005'],
+    customerCount: 3,
+    createdAt: new Date('2023-01-01'),
+    updatedAt: new Date('2025-11-01'),
+    createdBy: 'admin',
+  },
+  {
+    id: 'seg_recent',
+    name: 'Recently Active',
+    description: 'Customers who made a purchase in the last 30 days',
+    criteria: {
+      type: 'automatic',
+      rules: {
+        lastPurchaseDays: 30,
+      },
+    },
+    customerIds: ['cust_001', 'cust_003', 'cust_005'],
+    customerCount: 3,
+    createdAt: new Date('2024-01-01'),
+    updatedAt: new Date('2025-11-01'),
+    createdBy: 'admin',
+  },
+];
+
+// Mock customer notes
+let MOCK_NOTES = [
+  {
+    id: 'note_001',
+    customerId: 'cust_001',
+    note: 'Customer expressed interest in advanced yoga workshops',
+    type: NOTE_TYPES.SALES,
+    createdBy: 'admin',
+    createdAt: new Date('2025-10-15'),
+  },
+  {
+    id: 'note_002',
+    customerId: 'cust_001',
+    note: 'Resolved billing inquiry regarding loyalty points',
+    type: NOTE_TYPES.SUPPORT,
+    createdBy: 'support_01',
+    createdAt: new Date('2025-10-20'),
+  },
+  {
+    id: 'note_003',
+    customerId: 'cust_003',
+    note: 'Corporate wellness program renewal scheduled',
+    type: NOTE_TYPES.GENERAL,
+    createdBy: 'admin',
+    createdAt: new Date('2025-11-01'),
+  },
+];
+
+// Mock purchase history
+let MOCK_PURCHASE_HISTORY = [
+  {
+    id: 'order_001',
+    customerId: 'cust_001',
+    date: new Date('2025-11-01'),
+    amount: 120.00,
+    discount: 12.00,
+    total: 108.00,
+    paymentMethod: 'credit_card',
+    items: [
+      { name: 'Yoga Mat Premium', quantity: 1, price: 80.00 },
+      { name: 'Meditation Cushion', quantity: 1, price: 40.00 },
+    ],
+    status: 'completed',
+    loyaltyPointsEarned: 108,
+  },
+  {
+    id: 'order_002',
+    customerId: 'cust_001',
+    date: new Date('2025-10-15'),
+    amount: 200.00,
+    discount: 20.00,
+    total: 180.00,
+    paymentMethod: 'store_credit',
+    items: [
+      { name: 'Yoga Block Set', quantity: 2, price: 50.00 },
+      { name: 'Resistance Bands', quantity: 1, price: 30.00 },
+      { name: 'Water Bottle', quantity: 2, price: 35.00 },
+    ],
+    status: 'completed',
+    loyaltyPointsEarned: 180,
+  },
+  {
+    id: 'order_003',
+    customerId: 'cust_003',
+    date: new Date('2025-11-03'),
+    amount: 350.00,
+    discount: 52.50,
+    total: 297.50,
+    paymentMethod: 'corporate_account',
+    items: [
+      { name: 'Wellness Package', quantity: 5, price: 70.00 },
+    ],
+    status: 'completed',
+    loyaltyPointsEarned: 298,
+  },
+];
+
+// Mock credit transactions
+let MOCK_CREDIT_TRANSACTIONS = [
+  {
+    id: 'credit_tx_001',
+    customerId: 'cust_001',
+    type: 'payment',
+    amount: 500.00,
+    balanceBefore: 500.00,
+    balanceAfter: 0,
+    description: 'Payment received',
+    paymentMethod: 'bank_transfer',
+    date: new Date('2025-10-25'),
+    createdBy: 'admin',
+  },
+  {
+    id: 'credit_tx_002',
+    customerId: 'cust_003',
+    type: 'charge',
+    amount: 297.50,
+    balanceBefore: 0,
+    balanceAfter: 297.50,
+    description: 'Corporate order #order_003',
+    paymentMethod: null,
+    date: new Date('2025-11-03'),
+    createdBy: 'system',
+  },
+];
+
+// Mock store credit transactions
+let MOCK_STORE_CREDIT_TRANSACTIONS = [
+  {
+    id: 'sc_tx_001',
+    customerId: 'cust_001',
+    type: 'credit',
+    amount: 150.00,
+    balanceBefore: 0,
+    balanceAfter: 150.00,
+    reason: 'Return credit for order #order_050',
+    orderId: 'order_050',
+    date: new Date('2025-10-15'),
+    createdBy: 'admin',
+  },
+  {
+    id: 'sc_tx_002',
+    customerId: 'cust_001',
+    type: 'debit',
+    amount: 50.00,
+    balanceBefore: 200.00,
+    balanceAfter: 150.00,
+    reason: 'Applied to order #order_002',
+    orderId: 'order_002',
+    date: new Date('2025-10-16'),
+    createdBy: 'system',
   },
 ];
 
@@ -525,6 +748,622 @@ const customerService = {
     });
 
     return updated;
+  },
+
+  // ========== SEGMENT MANAGEMENT ==========
+
+  /**
+   * Get all customer segments
+   * @returns {Promise<CustomerSegment[]>}
+   */
+  async getSegments() {
+    await delay(300);
+    return [...MOCK_SEGMENTS];
+  },
+
+  /**
+   * Get segment by ID
+   * @param {string} id - Segment ID
+   * @returns {Promise<CustomerSegment|null>}
+   */
+  async getSegmentById(id) {
+    await delay(300);
+    return MOCK_SEGMENTS.find((s) => s.id === id) || null;
+  },
+
+  /**
+   * Create new customer segment
+   * @param {Object} data - Segment data
+   * @returns {Promise<CustomerSegment>}
+   */
+  async createSegment(data) {
+    await delay(500);
+
+    const newSegment = {
+      id: `seg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name: data.name,
+      description: data.description || '',
+      criteria: data.criteria,
+      customerIds: data.customerIds || [],
+      customerCount: data.customerIds?.length || 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      createdBy: 'current_user',
+    };
+
+    MOCK_SEGMENTS.push(newSegment);
+    return newSegment;
+  },
+
+  /**
+   * Update existing segment
+   * @param {string} id - Segment ID
+   * @param {Object} data - Updated segment data
+   * @returns {Promise<CustomerSegment>}
+   */
+  async updateSegment(id, data) {
+    await delay(500);
+
+    const index = MOCK_SEGMENTS.findIndex((s) => s.id === id);
+    if (index === -1) {
+      throw new Error('Segment not found');
+    }
+
+    MOCK_SEGMENTS[index] = {
+      ...MOCK_SEGMENTS[index],
+      ...data,
+      id,
+      updatedAt: new Date(),
+    };
+
+    return MOCK_SEGMENTS[index];
+  },
+
+  /**
+   * Delete segment
+   * @param {string} id - Segment ID
+   * @returns {Promise<boolean>}
+   */
+  async deleteSegment(id) {
+    await delay(500);
+
+    const index = MOCK_SEGMENTS.findIndex((s) => s.id === id);
+    if (index === -1) {
+      throw new Error('Segment not found');
+    }
+
+    MOCK_SEGMENTS.splice(index, 1);
+    return true;
+  },
+
+  /**
+   * Assign customers to a segment
+   * @param {string} segmentId - Segment ID
+   * @param {string[]} customerIds - Customer IDs to assign
+   * @returns {Promise<CustomerSegment>}
+   */
+  async assignCustomersToSegment(segmentId, customerIds) {
+    await delay(500);
+
+    const segmentIndex = MOCK_SEGMENTS.findIndex((s) => s.id === segmentId);
+    if (segmentIndex === -1) {
+      throw new Error('Segment not found');
+    }
+
+    // Update segment with new customer IDs
+    const existingIds = MOCK_SEGMENTS[segmentIndex].customerIds || [];
+    const updatedIds = [...new Set([...existingIds, ...customerIds])];
+
+    MOCK_SEGMENTS[segmentIndex] = {
+      ...MOCK_SEGMENTS[segmentIndex],
+      customerIds: updatedIds,
+      customerCount: updatedIds.length,
+      updatedAt: new Date(),
+    };
+
+    // Update customers with segment ID
+    customerIds.forEach((customerId) => {
+      const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+      if (customerIndex !== -1) {
+        const existingSegments = MOCK_CUSTOMERS[customerIndex].segments || [];
+        if (!existingSegments.includes(segmentId)) {
+          MOCK_CUSTOMERS[customerIndex] = {
+            ...MOCK_CUSTOMERS[customerIndex],
+            segments: [...existingSegments, segmentId],
+            updatedAt: new Date(),
+          };
+        }
+      }
+    });
+
+    return MOCK_SEGMENTS[segmentIndex];
+  },
+
+  /**
+   * Remove customers from a segment
+   * @param {string} segmentId - Segment ID
+   * @param {string[]} customerIds - Customer IDs to remove
+   * @returns {Promise<CustomerSegment>}
+   */
+  async removeCustomersFromSegment(segmentId, customerIds) {
+    await delay(500);
+
+    const segmentIndex = MOCK_SEGMENTS.findIndex((s) => s.id === segmentId);
+    if (segmentIndex === -1) {
+      throw new Error('Segment not found');
+    }
+
+    // Update segment by removing customer IDs
+    const updatedIds = MOCK_SEGMENTS[segmentIndex].customerIds.filter(
+      (id) => !customerIds.includes(id)
+    );
+
+    MOCK_SEGMENTS[segmentIndex] = {
+      ...MOCK_SEGMENTS[segmentIndex],
+      customerIds: updatedIds,
+      customerCount: updatedIds.length,
+      updatedAt: new Date(),
+    };
+
+    // Update customers by removing segment ID
+    customerIds.forEach((customerId) => {
+      const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+      if (customerIndex !== -1) {
+        const existingSegments = MOCK_CUSTOMERS[customerIndex].segments || [];
+        MOCK_CUSTOMERS[customerIndex] = {
+          ...MOCK_CUSTOMERS[customerIndex],
+          segments: existingSegments.filter((s) => s !== segmentId),
+          updatedAt: new Date(),
+        };
+      }
+    });
+
+    return MOCK_SEGMENTS[segmentIndex];
+  },
+
+  // ========== CUSTOMER NOTES ==========
+
+  /**
+   * Get notes for a customer
+   * @param {string} customerId - Customer ID
+   * @returns {Promise<CustomerNote[]>}
+   */
+  async getCustomerNotes(customerId) {
+    await delay(300);
+    return MOCK_NOTES.filter((n) => n.customerId === customerId).sort(
+      (a, b) => b.createdAt - a.createdAt
+    );
+  },
+
+  /**
+   * Add note to customer
+   * @param {string} customerId - Customer ID
+   * @param {Object} noteData - Note data
+   * @returns {Promise<CustomerNote>}
+   */
+  async addCustomerNote(customerId, noteData) {
+    await delay(500);
+
+    const newNote = {
+      id: `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      customerId,
+      note: noteData.note,
+      type: noteData.type || NOTE_TYPES.GENERAL,
+      createdBy: 'current_user',
+      createdAt: new Date(),
+    };
+
+    MOCK_NOTES.push(newNote);
+    return newNote;
+  },
+
+  /**
+   * Update customer note
+   * @param {string} noteId - Note ID
+   * @param {Object} noteData - Updated note data
+   * @returns {Promise<CustomerNote>}
+   */
+  async updateCustomerNote(noteId, noteData) {
+    await delay(500);
+
+    const index = MOCK_NOTES.findIndex((n) => n.id === noteId);
+    if (index === -1) {
+      throw new Error('Note not found');
+    }
+
+    MOCK_NOTES[index] = {
+      ...MOCK_NOTES[index],
+      ...noteData,
+      id: noteId,
+    };
+
+    return MOCK_NOTES[index];
+  },
+
+  /**
+   * Delete customer note
+   * @param {string} noteId - Note ID
+   * @returns {Promise<boolean>}
+   */
+  async deleteCustomerNote(noteId) {
+    await delay(500);
+
+    const index = MOCK_NOTES.findIndex((n) => n.id === noteId);
+    if (index === -1) {
+      throw new Error('Note not found');
+    }
+
+    MOCK_NOTES.splice(index, 1);
+    return true;
+  },
+
+  // ========== PURCHASE HISTORY ==========
+
+  /**
+   * Get purchase history for a customer
+   * @param {string} customerId - Customer ID
+   * @param {Object} filters - Filter options
+   * @returns {Promise<PurchaseHistoryItem[]>}
+   */
+  async getCustomerPurchaseHistory(customerId, filters = {}) {
+    await delay(300);
+
+    let history = MOCK_PURCHASE_HISTORY.filter((p) => p.customerId === customerId);
+
+    // Date range filter
+    if (filters.startDate) {
+      history = history.filter((p) => p.date >= new Date(filters.startDate));
+    }
+    if (filters.endDate) {
+      history = history.filter((p) => p.date <= new Date(filters.endDate));
+    }
+
+    // Status filter
+    if (filters.status) {
+      history = history.filter((p) => p.status === filters.status);
+    }
+
+    return history.sort((a, b) => b.date - a.date);
+  },
+
+  /**
+   * Get purchase history statistics for a customer
+   * @param {string} customerId - Customer ID
+   * @returns {Promise<Object>}
+   */
+  async getPurchaseHistoryStats(customerId) {
+    await delay(300);
+
+    const history = MOCK_PURCHASE_HISTORY.filter((p) => p.customerId === customerId);
+
+    if (history.length === 0) {
+      return {
+        totalOrders: 0,
+        totalSpent: 0,
+        averageOrderValue: 0,
+        totalSaved: 0,
+        lastOrderDate: null,
+        firstOrderDate: null,
+      };
+    }
+
+    const totalSpent = history.reduce((sum, p) => sum + p.total, 0);
+    const totalSaved = history.reduce((sum, p) => sum + p.discount, 0);
+    const dates = history.map((p) => p.date).sort((a, b) => a - b);
+
+    return {
+      totalOrders: history.length,
+      totalSpent,
+      averageOrderValue: totalSpent / history.length,
+      totalSaved,
+      lastOrderDate: dates[dates.length - 1],
+      firstOrderDate: dates[0],
+    };
+  },
+
+  // ========== CREDIT MANAGEMENT ==========
+
+  /**
+   * Get credit transactions for a customer
+   * @param {string} customerId - Customer ID
+   * @returns {Promise<CreditTransaction[]>}
+   */
+  async getCreditTransactions(customerId) {
+    await delay(300);
+    return MOCK_CREDIT_TRANSACTIONS.filter((t) => t.customerId === customerId).sort(
+      (a, b) => b.date - a.date
+    );
+  },
+
+  /**
+   * Create credit charge
+   * @param {string} customerId - Customer ID
+   * @param {Object} chargeData - Charge data
+   * @returns {Promise<CreditTransaction>}
+   */
+  async createCreditCharge(customerId, chargeData) {
+    await delay(500);
+
+    const customer = MOCK_CUSTOMERS.find((c) => c.id === customerId);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const currentBalance = customer.creditInfo?.currentBalance || 0;
+    const newBalance = currentBalance + chargeData.amount;
+    const creditLimit = customer.creditInfo?.creditLimit || 0;
+
+    if (newBalance > creditLimit) {
+      throw new Error('Credit limit exceeded');
+    }
+
+    const transaction = {
+      id: `credit_tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      customerId,
+      type: 'charge',
+      amount: chargeData.amount,
+      balanceBefore: currentBalance,
+      balanceAfter: newBalance,
+      description: chargeData.description || 'Credit charge',
+      paymentMethod: null,
+      date: new Date(),
+      createdBy: 'current_user',
+    };
+
+    MOCK_CREDIT_TRANSACTIONS.push(transaction);
+
+    // Update customer credit info
+    const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+    if (customerIndex !== -1) {
+      MOCK_CUSTOMERS[customerIndex] = {
+        ...MOCK_CUSTOMERS[customerIndex],
+        creditInfo: {
+          ...MOCK_CUSTOMERS[customerIndex].creditInfo,
+          currentBalance: newBalance,
+          availableCredit: creditLimit - newBalance,
+        },
+        updatedAt: new Date(),
+      };
+    }
+
+    return transaction;
+  },
+
+  /**
+   * Create credit payment
+   * @param {string} customerId - Customer ID
+   * @param {Object} paymentData - Payment data
+   * @returns {Promise<CreditTransaction>}
+   */
+  async createCreditPayment(customerId, paymentData) {
+    await delay(500);
+
+    const customer = MOCK_CUSTOMERS.find((c) => c.id === customerId);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const currentBalance = customer.creditInfo?.currentBalance || 0;
+    const newBalance = Math.max(0, currentBalance - paymentData.amount);
+    const creditLimit = customer.creditInfo?.creditLimit || 0;
+
+    const transaction = {
+      id: `credit_tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      customerId,
+      type: 'payment',
+      amount: paymentData.amount,
+      balanceBefore: currentBalance,
+      balanceAfter: newBalance,
+      description: paymentData.description || 'Credit payment',
+      paymentMethod: paymentData.paymentMethod,
+      date: new Date(),
+      createdBy: 'current_user',
+    };
+
+    MOCK_CREDIT_TRANSACTIONS.push(transaction);
+
+    // Update customer credit info
+    const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+    if (customerIndex !== -1) {
+      MOCK_CUSTOMERS[customerIndex] = {
+        ...MOCK_CUSTOMERS[customerIndex],
+        creditInfo: {
+          ...MOCK_CUSTOMERS[customerIndex].creditInfo,
+          currentBalance: newBalance,
+          availableCredit: creditLimit - newBalance,
+          lastPaymentDate: new Date(),
+          lastPaymentAmount: paymentData.amount,
+        },
+        updatedAt: new Date(),
+      };
+    }
+
+    return transaction;
+  },
+
+  /**
+   * Update customer credit limit
+   * @param {string} customerId - Customer ID
+   * @param {number} newLimit - New credit limit
+   * @returns {Promise<Customer>}
+   */
+  async updateCreditLimit(customerId, newLimit) {
+    await delay(500);
+
+    const index = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+    if (index === -1) {
+      throw new Error('Customer not found');
+    }
+
+    const customer = MOCK_CUSTOMERS[index];
+    const currentBalance = customer.creditInfo?.currentBalance || 0;
+
+    MOCK_CUSTOMERS[index] = {
+      ...customer,
+      creditInfo: {
+        ...customer.creditInfo,
+        creditLimit: newLimit,
+        availableCredit: newLimit - currentBalance,
+      },
+      updatedAt: new Date(),
+    };
+
+    return MOCK_CUSTOMERS[index];
+  },
+
+  // ========== STORE CREDIT MANAGEMENT ==========
+
+  /**
+   * Get store credit transactions for a customer
+   * @param {string} customerId - Customer ID
+   * @returns {Promise<StoreCreditTransaction[]>}
+   */
+  async getStoreCreditTransactions(customerId) {
+    await delay(300);
+    return MOCK_STORE_CREDIT_TRANSACTIONS.filter((t) => t.customerId === customerId).sort(
+      (a, b) => b.date - a.date
+    );
+  },
+
+  /**
+   * Add store credit to customer
+   * @param {string} customerId - Customer ID
+   * @param {Object} creditData - Store credit data
+   * @returns {Promise<StoreCreditTransaction>}
+   */
+  async addStoreCredit(customerId, creditData) {
+    await delay(500);
+
+    const customer = MOCK_CUSTOMERS.find((c) => c.id === customerId);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const currentBalance = customer.storeCredit?.balance || 0;
+    const newBalance = currentBalance + creditData.amount;
+
+    const transaction = {
+      id: `sc_tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      customerId,
+      type: 'credit',
+      amount: creditData.amount,
+      balanceBefore: currentBalance,
+      balanceAfter: newBalance,
+      reason: creditData.reason || 'Store credit added',
+      orderId: creditData.orderId || null,
+      date: new Date(),
+      createdBy: 'current_user',
+    };
+
+    MOCK_STORE_CREDIT_TRANSACTIONS.push(transaction);
+
+    // Update customer store credit
+    const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+    if (customerIndex !== -1) {
+      MOCK_CUSTOMERS[customerIndex] = {
+        ...MOCK_CUSTOMERS[customerIndex],
+        storeCredit: {
+          balance: newBalance,
+          lastUpdated: new Date(),
+          expiryDate: creditData.expiryDate || null,
+        },
+        updatedAt: new Date(),
+      };
+    }
+
+    return transaction;
+  },
+
+  /**
+   * Deduct store credit from customer
+   * @param {string} customerId - Customer ID
+   * @param {Object} debitData - Debit data
+   * @returns {Promise<StoreCreditTransaction>}
+   */
+  async deductStoreCredit(customerId, debitData) {
+    await delay(500);
+
+    const customer = MOCK_CUSTOMERS.find((c) => c.id === customerId);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const currentBalance = customer.storeCredit?.balance || 0;
+    if (currentBalance < debitData.amount) {
+      throw new Error('Insufficient store credit balance');
+    }
+
+    const newBalance = currentBalance - debitData.amount;
+
+    const transaction = {
+      id: `sc_tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      customerId,
+      type: 'debit',
+      amount: debitData.amount,
+      balanceBefore: currentBalance,
+      balanceAfter: newBalance,
+      reason: debitData.reason || 'Store credit used',
+      orderId: debitData.orderId || null,
+      date: new Date(),
+      createdBy: 'current_user',
+    };
+
+    MOCK_STORE_CREDIT_TRANSACTIONS.push(transaction);
+
+    // Update customer store credit
+    const customerIndex = MOCK_CUSTOMERS.findIndex((c) => c.id === customerId);
+    if (customerIndex !== -1) {
+      MOCK_CUSTOMERS[customerIndex] = {
+        ...MOCK_CUSTOMERS[customerIndex],
+        storeCredit: {
+          ...MOCK_CUSTOMERS[customerIndex].storeCredit,
+          balance: newBalance,
+          lastUpdated: new Date(),
+        },
+        updatedAt: new Date(),
+      };
+    }
+
+    return transaction;
+  },
+
+  /**
+   * Redeem loyalty points for store credit
+   * @param {string} customerId - Customer ID
+   * @param {number} points - Points to redeem
+   * @param {number} conversionRate - Points to currency conversion rate
+   * @returns {Promise<Object>}
+   */
+  async redeemLoyaltyPoints(customerId, points, conversionRate = 100) {
+    await delay(500);
+
+    const customer = MOCK_CUSTOMERS.find((c) => c.id === customerId);
+    if (!customer) {
+      throw new Error('Customer not found');
+    }
+
+    const currentPoints = customer.loyaltyInfo?.points || 0;
+    if (currentPoints < points) {
+      throw new Error('Insufficient loyalty points');
+    }
+
+    // Convert points to store credit (e.g., 100 points = $1)
+    const creditAmount = points / conversionRate;
+
+    // Deduct points
+    await this.updateLoyaltyPoints(customerId, -points);
+
+    // Add store credit
+    const transaction = await this.addStoreCredit(customerId, {
+      amount: creditAmount,
+      reason: `Redeemed ${points} loyalty points`,
+    });
+
+    return {
+      pointsRedeemed: points,
+      storeCreditAdded: creditAmount,
+      transaction,
+    };
   },
 };
 
