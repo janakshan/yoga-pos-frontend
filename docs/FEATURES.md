@@ -1,6 +1,6 @@
-# New Features Documentation
+# Yoga POS - Advanced Features Documentation
 
-This document describes the newly implemented features for the Yoga POS system.
+This document describes the advanced features implemented in the Yoga POS system, including multi-language support, multi-currency, custom branding, hardware integration, notification system, and backup & recovery.
 
 ## Table of Contents
 
@@ -8,6 +8,8 @@ This document describes the newly implemented features for the Yoga POS system.
 2. [Multi-Currency Support](#multi-currency-support)
 3. [Custom Branding](#custom-branding)
 4. [Hardware Support](#hardware-support)
+5. [Notification System](#notification-system)
+6. [Backup & Recovery System](#backup--recovery-system)
 
 ---
 
@@ -572,6 +574,344 @@ For issues or questions:
 
 ---
 
+## Notification System
+
+### Overview
+Multi-channel notification system supporting Email, SMS, and WhatsApp for automated customer communication and business alerts.
+
+### Features
+
+#### Notification Channels
+- **Email** - Email notifications via SMTP
+- **SMS** - SMS notifications via Twilio/similar services
+- **WhatsApp** - WhatsApp Business API integration
+- **In-App** - Toast and sound notifications
+
+#### Event-Based Triggers
+Automatic notifications for:
+- **Sale Confirmation** - Order/receipt sent to customers
+- **Booking Confirmation** - Class/appointment confirmations
+- **Low Stock Alerts** - Inventory alerts to staff
+- **Payment Reminders** - Outstanding invoice reminders
+- **Membership Expiry** - Membership renewal notifications
+- **Return Processed** - Return/refund confirmations
+- **Daily Summary** - End-of-day sales summary
+
+#### Notification Templates
+Pre-built templates with variable substitution:
+```javascript
+{
+  subject: 'Order Confirmation - #{orderNumber}',
+  message: 'Thank you for your purchase! Order #{orderNumber} for #{total} has been confirmed.',
+  variables: ['orderNumber', 'total', 'customerName', 'items']
+}
+```
+
+### Implementation
+
+#### Service Layer (`/src/services/notification/`)
+
+**Core Services:**
+- `notificationService.js` - Main notification orchestration
+- `emailNotificationProvider.js` - Email sending
+- `smsNotificationProvider.js` - SMS sending
+- `whatsappNotificationProvider.js` - WhatsApp sending
+
+**Usage:**
+```javascript
+import { notificationService } from './services/notification';
+
+// Send notification
+await notificationService.send({
+  userId: 'user_123',
+  type: 'email',
+  channel: 'email',
+  eventType: 'sale_confirmation',
+  subject: 'Your order is confirmed',
+  message: 'Thank you for your purchase!',
+  metadata: {
+    orderId: 'ORD-123',
+    total: 49.99
+  }
+});
+
+// Get notification history
+const history = await notificationService.getHistory({
+  userId: 'user_123',
+  type: 'email',
+  startDate: '2025-01-01',
+  endDate: '2025-11-06'
+});
+
+// Get notification statistics
+const stats = await notificationService.getStats();
+```
+
+#### Store Integration
+
+**Notification Slice** (`/src/store/slices/notificationSlice.js`):
+
+```javascript
+const { notifications, stats, preferences, updatePreferences } = useStore();
+
+// Update notification preferences
+updatePreferences({
+  emailEnabled: true,
+  smsEnabled: false,
+  whatsappEnabled: true,
+  lowStockAlerts: true,
+  orderNotifications: true,
+  soundEnabled: true
+});
+```
+
+#### Configuration
+
+Navigate to **Settings > Notifications** to:
+- Enable/disable notification channels
+- Configure SMTP settings for email
+- Set up SMS provider (Twilio)
+- Configure WhatsApp Business API
+- Customize notification templates
+- Set up event triggers
+- Manage notification preferences per user
+- View notification history and statistics
+
+### Notification Queue
+
+Features a queue system for reliable delivery:
+- Retry failed notifications (up to 3 attempts)
+- Track delivery status
+- Queue management
+- Priority-based sending
+
+### Testing
+
+Mock implementations included for development:
+- Email simulation with console logs
+- SMS simulation
+- WhatsApp simulation
+- Notification delivery tracking
+
+---
+
+## Backup & Recovery System
+
+### Overview
+Comprehensive backup and recovery system with support for local and cloud storage, automated scheduling, encryption, and one-click restore.
+
+### Features
+
+#### Backup Types
+1. **Full Backup** - Complete system backup including all data
+2. **Incremental Backup** - Only changed data since last backup
+3. **Selective Backup** - Choose specific data to backup
+
+#### Storage Options
+- **Local Backup** - Download as JSON file to local machine
+- **Cloud Backup** - Upload to cloud storage:
+  - Google Drive
+  - Dropbox
+  - AWS S3 (S3-compatible storage)
+
+#### Security
+- **AES-256-GCM Encryption** - Military-grade encryption for backups
+- **Password Protection** - Optional password for backup files
+- **Encrypted Cloud Storage** - Backups encrypted before upload
+
+### Implementation
+
+#### Backup Service (`/src/services/backup/backupService.js`)
+
+**Core Functions:**
+
+```javascript
+import { backupService } from './services/backup';
+
+// Create manual backup
+const backup = await backupService.createBackup({
+  type: 'full',
+  description: 'Manual backup before system update',
+  encrypted: true,
+  password: 'secure-password'
+});
+
+// Download backup locally
+await backupService.downloadBackup(backup.id, backup.filename);
+
+// Upload to cloud
+await backupService.uploadToCloud(backup, {
+  provider: 'google_drive', // 'dropbox', 'aws_s3'
+  credentials: {
+    // Provider-specific credentials
+  }
+});
+
+// Restore from backup
+await backupService.restoreBackup(backupId, {
+  createPreRestoreBackup: true // Safety backup before restore
+});
+
+// Get backup history
+const history = await backupService.getBackupHistory();
+
+// Get backup statistics
+const stats = await backupService.getBackupStats();
+
+// Delete old backups
+await backupService.cleanupOldBackups(30); // Keep last 30 days
+```
+
+#### Auto-Backup Scheduler (`/src/services/backup/autoBackupScheduler.js`)
+
+**Automated Backup Features:**
+- **Frequency Options:** Hourly, Daily, Weekly, Monthly
+- **Scheduled Time:** Set specific time for daily/weekly/monthly backups
+- **Auto-cleanup:** Automatically delete backups older than retention period
+- **Cloud Auto-upload:** Automatically upload to configured cloud provider
+- **Backup Verification:** Verify backup integrity after creation
+
+**Usage:**
+```javascript
+import { autoBackupScheduler } from './services/backup';
+
+// Start auto-backup
+await autoBackupScheduler.startAutoBackup({
+  frequency: 'daily', // 'hourly', 'weekly', 'monthly'
+  time: '02:00', // Time for daily/weekly/monthly (24-hour format)
+  enabled: true,
+  cloudProvider: 'google_drive',
+  retentionDays: 30,
+  encrypted: true
+});
+
+// Stop auto-backup
+await autoBackupScheduler.stopAutoBackup();
+
+// Get backup status
+const status = await autoBackupScheduler.getBackupStatus();
+```
+
+#### Store Integration
+
+**Backup Slice** (`/src/store/slices/backupSlice.js`):
+
+```javascript
+const {
+  backups,
+  backupSettings,
+  backupStatus,
+  updateBackupSettings,
+  addBackup,
+  removeBackup
+} = useStore();
+
+// Update backup settings
+updateBackupSettings({
+  autoBackup: {
+    enabled: true,
+    frequency: 'daily',
+    time: '02:00',
+    cloudProvider: 'google_drive',
+    retentionDays: 30
+  },
+  encryption: {
+    enabled: true,
+    password: 'encrypted-password'
+  },
+  cloudProviders: {
+    googleDrive: {
+      enabled: true,
+      credentials: {
+        // OAuth credentials
+      }
+    },
+    dropbox: {
+      enabled: false
+    },
+    awsS3: {
+      enabled: false
+    }
+  }
+});
+```
+
+#### Configuration
+
+Navigate to **Settings > Backup & Cloud** to:
+- Enable/disable auto-backup
+- Set backup frequency and time
+- Configure cloud storage providers
+- Set encryption password
+- View backup history (last 50 backups)
+- Restore from backup
+- Download/upload backups
+- Configure retention policy
+- View backup statistics
+
+### Backup Data Structure
+
+Backups include:
+```json
+{
+  "metadata": {
+    "id": "backup_20251106_140530",
+    "version": "2.0",
+    "timestamp": "2025-11-06T14:05:30.000Z",
+    "type": "full",
+    "encrypted": true,
+    "size": 1254367
+  },
+  "data": {
+    "products": [...],
+    "customers": [...],
+    "transactions": [...],
+    "inventory": [...],
+    "invoices": [...],
+    "payments": [...],
+    "users": [...],
+    "settings": {...},
+    // ... all other data
+  }
+}
+```
+
+### Recovery Process
+
+1. **Pre-Restore Backup** - Automatically creates safety backup of current state
+2. **Validation** - Verifies backup file integrity and version compatibility
+3. **Decryption** - Decrypts backup if encrypted
+4. **Data Restore** - Restores all data to state management and storage
+5. **Verification** - Verifies restored data integrity
+6. **Reload** - Refreshes application to reflect restored state
+
+### Backup Best Practices
+
+1. **Regular Backups** - Enable daily auto-backup at minimum
+2. **Cloud Storage** - Always enable cloud backup for disaster recovery
+3. **Encryption** - Always encrypt backups containing sensitive data
+4. **Retention Policy** - Keep at least 30 days of backup history
+5. **Test Restore** - Periodically test backup restoration
+6. **Pre-Update Backup** - Always backup before major updates
+7. **Multiple Locations** - Store backups in multiple cloud providers
+
+### Browser Compatibility
+
+**Backup Features:**
+- Local Download: All modern browsers
+- File Upload: All modern browsers
+- Cloud Integration: Requires API keys/OAuth
+
+**Encryption:**
+- Uses Web Crypto API (supported in all modern browsers)
+- AES-256-GCM encryption standard
+- PBKDF2 key derivation
+
+---
+
 ## License
 
 Copyright © 2025 Yoga POS. All rights reserved.
+
+**Version**: 2.0
+**Last Updated**: 2025-11-06

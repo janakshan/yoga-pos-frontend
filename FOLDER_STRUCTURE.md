@@ -21,16 +21,24 @@ yoga-pos-frontend/
 Feature-based modules following domain-driven design. Each feature is self-contained with its own components, hooks, services, and state management.
 
 **Available Features:**
-- **`auth/`** - Authentication & authorization (login, register, password reset)
-- **`dashboard/`** - Main dashboard with analytics and overview
-- **`pos/`** - Point of Sale checkout interface
-- **`products/`** - Product/class management (CRUD operations)
-- **`customers/`** - Customer/member management
-- **`inventory/`** - Inventory tracking and management
-- **`reports/`** - Analytics, reports, and data visualization
-- **`settings/`** - Application settings and configuration
-- **`payments/`** - Payment processing and history
-- **`bookings/`** - Class bookings and scheduling
+- **`auth/`** - Authentication & authorization (login, PIN login, password reset, token management)
+- **`dashboard/`** - Main dashboard with analytics and business metrics
+- **`pos/`** - Point of Sale (checkout, split payments, returns, hold sales, shift management)
+- **`products/`** - Product management (CRUD, variants, bundles, pricing tiers, barcode generation)
+- **`customers/`** - Customer/member management (CRM, loyalty, store credit, segments, notes)
+- **`inventory/`** - Inventory management (stock levels, cycle counts, serial tracking, inter-branch transfers)
+- **`financial/`** - Financial management (invoices, payments, expenses, cash flow, reports)
+- **`reports/`** - Analytics and reporting (sales, inventory, financial, customer analytics)
+- **`branch/`** - Multi-location/branch management (branch settings, performance tracking)
+- **`users/`** - User management (staff profiles, user CRUD operations)
+- **`roles/`** - Role management (role creation, assignment, hierarchies)
+- **`permissions/`** - Permission management (fine-grained access control)
+- **`audit/`** - Audit logging (comprehensive activity tracking, 40+ event types)
+- **`session/`** - Session management (concurrent user tracking, session state)
+- **`purchase/`** - Purchase orders and supplier management (PO lifecycle, receiving)
+- **`pricing/`** - Pricing and promotions (tiered pricing, discounts, location-specific)
+- **`settings/`** - Application settings (multi-currency, multi-language, branding, hardware)
+- **`bookings/`** - Class bookings and scheduling (placeholder for future expansion)
 
 **Each feature contains:**
 ```
@@ -89,16 +97,42 @@ Business logic and external service integration.
 - **`api/`** - API client configuration and HTTP interceptors
 - **`storage/`** - LocalStorage, SessionStorage utilities
 - **`validation/`** - Validation schemas and rules
-- **`notification/`** - Notification/toast service
-- **`analytics/`** - Analytics tracking service
+- **`notification/`** - Multi-channel notification service (Email, SMS, WhatsApp)
+- **`backup/`** - Backup and recovery service (local and cloud backup, encryption)
+- **`hardware/`** - Hardware integration (printer, cash drawer, scanner, customer display)
+- **`analytics/`** - Analytics tracking and reporting service
 
 ### 📁 `store/`
-Global state management (Redux, Zustand, or other state management solution).
+Global state management using Zustand with persistence.
 
-- **`slices/`** - State slices/reducers
-- **`middleware/`** - Custom middleware
-- **`selectors/`** - Memoized selectors
-- **`index.ts`** - Store configuration
+- **`slices/`** - State slices for different features:
+  - `authSlice.js` - Authentication state
+  - `cartSlice.js` - Shopping cart (session storage)
+  - `settingsSlice.js` - App settings (currency, language, hardware, branding)
+  - `notificationSlice.js` - Notification preferences and history
+  - `backupSlice.js` - Backup settings and status
+  - `uiSlice.js` - UI state (sidebar, modals, theme)
+  - `branchSlice.js` - Branch management
+  - `permissionSlice.js` - Permission management
+  - `roleSlice.js` - Role management
+  - `userSlice.js` - User management
+  - `productSlice.js` - Product catalog
+  - `inventorySlice.js` - Inventory state
+  - `posSlice.js` - POS-specific state
+  - `customerSlice.js` - Customer data
+  - `reportSlice.js` - Report data
+  - `supplierSlice.js` - Supplier data
+  - `purchaseOrderSlice.js` - Purchase order data
+  - `auditSlice.js` - Audit logs
+  - `sessionSlice.js` - Session data
+  - `invoiceSlice.js` - Invoice management
+  - `paymentSlice.js` - Payment tracking
+  - `expenseSlice.js` - Expense recording
+  - `transactionSlice.js` - Transaction management
+  - `financialSlice.js` - Financial summaries
+- **`middleware/`** - Custom middleware (persist, devtools, immer)
+- **`selectors/`** - Memoized selectors for optimized state access
+- **`index.js`** - Store configuration and exports
 
 ### 📁 `types/`
 Global TypeScript type definitions and interfaces.
@@ -271,7 +305,101 @@ touch src/components/common/NewComponent.tsx
 touch src/services/newService/index.ts
 ```
 
+## Additional Directories
+
+### 📁 `i18n/`
+Internationalization and localization configuration.
+
+- **`config.js`** - i18next configuration
+- **`locales/`** - Translation files:
+  - `en.json` - English translations (343+ keys)
+  - `es.json` - Spanish translations
+  - `fr.json` - French translations
+
+### 📁 `utils/`
+Additional utility functions.
+
+- **`currency.js`** - Multi-currency utilities (8+ currencies, conversion, formatting)
+- **`date.js`** - Date formatting and manipulation
+- **`validators.js`** - Validation utilities
+- **`storage.js`** - Enhanced storage utilities
+
+## State Persistence Strategy
+
+The application uses a two-tier storage approach:
+
+### LocalStorage (Persistent across sessions)
+- User authentication state
+- Application settings
+- User preferences
+- Product catalog
+- Customer data
+- Financial records (invoices, payments, expenses)
+- Branch configuration
+- Role and permission data
+- Audit logs
+
+### SessionStorage (Cleared on browser close)
+- Shopping cart state
+- Current POS transaction
+- Temporary checkout data
+
+## Feature Module Pattern
+
+Each feature module follows this standard structure:
+
+```
+feature/
+├── components/          # UI components
+│   ├── FeatureList.jsx
+│   ├── FeatureForm.jsx
+│   ├── FeatureCard.jsx
+│   └── index.js
+├── hooks/              # Custom hooks
+│   ├── useFeature.js
+│   ├── useFeatureForm.js
+│   └── index.js
+├── services/           # API and business logic
+│   ├── featureService.js
+│   └── index.js
+├── store/             # State management
+│   ├── featureSlice.js
+│   └── index.js
+├── types/             # Type definitions
+│   ├── feature.types.js
+│   └── index.js
+├── utils/             # Feature-specific utilities
+│   └── index.js
+├── index.js           # Public API exports
+└── README.md          # Feature documentation
+```
+
+## Code Organization Best Practices
+
+1. **Barrel Exports** - Each directory has an `index.js` for clean imports
+2. **Feature Isolation** - Features are self-contained with minimal cross-dependencies
+3. **Service Layer** - Business logic separated from UI components
+4. **State Management** - Zustand slices organized by feature
+5. **Type Safety** - JSDoc type definitions for all data structures
+6. **Mock Data** - Services include mock data for development
+7. **Documentation** - Each feature module includes README documentation
+
+## Recent Additions (2025-11-06)
+
+- ✅ Multi-channel notification system (Email, SMS, WhatsApp)
+- ✅ Automated backup with cloud storage (Google Drive, Dropbox, AWS S3)
+- ✅ Hardware integration services (printer, cash drawer, scanner, display)
+- ✅ Multi-currency support with 8+ currencies
+- ✅ Multi-language support (English, Spanish, French)
+- ✅ Comprehensive audit logging system
+- ✅ Session management with concurrent user tracking
+- ✅ Advanced inventory management (cycle counts, serial tracking)
+- ✅ Purchase order management
+- ✅ Financial management module (invoices, payments, expenses)
+- ✅ Pricing and promotions engine
+
 ---
 
-**Last Updated**: 2025-11-04
+**Version**: 2.0
+**Last Updated**: 2025-11-06
 **Maintainer**: Development Team

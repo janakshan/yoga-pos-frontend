@@ -76,14 +76,43 @@ function Cart() {
 ## Available Stores
 
 ### Main Store (`useStore`)
-- **Auth**: User authentication, tokens
-- **UI**: Theme, modals, sidebar, notifications
-- **Settings**: App settings and preferences
-- Persisted in `localStorage`
+The main store persists in `localStorage` and includes these slices:
+
+#### Authentication & User Management
+- **authSlice** - User authentication, tokens, session management
+- **userSlice** - User accounts, staff profiles
+- **roleSlice** - Role management and assignments
+- **permissionSlice** - Permission management and access control
+- **sessionSlice** - Session tracking and concurrent user management
+- **auditSlice** - Audit logs and activity tracking
+
+#### Business Operations
+- **productSlice** - Product catalog, variants, bundles, pricing
+- **inventorySlice** - Stock levels, transactions, alerts
+- **customerSlice** - Customer records, loyalty, segments
+- **posSlice** - POS configuration and statistics
+- **branchSlice** - Multi-location management
+- **supplierSlice** - Supplier management
+- **purchaseOrderSlice** - Purchase order tracking
+
+#### Financial Management
+- **invoiceSlice** - Invoice management and tracking
+- **paymentSlice** - Payment processing and history
+- **expenseSlice** - Expense recording and tracking
+- **transactionSlice** - Financial transaction management
+- **financialSlice** - Financial summaries and statistics
+
+#### System & Configuration
+- **settingsSlice** - App settings (currency, language, hardware, branding, tax)
+- **uiSlice** - UI state (theme, modals, sidebar, notifications)
+- **notificationSlice** - Notification preferences and history
+- **backupSlice** - Backup settings, history, and status
+- **reportSlice** - Report data and configurations
 
 ### Cart Store (`useCartStore`)
-- **Cart**: POS cart items, customer, discounts, calculations
+- **cartSlice** - POS cart items, customer, discounts, calculations
 - Persisted in `sessionStorage` (cleared on browser close)
+- Isolated from main store for better performance
 
 ## Middleware
 
@@ -106,6 +135,80 @@ Redux DevTools integration (dev mode only):
 - Action inspection
 - State snapshots
 
+## Store State Organization
+
+### localStorage Persistence (Main Store)
+Data that needs to survive browser restarts:
+- User authentication and preferences
+- Product catalog and inventory
+- Customer database
+- Financial records (invoices, payments, expenses)
+- Audit logs and session history
+- Application settings and configuration
+- Branch and user management data
+
+### sessionStorage Persistence (Cart Store)
+Data that should reset on browser close:
+- Current shopping cart
+- POS checkout state
+- Temporary transaction data
+
+## New Features in State Management
+
+### Notification System
+```javascript
+const {
+  notifications,
+  notificationStats,
+  notificationPreferences,
+  updateNotificationPreferences,
+  addNotification
+} = useStore();
+
+// Tracks notification history, delivery status, and preferences
+```
+
+### Backup System
+```javascript
+const {
+  backups,
+  backupSettings,
+  backupStatus,
+  updateBackupSettings,
+  addBackup,
+  setBackupStatus
+} = useStore();
+
+// Manages backup history (last 50), cloud settings, and auto-backup configuration
+```
+
+### Audit Logging
+```javascript
+const {
+  auditLogs,
+  auditStats,
+  setAuditLogs,
+  addAuditLog,
+  getAuditLogsByUser
+} = useStore();
+
+// Comprehensive activity tracking with 40+ event types
+```
+
+### Session Management
+```javascript
+const {
+  sessions,
+  currentSession,
+  sessionStats,
+  addSession,
+  updateSession,
+  terminateSession
+} = useStore();
+
+// Tracks concurrent users and session activity
+```
+
 ## Best Practices
 
 1. **Use selectors** for accessing state to optimize re-renders
@@ -113,6 +216,9 @@ Redux DevTools integration (dev mode only):
 3. **Persist wisely** - only persist what's necessary
 4. **Use cart store for session data** - use main store for permanent data
 5. **Computed values** - use getter functions for derived state
+6. **Audit sensitive operations** - log all security-relevant actions
+7. **Session tracking** - track user activity for security and analytics
+8. **Backup regularly** - ensure data persistence with automated backups
 
 ## Examples
 
@@ -161,3 +267,88 @@ toggleTheme();
 // Open modal
 openModal('payment', { amount: 100 });
 ```
+
+### Financial Operations
+```javascript
+const {
+  invoices,
+  invoiceStats,
+  addInvoice,
+  updateInvoice,
+  getInvoiceById,
+  getOverdueInvoices
+} = useStore((state) => ({
+  invoices: state.invoices,
+  invoiceStats: state.invoiceStats,
+  addInvoice: state.addInvoice,
+  updateInvoice: state.updateInvoice,
+  getInvoiceById: state.getInvoiceById,
+  getOverdueInvoices: state.getOverdueInvoices,
+}));
+
+// Create invoice
+addInvoice({
+  customerId: '1',
+  items: [...],
+  total: 100.00
+});
+
+// Get overdue invoices
+const overdue = getOverdueInvoices();
+```
+
+### Settings Management
+```javascript
+const {
+  settings,
+  currency,
+  language,
+  updateSettings,
+  updateCurrency,
+  updateLanguage
+} = useStore((state) => ({
+  settings: state.settings,
+  currency: state.currency,
+  language: state.language,
+  updateSettings: state.updateSettings,
+  updateCurrency: state.updateCurrency,
+  updateLanguage: state.updateLanguage,
+}));
+
+// Update currency
+updateCurrency('USD');
+
+// Update language
+updateLanguage('es');
+
+// Update hardware settings
+updateSettings({
+  hardware: {
+    receiptPrinter: {
+      enabled: true,
+      connection: 'usb'
+    }
+  }
+});
+```
+
+## Store Statistics
+
+Total state slices: **24+**
+- Authentication & Security: 6 slices
+- Business Operations: 7 slices
+- Financial Management: 5 slices
+- System & Configuration: 6+ slices
+
+Persisted data size: Typically 5-20 MB (depends on transaction volume)
+Session data size: Typically 50-500 KB
+
+## Version History
+
+- **v2.0** (2025-11-06) - Added notification, backup, audit, and session management slices
+- **v1.5** (2025-10-15) - Added financial management slices
+- **v1.0** (2024-11-04) - Initial store setup with core slices
+
+---
+
+**Last Updated**: 2025-11-06
