@@ -866,6 +866,18 @@ const reportService = {
       },
     };
   },
+
+  /**
+   * Get reports (wrapper for getList with consistent API format)
+   */
+  async getReports(filters = {}) {
+    const reports = await this.getList(filters);
+    return {
+      items: reports,
+      total: reports.length,
+    };
+  },
 };
 
+export { reportService };
 export default reportService;
