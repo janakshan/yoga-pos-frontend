@@ -222,9 +222,9 @@ class EmailProvider {
   constructor() {
     // In production, configure with actual email service (SendGrid, AWS SES, etc.)
     this.config = {
-      apiKey: process.env.VITE_EMAIL_API_KEY || 'demo-key',
-      from: process.env.VITE_EMAIL_FROM || 'noreply@yogapos.com',
-      serviceUrl: process.env.VITE_EMAIL_SERVICE_URL || 'https://api.emailservice.com/send',
+      apiKey: import.meta.env.VITE_EMAIL_API_KEY || 'demo-key',
+      from: import.meta.env.VITE_EMAIL_FROM || 'noreply@yogapos.com',
+      serviceUrl: import.meta.env.VITE_EMAIL_SERVICE_URL || 'https://api.emailservice.com/send',
     };
   }
 
@@ -295,9 +295,9 @@ class SMSProvider {
   constructor() {
     // In production, configure with actual SMS service (Twilio, AWS SNS, etc.)
     this.config = {
-      apiKey: process.env.VITE_SMS_API_KEY || 'demo-key',
-      from: process.env.VITE_SMS_FROM || '+1234567890',
-      serviceUrl: process.env.VITE_SMS_SERVICE_URL || 'https://api.smsservice.com/send',
+      apiKey: import.meta.env.VITE_SMS_API_KEY || 'demo-key',
+      from: import.meta.env.VITE_SMS_FROM || '+1234567890',
+      serviceUrl: import.meta.env.VITE_SMS_SERVICE_URL || 'https://api.smsservice.com/send',
     };
   }
 
@@ -364,9 +364,9 @@ class WhatsAppProvider {
   constructor() {
     // In production, configure with WhatsApp Business API
     this.config = {
-      apiKey: process.env.VITE_WHATSAPP_API_KEY || 'demo-key',
-      phoneNumberId: process.env.VITE_WHATSAPP_PHONE_ID || '1234567890',
-      serviceUrl: process.env.VITE_WHATSAPP_SERVICE_URL || 'https://graph.facebook.com/v17.0',
+      apiKey: import.meta.env.VITE_WHATSAPP_API_KEY || 'demo-key',
+      phoneNumberId: import.meta.env.VITE_WHATSAPP_PHONE_ID || '1234567890',
+      serviceUrl: import.meta.env.VITE_WHATSAPP_SERVICE_URL || 'https://graph.facebook.com/v17.0',
     };
   }
 
