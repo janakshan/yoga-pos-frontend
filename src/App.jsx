@@ -12,6 +12,7 @@ import InventoryPage from './pages/InventoryPage';
 import POSPage from './pages/POSPage';
 import CustomersPage from './pages/CustomersPage';
 import ReportsPage from './pages/ReportsPage';
+import DemoDataPage from './pages/DemoDataPage';
 import './App.css';
 
 function App() {
@@ -84,6 +85,9 @@ function App() {
 
           {/* Reports Management */}
           <Route path="reports" element={<ReportsPage />} />
+
+          {/* Demo Data Overview */}
+          <Route path="demo-data" element={<DemoDataPage />} />
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />

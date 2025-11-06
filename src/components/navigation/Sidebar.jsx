@@ -13,11 +13,13 @@ import {
   CalendarIcon,
   ArchiveBoxIcon,
   ShieldCheckIcon,
-  UsersIcon
+  UsersIcon,
+  BeakerIcon
 } from '@heroicons/react/24/outline';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
+  { name: 'Demo Data', path: '/demo-data', icon: BeakerIcon },
   { name: 'Branches', path: '/branches', icon: BuildingStorefrontIcon },
   { name: 'Users', path: '/users', icon: UsersIcon },
   { name: 'Roles', path: '/roles', icon: ShieldCheckIcon },
