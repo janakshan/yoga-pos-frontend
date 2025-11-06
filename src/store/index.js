@@ -18,6 +18,8 @@ import {
   createSupplierSlice,
   createPurchaseOrderSlice,
 } from './slices';
+import { createAuditSlice } from '../features/audit/store/auditSlice.js';
+import { createSessionSlice } from '../features/session/store/sessionSlice.js';
 
 /**
  * Main Application Store
@@ -43,6 +45,8 @@ export const useStore = create(
         ...createReportSlice(set, get, api),
         ...createSupplierSlice(set, get, api),
         ...createPurchaseOrderSlice(set, get, api),
+        ...createAuditSlice(set, get, api),
+        ...createSessionSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -123,6 +127,13 @@ export const useStore = create(
           purchaseOrders: state.purchaseOrders,
           purchaseOrderStats: state.purchaseOrderStats,
           purchaseAnalytics: state.purchaseAnalytics,
+
+          // Audit Logs (do not persist - too large)
+          // Only persist filters for convenience
+          auditFilters: state.audit?.filters,
+
+          // Sessions (persist current session only)
+          currentSession: state.sessions?.current,
         }),
       }
     ),

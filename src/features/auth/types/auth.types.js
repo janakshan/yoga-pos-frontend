@@ -23,6 +23,24 @@
  */
 
 /**
+ * @typedef {Object} PINLoginCredentials
+ * @property {string} username - Username or email
+ * @property {string} pin - User PIN (4-6 digits)
+ * @property {boolean} [rememberMe] - Remember user session
+ */
+
+/**
+ * Authentication method types
+ * @readonly
+ * @enum {string}
+ */
+export const AuthMethod = {
+  PASSWORD: 'password',
+  PIN: 'pin',
+  BIOMETRIC: 'biometric', // For future use
+};
+
+/**
  * @typedef {Object} AuthResponse
  * @property {User} user - User data
  * @property {string} token - Access token
@@ -53,4 +71,7 @@ export const AuthErrorCodes = {
   INVALID_TOKEN: 'INVALID_TOKEN',
   NETWORK_ERROR: 'NETWORK_ERROR',
   UNAUTHORIZED: 'UNAUTHORIZED',
+  INVALID_PIN: 'INVALID_PIN',
+  PIN_NOT_SET: 'PIN_NOT_SET',
+  PIN_LOCKED: 'PIN_LOCKED',
 };
