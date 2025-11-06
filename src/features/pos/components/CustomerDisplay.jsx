@@ -2,6 +2,7 @@ import React from 'react';
 import { ShoppingBag, Package } from 'lucide-react';
 import { usePos } from '../hooks/usePos';
 import { formatCurrency } from '../utils/calculations';
+import { useStorageSync } from '../../../hooks/useStorageSync';
 
 /**
  * CustomerDisplay Component
@@ -10,6 +11,9 @@ import { formatCurrency } from '../utils/calculations';
  * @returns {JSX.Element}
  */
 export const CustomerDisplay = () => {
+  // Sync cart state across windows
+  useStorageSync();
+
   const { cartItems, getCartTotals } = usePos();
   const totals = getCartTotals();
 

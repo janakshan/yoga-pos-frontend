@@ -92,9 +92,16 @@ export const useStore = create(
           stockLevels: state.stockLevels,
           inventoryStats: state.inventoryStats,
 
-          // POS (persist transactions history and stats, but not cart)
+          // POS (persist transactions, stats, and cart items for customer display)
           transactions: state.transactions,
           posStats: state.posStats,
+          cartItems: state.cartItems,
+          selectedCustomerId: state.selectedCustomerId,
+          customerInfo: state.customerInfo,
+          paymentMethod: state.paymentMethod,
+          discountPercentage: state.discountPercentage,
+          taxPercentage: state.taxPercentage,
+          notes: state.notes,
 
           // Customers (persist customers list)
           customers: state.customers,
@@ -103,8 +110,6 @@ export const useStore = create(
           // Reports (persist reports list)
           reports: state.reports,
           reportStats: state.reportStats,
-
-          // Cart is NOT persisted (cleared on page refresh)
         }),
       }
     ),
