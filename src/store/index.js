@@ -20,6 +20,13 @@ import {
 } from './slices';
 import { createAuditSlice } from '../features/audit/store/auditSlice.js';
 import { createSessionSlice } from '../features/session/store/sessionSlice.js';
+import {
+  createInvoiceSlice,
+  createPaymentSlice,
+  createExpenseSlice,
+  createTransactionSlice,
+  createFinancialSlice,
+} from '../features/financial/store/index.js';
 
 /**
  * Main Application Store
@@ -47,6 +54,11 @@ export const useStore = create(
         ...createPurchaseOrderSlice(set, get, api),
         ...createAuditSlice(set, get, api),
         ...createSessionSlice(set, get, api),
+        ...createInvoiceSlice(set, get, api),
+        ...createPaymentSlice(set, get, api),
+        ...createExpenseSlice(set, get, api),
+        ...createTransactionSlice(set, get, api),
+        ...createFinancialSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -134,6 +146,27 @@ export const useStore = create(
 
           // Sessions (persist current session only)
           currentSession: state.sessions?.current,
+
+          // Financial - Invoices
+          invoices: state.invoices,
+          invoiceStats: state.invoiceStats,
+
+          // Financial - Payments
+          payments: state.payments,
+          paymentStats: state.paymentStats,
+
+          // Financial - Expenses
+          expenses: state.expenses,
+          expenseStats: state.expenseStats,
+          expenseCategories: state.expenseCategories,
+
+          // Financial - Transactions
+          financialTransactions: state.financialTransactions,
+          transactionStats: state.transactionStats,
+
+          // Financial - General
+          bankAccounts: state.bankAccounts,
+          eodReports: state.eodReports,
         }),
       }
     ),
