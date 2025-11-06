@@ -15,6 +15,7 @@ import CustomerDisplayPage from './pages/CustomerDisplayPage';
 import CustomersPage from './pages/CustomersPage';
 import ReportsPage from './pages/ReportsPage';
 import DemoDataPage from './pages/DemoDataPage';
+import PurchasePage from './pages/PurchasePage';
 import './App.css';
 
 function App() {
@@ -79,6 +80,9 @@ function App() {
 
           {/* Inventory Management */}
           <Route path="inventory" element={<InventoryPage />} />
+
+          {/* Purchase & Procurement */}
+          <Route path="purchase" element={<PurchasePage />} />
 
           {/* POS (Point of Sale) */}
           <Route path="pos" element={<POSPage />} />

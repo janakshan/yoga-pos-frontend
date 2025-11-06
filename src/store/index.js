@@ -16,6 +16,7 @@ import {
   createCustomerSlice,
   createReportSlice,
 } from './slices';
+import { createSupplierSlice, createPurchaseSlice } from '../features/purchase/store/index.js';
 
 /**
  * Main Application Store
@@ -39,6 +40,8 @@ export const useStore = create(
         ...createPosSlice(set, get, api),
         ...createCustomerSlice(set, get, api),
         ...createReportSlice(set, get, api),
+        ...createSupplierSlice(set, get, api),
+        ...createPurchaseSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -110,6 +113,14 @@ export const useStore = create(
           // Reports (persist reports list)
           reports: state.reports,
           reportStats: state.reportStats,
+
+          // Suppliers (persist suppliers list)
+          suppliers: state.suppliers,
+          supplierStats: state.supplierStats,
+
+          // Purchase Orders (persist purchase orders)
+          purchaseOrders: state.purchaseOrders,
+          purchaseStats: state.purchaseStats,
         }),
       }
     ),
