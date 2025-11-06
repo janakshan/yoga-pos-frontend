@@ -39,7 +39,6 @@ src/
 - **Bookings** - Class scheduling and appointments
 - **Payments** - Payment processing
 - **Reports** - Analytics and reporting
-- **Staff** - Employee management
 - **Settings** - Application configuration
 
 ## Technology Stack

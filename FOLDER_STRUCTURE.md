@@ -31,7 +31,6 @@ Feature-based modules following domain-driven design. Each feature is self-conta
 - **`settings/`** - Application settings and configuration
 - **`payments/`** - Payment processing and history
 - **`bookings/`** - Class bookings and scheduling
-- **`staff/`** - Staff/employee management
 
 **Each feature contains:**
 ```

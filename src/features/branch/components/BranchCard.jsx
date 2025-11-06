@@ -66,7 +66,7 @@ export const BranchCard = ({
 
   return (
     <div
-      className={`bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer relative ${
+      className={`bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer relative border border-gray-200 ${
         isSelected ? 'ring-2 ring-blue-500' : ''
       }`}
       onClick={handleCardClick}

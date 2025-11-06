@@ -33,8 +33,5 @@ export * from './payments';
 // Bookings Feature
 export * from './bookings';
 
-// Staff Feature
-export * from './staff';
-
 // Branch Feature
 export * from './branch';

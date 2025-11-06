@@ -4,7 +4,6 @@ import { ProtectedRoute } from './features/auth';
 import { LoginPage, UnauthorizedPage } from './pages';
 import MainLayout from './layouts/MainLayout';
 import BranchPage from './pages/BranchPage';
-import StaffPage from './pages/StaffPage';
 import DashboardPage from './pages/DashboardPage';
 import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
@@ -66,9 +65,6 @@ function App() {
 
           {/* Branch Management */}
           <Route path="branches" element={<BranchPage />} />
-
-          {/* Staff Management */}
-          <Route path="staff" element={<StaffPage />} />
 
           {/* User & Role Management */}
           <Route path="users" element={<UsersPage />} />
