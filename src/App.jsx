@@ -15,6 +15,8 @@ import CustomerDisplayPage from './pages/CustomerDisplayPage';
 import CustomersPage from './pages/CustomersPage';
 import ReportsPage from './pages/ReportsPage';
 import DemoDataPage from './pages/DemoDataPage';
+import { SuppliersPage } from './pages/SuppliersPage';
+import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
 import './App.css';
 
 function App() {
@@ -79,6 +81,10 @@ function App() {
 
           {/* Inventory Management */}
           <Route path="inventory" element={<InventoryPage />} />
+
+          {/* Purchase/Procurement Management */}
+          <Route path="suppliers" element={<SuppliersPage />} />
+          <Route path="purchase-orders" element={<PurchaseOrdersPage />} />
 
           {/* POS (Point of Sale) */}
           <Route path="pos" element={<POSPage />} />
