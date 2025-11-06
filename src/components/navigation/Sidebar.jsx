@@ -19,7 +19,6 @@ import {
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
   { name: 'Branches', path: '/branches', icon: BuildingStorefrontIcon },
-  { name: 'Staff', path: '/staff', icon: UserGroupIcon },
   { name: 'Users', path: '/users', icon: UsersIcon },
   { name: 'Roles', path: '/roles', icon: ShieldCheckIcon },
   { name: 'POS', path: '/pos', icon: ShoppingCartIcon },

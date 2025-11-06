@@ -7,7 +7,6 @@ import {
   createUISlice,
   createSettingsSlice,
   createBranchSlice,
-  createStaffSlice,
   createPermissionSlice,
   createRoleSlice,
   createUserSlice,
@@ -32,7 +31,6 @@ export const useStore = create(
         ...createUISlice(set, get, api),
         ...createSettingsSlice(set, get, api),
         ...createBranchSlice(set, get, api),
-        ...createStaffSlice(set, get, api),
         ...createPermissionSlice(set, get, api),
         ...createRoleSlice(set, get, api),
         ...createUserSlice(set, get, api),
@@ -72,10 +70,6 @@ export const useStore = create(
           branches: state.branches,
           currentBranch: state.currentBranch,
           branchStats: state.branchStats,
-
-          // Staff (persist staff list)
-          staff: state.staff,
-          staffStats: state.staffStats,
 
           // Permissions (persist permissions list)
           permissions: state.permissions,
