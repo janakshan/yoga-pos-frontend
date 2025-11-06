@@ -637,6 +637,235 @@ const reportService = {
 
     return archived;
   },
+
+  /**
+   * Get consolidated sales report across all branches
+   */
+  async getConsolidatedSalesReport(filters = {}) {
+    await delay(1000);
+
+    const mockBranches = [
+      { id: 'branch-001', name: 'Downtown Yoga Studio', code: 'BR001' },
+      { id: 'branch-002', name: 'Marina District Studio', code: 'BR002' },
+      { id: 'branch-004', name: 'Oakland Yoga Center', code: 'BR004' },
+      { id: 'branch-005', name: 'Berkeley Wellness Studio', code: 'BR005' },
+    ];
+
+    const branchSales = mockBranches.map(branch => ({
+      branchId: branch.id,
+      branchName: branch.name,
+      branchCode: branch.code,
+      totalSales: Math.floor(Math.random() * 50000) + 30000,
+      transactionCount: Math.floor(Math.random() * 300) + 200,
+      averageTicketSize: Math.floor(Math.random() * 50) + 120,
+      topProducts: [
+        {
+          id: 'prod_001',
+          name: 'Premium Yoga Mat',
+          quantity: Math.floor(Math.random() * 30) + 20,
+          revenue: Math.floor(Math.random() * 5000) + 3000,
+        },
+        {
+          id: 'prod_002',
+          name: 'Yoga Block Set',
+          quantity: Math.floor(Math.random() * 25) + 15,
+          revenue: Math.floor(Math.random() * 3000) + 2000,
+        },
+      ],
+    }));
+
+    const totalSales = branchSales.reduce((sum, b) => sum + b.totalSales, 0);
+    const totalTransactions = branchSales.reduce((sum, b) => sum + b.transactionCount, 0);
+
+    return {
+      summary: {
+        totalSales,
+        totalTransactions,
+        averageTicketSize: totalSales / totalTransactions,
+        branchCount: branchSales.length,
+      },
+      branchSales: branchSales.sort((a, b) => b.totalSales - a.totalSales),
+      topPerformingBranch: branchSales.reduce((max, b) =>
+        b.totalSales > max.totalSales ? b : max
+      ),
+      comparisonData: {
+        salesByBranch: branchSales.map(b => ({
+          branchName: b.branchName,
+          sales: b.totalSales,
+        })),
+        transactionsByBranch: branchSales.map(b => ({
+          branchName: b.branchName,
+          transactions: b.transactionCount,
+        })),
+      },
+    };
+  },
+
+  /**
+   * Get consolidated inventory report across all branches
+   */
+  async getConsolidatedInventoryReport(filters = {}) {
+    await delay(1000);
+
+    const mockBranches = [
+      { id: 'branch-001', name: 'Downtown Yoga Studio' },
+      { id: 'branch-002', name: 'Marina District Studio' },
+      { id: 'branch-004', name: 'Oakland Yoga Center' },
+      { id: 'branch-005', name: 'Berkeley Wellness Studio' },
+    ];
+
+    const branchInventory = mockBranches.map(branch => ({
+      branchId: branch.id,
+      branchName: branch.name,
+      totalItems: Math.floor(Math.random() * 100) + 50,
+      totalValue: Math.floor(Math.random() * 20000) + 8000,
+      lowStockItems: Math.floor(Math.random() * 10) + 3,
+      outOfStockItems: Math.floor(Math.random() * 5) + 1,
+    }));
+
+    const totalItems = branchInventory.reduce((sum, b) => sum + b.totalItems, 0);
+    const totalValue = branchInventory.reduce((sum, b) => sum + b.totalValue, 0);
+    const totalLowStock = branchInventory.reduce((sum, b) => sum + b.lowStockItems, 0);
+    const totalOutOfStock = branchInventory.reduce((sum, b) => sum + b.outOfStockItems, 0);
+
+    return {
+      summary: {
+        totalItems,
+        totalValue,
+        lowStockItems: totalLowStock,
+        outOfStockItems: totalOutOfStock,
+        branchCount: branchInventory.length,
+        averageValuePerBranch: totalValue / branchInventory.length,
+      },
+      branchInventory: branchInventory.sort((a, b) => b.totalValue - a.totalValue),
+      alerts: {
+        branchesWithLowStock: branchInventory.filter(b => b.lowStockItems > 5).length,
+        branchesWithOutOfStock: branchInventory.filter(b => b.outOfStockItems > 2).length,
+      },
+    };
+  },
+
+  /**
+   * Get branch comparison report
+   */
+  async getBranchComparisonReport(branchIds, filters = {}) {
+    await delay(800);
+
+    const metrics = branchIds.map(branchId => ({
+      branchId,
+      branchName: `Branch ${branchId.slice(-3)}`,
+      sales: Math.floor(Math.random() * 50000) + 30000,
+      transactions: Math.floor(Math.random() * 300) + 200,
+      customers: Math.floor(Math.random() * 200) + 150,
+      averageTicketSize: Math.floor(Math.random() * 50) + 120,
+      inventoryValue: Math.floor(Math.random() * 20000) + 8000,
+      staffCount: Math.floor(Math.random() * 5) + 4,
+    }));
+
+    return {
+      metrics,
+      comparison: {
+        highestSales: metrics.reduce((max, m) => m.sales > max.sales ? m : max),
+        lowestSales: metrics.reduce((min, m) => m.sales < min.sales ? m : min),
+        highestTransactions: metrics.reduce((max, m) => m.transactions > max.transactions ? m : max),
+        mostCustomers: metrics.reduce((max, m) => m.customers > max.customers ? m : max),
+      },
+      averages: {
+        avgSales: metrics.reduce((sum, m) => sum + m.sales, 0) / metrics.length,
+        avgTransactions: metrics.reduce((sum, m) => sum + m.transactions, 0) / metrics.length,
+        avgCustomers: metrics.reduce((sum, m) => sum + m.customers, 0) / metrics.length,
+      },
+    };
+  },
+
+  /**
+   * Get inter-branch transfer report
+   */
+  async getInterBranchTransferReport(filters = {}) {
+    await delay(900);
+
+    const mockTransfers = [
+      {
+        id: 'TRF-001',
+        date: new Date('2025-10-01'),
+        fromBranch: 'Downtown Yoga Studio',
+        toBranch: 'Marina District Studio',
+        productName: 'Premium Yoga Mat',
+        quantity: 10,
+        status: 'completed',
+      },
+      {
+        id: 'TRF-002',
+        date: new Date('2025-10-15'),
+        fromBranch: 'Oakland Yoga Center',
+        toBranch: 'Berkeley Wellness Studio',
+        productName: 'Yoga Block Set',
+        quantity: 15,
+        status: 'completed',
+      },
+      {
+        id: 'TRF-003',
+        date: new Date('2025-10-20'),
+        fromBranch: 'Marina District Studio',
+        toBranch: 'Downtown Yoga Studio',
+        productName: 'Meditation Cushion',
+        quantity: 8,
+        status: 'in_transit',
+      },
+    ];
+
+    return {
+      transfers: mockTransfers,
+      summary: {
+        totalTransfers: mockTransfers.length,
+        completedTransfers: mockTransfers.filter(t => t.status === 'completed').length,
+        inTransitTransfers: mockTransfers.filter(t => t.status === 'in_transit').length,
+        totalItemsTransferred: mockTransfers.reduce((sum, t) => sum + t.quantity, 0),
+      },
+      mostActiveRoutes: [
+        { from: 'Downtown Yoga Studio', to: 'Marina District Studio', count: 5 },
+        { from: 'Oakland Yoga Center', to: 'Berkeley Wellness Studio', count: 3 },
+      ],
+    };
+  },
+
+  /**
+   * Get consolidated revenue report across all branches
+   */
+  async getConsolidatedRevenueReport(filters = {}) {
+    await delay(1000);
+
+    const mockBranches = [
+      { id: 'branch-001', name: 'Downtown Yoga Studio', code: 'BR001' },
+      { id: 'branch-002', name: 'Marina District Studio', code: 'BR002' },
+      { id: 'branch-004', name: 'Oakland Yoga Center', code: 'BR004' },
+      { id: 'branch-005', name: 'Berkeley Wellness Studio', code: 'BR005' },
+    ];
+
+    const monthlyData = mockBranches.map(branch => ({
+      branchId: branch.id,
+      branchName: branch.name,
+      branchCode: branch.code,
+      revenue: Math.floor(Math.random() * 50000) + 30000,
+      growth: (Math.random() * 20 - 5).toFixed(2), // -5% to +15%
+    }));
+
+    const totalRevenue = monthlyData.reduce((sum, b) => sum + b.revenue, 0);
+
+    return {
+      summary: {
+        totalRevenue,
+        branchCount: monthlyData.length,
+        averageRevenuePerBranch: totalRevenue / monthlyData.length,
+        topRevenueBranch: monthlyData.reduce((max, b) => b.revenue > max.revenue ? b : max),
+      },
+      branchRevenue: monthlyData.sort((a, b) => b.revenue - a.revenue),
+      trends: {
+        growingBranches: monthlyData.filter(b => parseFloat(b.growth) > 0).length,
+        decliningBranches: monthlyData.filter(b => parseFloat(b.growth) < 0).length,
+      },
+    };
+  },
 };
 
 export default reportService;

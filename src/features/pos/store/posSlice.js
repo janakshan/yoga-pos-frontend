@@ -26,6 +26,8 @@ export const createPosSlice = (set, get) => ({
   amountPaid: 0,
   posLoading: false,
   posError: null,
+  posBranchId: null, // Current branch ID for POS operations
+  posBranchName: null, // Current branch name for display
   posStats: {
     totalSales: 0,
     totalTransactions: 0,
@@ -34,6 +36,20 @@ export const createPosSlice = (set, get) => ({
     averageTransactionValue: 0,
     paymentMethodBreakdown: {},
   },
+
+  /**
+   * Set current branch for POS operations
+   * @param {Object} branch - Branch object
+   */
+  setPosBranch: (branch) =>
+    set((state) => {
+      state.posBranchId = branch?.id || null;
+      state.posBranchName = branch?.name || null;
+      // Update tax rate from branch settings
+      if (branch?.settings?.taxRate) {
+        state.taxPercentage = branch.settings.taxRate * 100;
+      }
+    }),
 
   // Cart Mutations
 
