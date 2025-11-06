@@ -20,6 +20,8 @@ import {
   subQuarters,
   subYears,
 } from 'date-fns';
+import analyticsService from './analyticsService.js';
+import { exportReport as exportReportFile } from './exportService.js';
 
 // Utility function to simulate API delay
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -347,8 +349,14 @@ const reportService = {
       };
     }
 
-    // Generate mock data based on report type
-    const mockData = this.generateMockData(type);
+    // Merge filters with date range
+    const completeFilters = {
+      ...filters,
+      ...dateRange,
+    };
+
+    // Generate data using analytics service
+    const mockData = await this.generateMockData(type, completeFilters);
 
     const newReport = {
       id: generateId(),
@@ -358,10 +366,7 @@ const reportService = {
       status: REPORT_STATUS.GENERATED,
       createdAt: new Date(),
       updatedAt: new Date(),
-      filters: {
-        ...filters,
-        ...dateRange,
-      },
+      filters: completeFilters,
       data: mockData,
       metadata: {
         generatedBy: 'current.user@yoga.com',
@@ -375,125 +380,69 @@ const reportService = {
   },
 
   /**
-   * Generate mock data based on report type
+   * Generate mock data based on report type using analytics services
    */
-  generateMockData(type) {
-    const baseAmount = Math.floor(Math.random() * 100000) + 50000;
+  async generateMockData(type, filters = {}) {
+    try {
+      switch (type) {
+        case REPORT_TYPES.SALES:
+          return await analyticsService.generateSalesReport(filters);
 
-    switch (type) {
-      case REPORT_TYPES.SALES:
-        return {
-          totalSales: baseAmount,
-          totalTransactions: Math.floor(baseAmount / 200),
-          averageTransaction: 200 + Math.floor(Math.random() * 100),
-          topProducts: [
-            {
-              id: 'P001',
-              name: 'Yoga Mat Premium',
-              sales: Math.floor(Math.random() * 50) + 20,
-              revenue: Math.floor(Math.random() * 15000) + 5000,
+        case REPORT_TYPES.REVENUE:
+        case REPORT_TYPES.BRANCH:
+          return await analyticsService.generateProfitLossReport(filters);
+
+        case REPORT_TYPES.PROFIT_LOSS:
+          return await analyticsService.generateProfitLossReport(filters);
+
+        case REPORT_TYPES.CUSTOMERS:
+        case REPORT_TYPES.CUSTOMER_ANALYTICS:
+          return await analyticsService.generateCustomerAnalyticsReport(filters);
+
+        case REPORT_TYPES.PRODUCTS:
+        case REPORT_TYPES.SLOW_MOVING:
+          return await analyticsService.generateSlowMovingStockReport(filters);
+
+        case REPORT_TYPES.TOP_SELLING:
+          return await analyticsService.generateSalesReport(filters);
+
+        case REPORT_TYPES.PAYMENTS:
+        case REPORT_TYPES.PAYMENT_ANALYSIS:
+          return await analyticsService.generatePaymentMethodReport(filters);
+
+        case REPORT_TYPES.STAFF:
+        case REPORT_TYPES.EMPLOYEE_PERFORMANCE:
+          return await analyticsService.generateEmployeePerformanceReport(filters);
+
+        case REPORT_TYPES.INVENTORY:
+        case REPORT_TYPES.INVENTORY_VALUATION:
+          return await analyticsService.generateInventoryValuationReport(filters);
+
+        case REPORT_TYPES.TAX:
+          return await analyticsService.generateTaxReport(filters);
+
+        case REPORT_TYPES.BOOKINGS:
+          return {
+            summary: {
+              totalBookings: Math.floor(Math.random() * 500) + 200,
+              completedBookings: Math.floor(Math.random() * 400) + 150,
+              cancelledBookings: Math.floor(Math.random() * 50) + 10,
+              noShowBookings: Math.floor(Math.random() * 30) + 5,
+              attendanceRate: (85 + Math.random() * 10).toFixed(1),
             },
-            {
-              id: 'P002',
-              name: 'Meditation Cushion',
-              sales: Math.floor(Math.random() * 40) + 15,
-              revenue: Math.floor(Math.random() * 10000) + 3000,
-            },
-          ],
-        };
+          };
 
-      case REPORT_TYPES.REVENUE:
-        return {
-          totalRevenue: baseAmount,
-          revenueByMonth: [
-            { month: 'Month 1', revenue: Math.floor(baseAmount / 3) },
-            { month: 'Month 2', revenue: Math.floor(baseAmount / 3) },
-            { month: 'Month 3', revenue: Math.floor(baseAmount / 3) },
-          ],
-          revenueByCategory: [
-            { category: 'Classes', revenue: Math.floor(baseAmount * 0.6) },
-            { category: 'Products', revenue: Math.floor(baseAmount * 0.3) },
-            { category: 'Memberships', revenue: Math.floor(baseAmount * 0.1) },
-          ],
-        };
-
-      case REPORT_TYPES.CUSTOMERS:
-        return {
-          totalCustomers: Math.floor(Math.random() * 400) + 200,
-          newCustomers: Math.floor(Math.random() * 50) + 20,
-          activeCustomers: Math.floor(Math.random() * 350) + 150,
-          churnRate: (Math.random() * 5).toFixed(1),
-          averageLifetimeValue: Math.floor(Math.random() * 1000) + 500,
-        };
-
-      case REPORT_TYPES.PRODUCTS:
-        return {
-          totalProducts: Math.floor(Math.random() * 200) + 100,
-          productsInStock: Math.floor(Math.random() * 180) + 90,
-          lowStockProducts: Math.floor(Math.random() * 15) + 5,
-          outOfStockProducts: Math.floor(Math.random() * 10) + 2,
-        };
-
-      case REPORT_TYPES.PAYMENTS:
-        return {
-          totalTransactions: Math.floor(Math.random() * 600) + 300,
-          totalAmount: baseAmount,
-          byMethod: [
-            {
-              method: 'Credit Card',
-              count: Math.floor(Math.random() * 300) + 150,
-              amount: Math.floor(baseAmount * 0.5),
-            },
-            {
-              method: 'Debit Card',
-              count: Math.floor(Math.random() * 150) + 75,
-              amount: Math.floor(baseAmount * 0.3),
-            },
-            {
-              method: 'Cash',
-              count: Math.floor(Math.random() * 100) + 50,
-              amount: Math.floor(baseAmount * 0.2),
-            },
-          ],
-          successRate: (95 + Math.random() * 4).toFixed(1),
-        };
-
-      case REPORT_TYPES.BOOKINGS:
-        return {
-          totalBookings: Math.floor(Math.random() * 500) + 200,
-          completedBookings: Math.floor(Math.random() * 400) + 150,
-          cancelledBookings: Math.floor(Math.random() * 50) + 10,
-          noShowBookings: Math.floor(Math.random() * 30) + 5,
-          attendanceRate: (85 + Math.random() * 10).toFixed(1),
-        };
-
-      case REPORT_TYPES.STAFF:
-        return {
-          totalStaff: Math.floor(Math.random() * 30) + 10,
-          activeStaff: Math.floor(Math.random() * 25) + 8,
-          averagePerformanceRating: (4.0 + Math.random()).toFixed(1),
-          totalClassesConducted: Math.floor(Math.random() * 500) + 200,
-        };
-
-      case REPORT_TYPES.INVENTORY:
-        return {
-          totalItems: Math.floor(Math.random() * 300) + 100,
-          totalValue: baseAmount,
-          lowStockItems: Math.floor(Math.random() * 20) + 5,
-          outOfStockItems: Math.floor(Math.random() * 10) + 2,
-          turnoverRate: (5 + Math.random() * 5).toFixed(1),
-        };
-
-      case REPORT_TYPES.BRANCH:
-        return {
-          totalBranches: Math.floor(Math.random() * 5) + 2,
-          topPerformer: 'Main Studio',
-          totalRevenue: baseAmount,
-          averageRevenuePerBranch: Math.floor(baseAmount / 3),
-        };
-
-      default:
-        return { message: 'Report data generated successfully' };
+        default:
+          // Fallback to simple mock data
+          return {
+            message: 'Report data generated successfully',
+            totalItems: Math.floor(Math.random() * 100) + 50,
+            summary: { status: 'completed' },
+          };
+      }
+    } catch (error) {
+      console.error('Error generating report data:', error);
+      throw error;
     }
   },
 
@@ -544,20 +493,19 @@ const reportService = {
    * Export a report in specified format
    */
   async export(id, format) {
-    await delay(800);
-
     const report = MOCK_REPORTS.find((r) => r.id === id);
     if (!report) {
       throw new Error('Report not found');
     }
 
-    // Simulate export
-    return {
-      success: true,
-      format,
-      filename: `${report.title.replace(/\s+/g, '_')}.${format}`,
-      downloadUrl: `#download-${id}-${format}`,
-    };
+    try {
+      // Use the export service to handle actual file export
+      const result = await exportReportFile(report, format);
+      return result;
+    } catch (error) {
+      console.error('Export error:', error);
+      throw new Error(`Failed to export report as ${format}`);
+    }
   },
 
   /**
