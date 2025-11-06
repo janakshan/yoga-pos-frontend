@@ -17,6 +17,10 @@ import { reportService } from '@/features/financial/services/reportService.js';
 import { paymentService } from '@/features/financial/services/paymentService.js';
 import { expenseService } from '@/features/financial/services/expenseService.js';
 import { cashflowService } from '@/features/financial/services/cashflowService.js';
+import { InvoiceFormModal } from '@/features/financial/components/InvoiceFormModal.jsx';
+import { PaymentFormModal } from '@/features/financial/components/PaymentFormModal.jsx';
+import { ExpenseFormModal } from '@/features/financial/components/ExpenseFormModal.jsx';
+import { ReportsModal } from '@/features/financial/components/ReportsModal.jsx';
 
 export const FinancialDashboard = () => {
   const { fetchInvoices, fetchInvoiceStats, invoiceStats } = useInvoices();
@@ -26,6 +30,12 @@ export const FinancialDashboard = () => {
   const [expenseStats, setExpenseStats] = useState(null);
   const [cashBalance, setCashBalance] = useState(0);
   const [dateRange, setDateRange] = useState('month');
+
+  // Modal states
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -83,6 +93,11 @@ export const FinancialDashboard = () => {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
+  };
+
+  // Handler for when a modal action is successful
+  const handleActionSuccess = () => {
+    loadDashboardData();
   };
 
   if (loading) {
@@ -354,19 +369,31 @@ export const FinancialDashboard = () => {
       <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="flex flex-col items-center gap-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+          <button
+            onClick={() => setIsInvoiceModalOpen(true)}
+            className="flex flex-col items-center gap-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+          >
             <FileText size={24} className="text-blue-600" />
             <span className="text-sm font-medium text-gray-900">Create Invoice</span>
           </button>
-          <button className="flex flex-col items-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+          <button
+            onClick={() => setIsPaymentModalOpen(true)}
+            className="flex flex-col items-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+          >
             <CreditCard size={24} className="text-green-600" />
             <span className="text-sm font-medium text-gray-900">Record Payment</span>
           </button>
-          <button className="flex flex-col items-center gap-2 p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+          <button
+            onClick={() => setIsExpenseModalOpen(true)}
+            className="flex flex-col items-center gap-2 p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+          >
             <Receipt size={24} className="text-red-600" />
             <span className="text-sm font-medium text-gray-900">Add Expense</span>
           </button>
-          <button className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+          <button
+            onClick={() => setIsReportsModalOpen(true)}
+            className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+          >
             <PieChart size={24} className="text-purple-600" />
             <span className="text-sm font-medium text-gray-900">View Reports</span>
           </button>
@@ -390,6 +417,27 @@ export const FinancialDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <InvoiceFormModal
+        isOpen={isInvoiceModalOpen}
+        onClose={() => setIsInvoiceModalOpen(false)}
+        onSuccess={handleActionSuccess}
+      />
+      <PaymentFormModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        onSuccess={handleActionSuccess}
+      />
+      <ExpenseFormModal
+        isOpen={isExpenseModalOpen}
+        onClose={() => setIsExpenseModalOpen(false)}
+        onSuccess={handleActionSuccess}
+      />
+      <ReportsModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
+      />
     </div>
   );
 };
