@@ -89,34 +89,34 @@ const UserList = ({ staffOnly = false }) => {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Total Users</div>
           <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Active</div>
           <div className="text-2xl font-bold text-green-600">{stats.active}</div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Inactive</div>
           <div className="text-2xl font-bold text-gray-600">{stats.inactive}</div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Suspended</div>
           <div className="text-2xl font-bold text-red-600">{stats.suspended}</div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Pending</div>
           <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
         </div>
-        <div className="bg-white p-4 rounded-lg shadow-sm border">
+        <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Online Today</div>
           <div className="text-2xl font-bold text-blue-600">{stats.loggedInToday}</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
+      <div className="bg-white p-4 rounded-lg shadow-md">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
@@ -126,18 +126,18 @@ const UserList = ({ staffOnly = false }) => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="px-4 py-2 border rounded-lg">
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="suspended">Suspended</option>
             <option value="pending">Pending</option>
           </select>
-          <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="px-4 py-2 border rounded-lg">
+          <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
             <option value="all">All Roles</option>
             {roles.map((role) => (
               <option key={role.id} value={role.id}>
@@ -163,7 +163,7 @@ const UserList = ({ staffOnly = false }) => {
       )}
 
       {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr>

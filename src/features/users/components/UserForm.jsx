@@ -196,7 +196,7 @@ const UserForm = ({ user, mode, onClose }) => {
               value={formData.username}
               onChange={handleChange}
               disabled={mode === 'edit'}
-              className="w-full px-4 py-2 border rounded-lg disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
             />
             {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
           </div>
@@ -208,7 +208,7 @@ const UserForm = ({ user, mode, onClose }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
@@ -222,7 +222,7 @@ const UserForm = ({ user, mode, onClose }) => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
           </div>
@@ -236,7 +236,7 @@ const UserForm = ({ user, mode, onClose }) => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             {errors.firstName && <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>}
           </div>
@@ -248,7 +248,7 @@ const UserForm = ({ user, mode, onClose }) => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             {errors.lastName && <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>}
           </div>
@@ -261,13 +261,13 @@ const UserForm = ({ user, mode, onClose }) => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-2">Roles *</label>
-          <div className="grid grid-cols-2 gap-2 p-3 border rounded-lg">
+          <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg">
             {roles.filter((r) => r.isActive).map((role) => (
               <label key={role.id} className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -289,7 +289,7 @@ const UserForm = ({ user, mode, onClose }) => {
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value={UserStatus.ACTIVE}>Active</option>
             <option value={UserStatus.INACTIVE}>Inactive</option>
@@ -322,7 +322,7 @@ const UserForm = ({ user, mode, onClose }) => {
                     type="text"
                     value={formData.staffProfile.employeeId || ''}
                     onChange={(e) => handleStaffFieldChange('employeeId', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="Auto-generated if empty"
                   />
                 </div>
@@ -333,7 +333,7 @@ const UserForm = ({ user, mode, onClose }) => {
                     type="text"
                     value={formData.staffProfile.position || ''}
                     onChange={(e) => handleStaffFieldChange('position', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -343,7 +343,7 @@ const UserForm = ({ user, mode, onClose }) => {
                     type="text"
                     value={formData.staffProfile.department || ''}
                     onChange={(e) => handleStaffFieldChange('department', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -352,7 +352,7 @@ const UserForm = ({ user, mode, onClose }) => {
                   <select
                     value={formData.staffProfile.employmentType || EmploymentType.FULL_TIME}
                     onChange={(e) => handleStaffFieldChange('employmentType', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value={EmploymentType.FULL_TIME}>Full Time</option>
                     <option value={EmploymentType.PART_TIME}>Part Time</option>
@@ -367,7 +367,7 @@ const UserForm = ({ user, mode, onClose }) => {
                     type="date"
                     value={formData.staffProfile.hireDate || ''}
                     onChange={(e) => handleStaffFieldChange('hireDate', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
 
@@ -376,7 +376,7 @@ const UserForm = ({ user, mode, onClose }) => {
                   <select
                     value={formData.staffProfile.employmentStatus || EmploymentStatus.EMPLOYED}
                     onChange={(e) => handleStaffFieldChange('employmentStatus', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value={EmploymentStatus.EMPLOYED}>Employed</option>
                     <option value={EmploymentStatus.ON_LEAVE}>On Leave</option>
@@ -391,7 +391,7 @@ const UserForm = ({ user, mode, onClose }) => {
                   <select
                     value={formData.staffProfile.compensationType || CompensationType.SALARY}
                     onChange={(e) => handleStaffFieldChange('compensationType', e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
                     <option value={CompensationType.SALARY}>Salary</option>
                     <option value={CompensationType.HOURLY}>Hourly</option>
@@ -405,7 +405,7 @@ const UserForm = ({ user, mode, onClose }) => {
                       type="number"
                       value={formData.staffProfile.salary || 0}
                       onChange={(e) => handleStaffFieldChange('salary', parseFloat(e.target.value) || 0)}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       min="0"
                       step="1000"
                     />
@@ -419,7 +419,7 @@ const UserForm = ({ user, mode, onClose }) => {
                       type="number"
                       value={formData.staffProfile.hourlyRate || 0}
                       onChange={(e) => handleStaffFieldChange('hourlyRate', parseFloat(e.target.value) || 0)}
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       min="0"
                       step="0.5"
                     />
