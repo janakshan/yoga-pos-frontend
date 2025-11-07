@@ -1,360 +1,219 @@
 /**
  * Authentication Service
- * Handles authentication API calls with mock implementation
+ * Handles authentication API calls with proper error handling
  */
 
-import { AuthErrorCodes, UserRoles } from '../types';
+import { AuthErrorCodes } from '../types';
+import authApi from '../../../api/auth.api';
+import tokenStorage from '../../../lib/tokenStorage';
 
-// Mock users database
-const MOCK_USERS = [
-  {
-    id: '1',
-    email: 'admin@yoga.com',
-    username: 'admin',
-    password: 'admin123', // In production, this would be hashed
-    pin: '1234', // In production, this would be hashed
-    pinEnabled: true,
-    pinAttempts: 0,
-    pinLockedUntil: null,
-    name: 'Admin User',
-    role: UserRoles.ADMIN,
-    avatar: 'https://ui-avatars.com/api/?name=Admin+User&background=6366f1&color=fff',
-    phone: '+1234567890',
-    createdAt: '2024-01-01T00:00:00.000Z',
-    lastLogin: null,
-  },
-  {
-    id: '2',
-    email: 'manager@yoga.com',
-    username: 'manager',
-    password: 'manager123',
-    pin: '5678',
-    pinEnabled: true,
-    pinAttempts: 0,
-    pinLockedUntil: null,
-    name: 'Manager User',
-    role: UserRoles.MANAGER,
-    avatar: 'https://ui-avatars.com/api/?name=Manager+User&background=8b5cf6&color=fff',
-    phone: '+1234567891',
-    createdAt: '2024-01-15T00:00:00.000Z',
-    lastLogin: null,
-  },
-  {
-    id: '3',
-    email: 'staff@yoga.com',
-    username: 'staff',
-    password: 'staff123',
-    pin: '9012',
-    pinEnabled: true,
-    pinAttempts: 0,
-    pinLockedUntil: null,
-    name: 'Staff User',
-    role: UserRoles.STAFF,
-    avatar: 'https://ui-avatars.com/api/?name=Staff+User&background=ec4899&color=fff',
-    phone: '+1234567892',
-    createdAt: '2024-02-01T00:00:00.000Z',
-    lastLogin: null,
-  },
-  {
-    id: '4',
-    email: 'instructor@yoga.com',
-    username: 'instructor',
-    password: 'instructor123',
-    pin: '3456',
-    pinEnabled: true,
-    pinAttempts: 0,
-    pinLockedUntil: null,
-    name: 'Yoga Instructor',
-    role: UserRoles.INSTRUCTOR,
-    avatar: 'https://ui-avatars.com/api/?name=Yoga+Instructor&background=14b8a6&color=fff',
-    phone: '+1234567893',
-    createdAt: '2024-02-15T00:00:00.000Z',
-    lastLogin: null,
-  },
-];
+/**
+ * Transform API error to consistent error format
+ * @param {Error} error - API error
+ * @returns {Object} Formatted error object
+ */
+const handleAuthError = (error) => {
+  // Network errors
+  if (!error.response) {
+    return {
+      message: 'Network error. Please check your internet connection.',
+      code: AuthErrorCodes.NETWORK_ERROR,
+    };
+  }
 
-// Mock delay to simulate API latency
-const mockDelay = (ms = 800) => new Promise((resolve) => setTimeout(resolve, ms));
+  // Get error data from response
+  const { status, data } = error.response;
 
-// Generate mock JWT token
-const generateToken = (userId) => {
-  const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-  const payload = btoa(
-    JSON.stringify({
-      userId,
-      iat: Date.now(),
-      exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-    })
-  );
-  const signature = btoa(`mock-signature-${userId}`);
-  return `${header}.${payload}.${signature}`;
-};
+  // Map HTTP status codes to auth error codes
+  switch (status) {
+    case 400:
+      return {
+        message: data?.message || 'Invalid request data',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
+        details: data?.details,
+      };
 
-// Generate mock refresh token
-const generateRefreshToken = (userId) => {
-  return btoa(`refresh-${userId}-${Date.now()}`);
+    case 401:
+      return {
+        message: data?.message || 'Invalid credentials',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
+      };
+
+    case 404:
+      return {
+        message: data?.message || 'User not found',
+        code: AuthErrorCodes.USER_NOT_FOUND,
+      };
+
+    case 423:
+      return {
+        message: data?.message || 'Account locked',
+        code: AuthErrorCodes.PIN_LOCKED,
+      };
+
+    default:
+      return {
+        message: data?.message || 'An unexpected error occurred',
+        code: 'UNKNOWN_ERROR',
+      };
+  }
 };
 
 /**
- * Mock login function
+ * Login with email and password
  * @param {import('../types').LoginCredentials} credentials
  * @returns {Promise<import('../types').AuthResponse>}
  */
 export const login = async (credentials) => {
-  await mockDelay();
+  try {
+    // Validate input
+    if (!credentials.email || !credentials.password) {
+      throw {
+        message: 'Email and password are required',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
+      };
+    }
 
-  const { email, password } = credentials;
+    // Call API
+    const response = await authApi.loginWithEmail(credentials);
 
-  // Validate input
-  if (!email || !password) {
-    throw {
-      message: 'Email and password are required',
-      code: AuthErrorCodes.INVALID_CREDENTIALS,
-    };
+    // Store tokens
+    tokenStorage.setAuthData(
+      response.token,
+      response.refreshToken,
+      response.user
+    );
+
+    return response;
+  } catch (error) {
+    throw handleAuthError(error);
   }
-
-  // Find user
-  const user = MOCK_USERS.find((u) => u.email === email);
-
-  if (!user) {
-    throw {
-      message: 'User not found',
-      code: AuthErrorCodes.USER_NOT_FOUND,
-    };
-  }
-
-  // Verify password
-  if (user.password !== password) {
-    throw {
-      message: 'Invalid credentials',
-      code: AuthErrorCodes.INVALID_CREDENTIALS,
-    };
-  }
-
-  // Update last login
-  user.lastLogin = new Date().toISOString();
-
-  // Generate tokens
-  const token = generateToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
-
-  // Return user data without password and PIN
-  const { password: _, pin: __, ...userWithoutPassword } = user;
-
-  return {
-    user: userWithoutPassword,
-    token,
-    refreshToken,
-    expiresIn: 86400, // 24 hours in seconds
-  };
 };
 
 /**
- * Mock PIN login function
+ * Login with PIN
  * @param {import('../types').PINLoginCredentials} credentials
  * @returns {Promise<import('../types').AuthResponse>}
  */
 export const loginWithPIN = async (credentials) => {
-  await mockDelay();
-
-  const { username, pin } = credentials;
-
-  // Validate input
-  if (!username || !pin) {
-    throw {
-      message: 'Username and PIN are required',
-      code: AuthErrorCodes.INVALID_CREDENTIALS,
-    };
-  }
-
-  // Validate PIN format (4-6 digits)
-  if (!/^\d{4,6}$/.test(pin)) {
-    throw {
-      message: 'PIN must be 4-6 digits',
-      code: AuthErrorCodes.INVALID_PIN,
-    };
-  }
-
-  // Find user by username or email
-  const user = MOCK_USERS.find(
-    (u) => u.username === username || u.email === username
-  );
-
-  if (!user) {
-    throw {
-      message: 'User not found',
-      code: AuthErrorCodes.USER_NOT_FOUND,
-    };
-  }
-
-  // Check if PIN is enabled
-  if (!user.pinEnabled) {
-    throw {
-      message: 'PIN authentication not enabled for this user',
-      code: AuthErrorCodes.PIN_NOT_SET,
-    };
-  }
-
-  // Check if PIN is locked
-  if (user.pinLockedUntil && new Date(user.pinLockedUntil) > new Date()) {
-    const lockTime = Math.ceil(
-      (new Date(user.pinLockedUntil) - new Date()) / 1000 / 60
-    );
-    throw {
-      message: `PIN is locked. Please try again in ${lockTime} minute(s)`,
-      code: AuthErrorCodes.PIN_LOCKED,
-    };
-  }
-
-  // Verify PIN
-  if (user.pin !== pin) {
-    // Increment failed attempts
-    user.pinAttempts = (user.pinAttempts || 0) + 1;
-
-    // Lock PIN after 5 failed attempts
-    if (user.pinAttempts >= 5) {
-      user.pinLockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // Lock for 15 minutes
+  try {
+    // Validate input
+    if (!credentials.username || !credentials.pin) {
       throw {
-        message: 'Too many failed attempts. PIN locked for 15 minutes.',
-        code: AuthErrorCodes.PIN_LOCKED,
+        message: 'Username and PIN are required',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
       };
     }
 
-    throw {
-      message: `Invalid PIN. ${5 - user.pinAttempts} attempts remaining`,
-      code: AuthErrorCodes.INVALID_PIN,
-    };
+    // Validate PIN format (4-6 digits)
+    if (!/^\d{4,6}$/.test(credentials.pin)) {
+      throw {
+        message: 'PIN must be 4-6 digits',
+        code: AuthErrorCodes.INVALID_PIN,
+      };
+    }
+
+    // Call API
+    const response = await authApi.loginWithPIN(credentials);
+
+    // Store tokens
+    tokenStorage.setAuthData(
+      response.token,
+      response.refreshToken,
+      response.user
+    );
+
+    return response;
+  } catch (error) {
+    throw handleAuthError(error);
   }
-
-  // Reset PIN attempts on successful login
-  user.pinAttempts = 0;
-  user.pinLockedUntil = null;
-
-  // Update last login
-  user.lastLogin = new Date().toISOString();
-
-  // Generate tokens
-  const token = generateToken(user.id);
-  const refreshToken = generateRefreshToken(user.id);
-
-  // Return user data without password and PIN
-  const { password: _, pin: __, ...userWithoutSensitiveData } = user;
-
-  return {
-    user: userWithoutSensitiveData,
-    token,
-    refreshToken,
-    expiresIn: 86400, // 24 hours in seconds
-  };
 };
 
 /**
- * Mock logout function
+ * Logout current user
  * @returns {Promise<void>}
  */
 export const logout = async () => {
-  await mockDelay(300);
-  // In a real implementation, this would invalidate the token on the server
-  return;
+  try {
+    // Call logout API
+    await authApi.logout();
+  } catch (error) {
+    // Log error but don't throw - we still want to clear local data
+    console.error('Logout API error:', error);
+  } finally {
+    // Always clear local tokens
+    tokenStorage.clearAuthData();
+  }
 };
 
 /**
- * Mock token refresh function
+ * Refresh access token
  * @param {string} refreshToken
  * @returns {Promise<{token: string, refreshToken: string, expiresIn: number}>}
  */
 export const refreshToken = async (refreshToken) => {
-  await mockDelay(500);
-
-  if (!refreshToken) {
-    throw {
-      message: 'Refresh token is required',
-      code: AuthErrorCodes.INVALID_TOKEN,
-    };
-  }
-
   try {
-    // Decode refresh token to get user ID
-    const decoded = atob(refreshToken);
-    const userId = decoded.split('-')[1];
-
-    // Verify user exists
-    const user = MOCK_USERS.find((u) => u.id === userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Generate new tokens
-    const newToken = generateToken(userId);
-    const newRefreshToken = generateRefreshToken(userId);
-
-    return {
-      token: newToken,
-      refreshToken: newRefreshToken,
-      expiresIn: 86400,
-    };
-  } catch (error) {
-    throw {
-      message: 'Invalid or expired refresh token',
-      code: AuthErrorCodes.INVALID_TOKEN,
-    };
-  }
-};
-
-/**
- * Mock get current user function
- * @param {string} token
- * @returns {Promise<import('../types').User>}
- */
-export const getCurrentUser = async (token) => {
-  await mockDelay(400);
-
-  if (!token) {
-    throw {
-      message: 'Token is required',
-      code: AuthErrorCodes.UNAUTHORIZED,
-    };
-  }
-
-  try {
-    // Decode token to get user ID
-    const parts = token.split('.');
-    const payload = JSON.parse(atob(parts[1]));
-    const userId = payload.userId;
-
-    // Check if token is expired
-    if (payload.exp < Date.now()) {
+    if (!refreshToken) {
       throw {
-        message: 'Token has expired',
-        code: AuthErrorCodes.EXPIRED_TOKEN,
+        message: 'Refresh token is required',
+        code: AuthErrorCodes.INVALID_TOKEN,
       };
     }
 
-    // Find user
-    const user = MOCK_USERS.find((u) => u.id === userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
+    // Call API
+    const response = await authApi.refreshAccessToken(refreshToken);
 
-    // Return user without password
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    // Update stored tokens
+    tokenStorage.setAccessToken(response.token);
+    tokenStorage.setRefreshToken(response.refreshToken);
+
+    return response;
   } catch (error) {
-    throw {
-      message: 'Invalid token',
-      code: AuthErrorCodes.INVALID_TOKEN,
-    };
+    // Clear tokens on refresh failure
+    tokenStorage.clearAuthData();
+    throw handleAuthError(error);
   }
 };
 
 /**
- * Mock verify token function
+ * Get current authenticated user
+ * @returns {Promise<import('../types').User>}
+ */
+export const getCurrentUser = async () => {
+  try {
+    const token = tokenStorage.getAccessToken();
+
+    if (!token) {
+      throw {
+        message: 'No authentication token found',
+        code: AuthErrorCodes.UNAUTHORIZED,
+      };
+    }
+
+    // Call API
+    const user = await authApi.getCurrentUser();
+
+    // Update stored user data
+    tokenStorage.setUser(user);
+
+    return user;
+  } catch (error) {
+    throw handleAuthError(error);
+  }
+};
+
+/**
+ * Verify if token is valid
  * @param {string} token
  * @returns {Promise<boolean>}
  */
 export const verifyToken = async (token) => {
   try {
-    await getCurrentUser(token);
+    if (!token) {
+      return false;
+    }
+
+    await getCurrentUser();
     return true;
   } catch {
     return false;
@@ -368,35 +227,22 @@ export const verifyToken = async (token) => {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 export const setPIN = async (userId, newPIN) => {
-  await mockDelay();
+  try {
+    // Validate PIN format
+    if (!/^\d{4,6}$/.test(newPIN)) {
+      throw {
+        message: 'PIN must be 4-6 digits',
+        code: AuthErrorCodes.INVALID_PIN,
+      };
+    }
 
-  // Validate PIN format
-  if (!/^\d{4,6}$/.test(newPIN)) {
-    throw {
-      message: 'PIN must be 4-6 digits',
-      code: AuthErrorCodes.INVALID_PIN,
-    };
+    // Call API
+    const response = await authApi.setUserPIN({ userId, newPIN });
+
+    return response;
+  } catch (error) {
+    throw handleAuthError(error);
   }
-
-  // Find user
-  const user = MOCK_USERS.find((u) => u.id === userId);
-  if (!user) {
-    throw {
-      message: 'User not found',
-      code: AuthErrorCodes.USER_NOT_FOUND,
-    };
-  }
-
-  // Update PIN
-  user.pin = newPIN;
-  user.pinEnabled = true;
-  user.pinAttempts = 0;
-  user.pinLockedUntil = null;
-
-  return {
-    success: true,
-    message: 'PIN set successfully',
-  };
 };
 
 /**
@@ -405,24 +251,21 @@ export const setPIN = async (userId, newPIN) => {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 export const disablePIN = async (userId) => {
-  await mockDelay();
+  try {
+    if (!userId) {
+      throw {
+        message: 'User ID is required',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
+      };
+    }
 
-  // Find user
-  const user = MOCK_USERS.find((u) => u.id === userId);
-  if (!user) {
-    throw {
-      message: 'User not found',
-      code: AuthErrorCodes.USER_NOT_FOUND,
-    };
+    // Call API
+    const response = await authApi.disableUserPIN(userId);
+
+    return response;
+  } catch (error) {
+    throw handleAuthError(error);
   }
-
-  // Disable PIN
-  user.pinEnabled = false;
-
-  return {
-    success: true,
-    message: 'PIN authentication disabled',
-  };
 };
 
 /**
@@ -431,25 +274,21 @@ export const disablePIN = async (userId) => {
  * @returns {Promise<{success: boolean, message: string}>}
  */
 export const resetPINAttempts = async (userId) => {
-  await mockDelay();
+  try {
+    if (!userId) {
+      throw {
+        message: 'User ID is required',
+        code: AuthErrorCodes.INVALID_CREDENTIALS,
+      };
+    }
 
-  // Find user
-  const user = MOCK_USERS.find((u) => u.id === userId);
-  if (!user) {
-    throw {
-      message: 'User not found',
-      code: AuthErrorCodes.USER_NOT_FOUND,
-    };
+    // Call API
+    const response = await authApi.resetPINAttempts(userId);
+
+    return response;
+  } catch (error) {
+    throw handleAuthError(error);
   }
-
-  // Reset attempts
-  user.pinAttempts = 0;
-  user.pinLockedUntil = null;
-
-  return {
-    success: true,
-    message: 'PIN attempts reset successfully',
-  };
 };
 
 // Export auth service
