@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   HomeIcon,
   BuildingStorefrontIcon,
@@ -17,7 +17,9 @@ import {
   BeakerIcon,
   TruckIcon,
   BuildingOffice2Icon,
+  ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../../features/auth/hooks';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
@@ -43,10 +45,22 @@ const navigationItems = [
  * Supports mobile drawer functionality
  */
 const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) => {
+  const navigate = useNavigate();
+  const { logout, isLoading } = useAuth();
+
   const handleLinkClick = () => {
     // Close mobile menu when a link is clicked
     if (isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
     }
   };
 
@@ -91,8 +105,16 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
         })}
       </nav>
 
-      {/* Footer */}
+      {/* Footer with Logout Button */}
       <div className="p-4 border-t border-gray-200 bg-gray-50">
+        <button
+          onClick={handleLogout}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center px-4 py-3 mb-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+          {isLoading ? 'Logging out...' : 'Logout'}
+        </button>
         <p className="text-xs text-gray-500 text-center">
           © 2025 Yoga POS System
         </p>

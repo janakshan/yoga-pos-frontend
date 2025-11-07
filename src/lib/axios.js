@@ -54,6 +54,14 @@ axiosInstance.interceptors.response.use(
 
     // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Don't handle 401 for login/refresh endpoints - let them fail naturally
+      const isAuthEndpoint = originalRequest.url?.includes('/auth/login') ||
+                            originalRequest.url?.includes('/auth/refresh');
+
+      if (isAuthEndpoint) {
+        return Promise.reject(error);
+      }
+
       originalRequest._retry = true;
 
       try {

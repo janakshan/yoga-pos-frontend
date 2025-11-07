@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Navigate, useNavigate } from 'react-router-dom';
+import {
+  Bars3Icon,
+  XMarkIcon,
+  ArrowRightOnRectangleIcon,
+  ArrowsPointingOutIcon,
+  ArrowsPointingInIcon
+} from '@heroicons/react/24/outline';
 import { Sidebar } from '@/components/navigation';
 import { useStore } from '@/store';
 import { selectUser, selectIsAuthenticated } from '@/store/selectors';
+import { useAuth } from '@/features/auth';
 
 /**
  * MainLayout Component
@@ -19,11 +26,56 @@ const MainLayout = () => {
   const user = useStore(selectUser);
   const isAuthenticated = useStore(selectIsAuthenticated);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const navigate = useNavigate();
+  const { logout, isLoading } = useAuth();
 
   // Redirect to login if not authenticated
   if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
+
+  // Monitor fullscreen state changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // Enter fullscreen
+        await document.documentElement.requestFullscreen();
+      } else {
+        // Exit fullscreen
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error('Fullscreen error:', error);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -77,6 +129,35 @@ const MainLayout = () => {
               <span className="text-xs sm:text-sm text-gray-500 hidden md:block">
                 Last login: {new Date(user.lastLogin).toLocaleString()}
               </span>
+
+              {/* Fullscreen Toggle Button */}
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+              >
+                {isFullscreen ? (
+                  <ArrowsPointingInIcon className="w-5 h-5" />
+                ) : (
+                  <ArrowsPointingOutIcon className="w-5 h-5" />
+                )}
+                <span className="hidden lg:inline">
+                  {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+                </span>
+              </button>
+
+              {/* Logout Button */}
+              <button
+                onClick={handleLogout}
+                disabled={isLoading}
+                className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Logout"
+              >
+                <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                <span className="hidden sm:inline">
+                  {isLoading ? 'Logging out...' : 'Logout'}
+                </span>
+              </button>
             </div>
           </div>
         </header>

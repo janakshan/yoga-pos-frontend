@@ -60,6 +60,17 @@ export const LoginForm = () => {
 
     try {
       await login(formData);
+
+      // Auto-enter fullscreen after successful login
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (fullscreenError) {
+        // Silently fail if fullscreen is not supported or user denies permission
+        console.log('Fullscreen not available:', fullscreenError.message);
+      }
+
       navigate('/'); // Redirect to home/dashboard
     } catch (error) {
       // Error is already handled in the hook
