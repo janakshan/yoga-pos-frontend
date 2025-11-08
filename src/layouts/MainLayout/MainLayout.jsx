@@ -11,6 +11,7 @@ import { Sidebar } from '@/components/navigation';
 import { useStore } from '@/store';
 import { selectUser, selectIsAuthenticated } from '@/store/selectors';
 import { useAuth } from '@/features/auth';
+import { BranchSelector } from '@/features/branch/components';
 
 /**
  * MainLayout Component
@@ -129,6 +130,9 @@ const MainLayout = () => {
               <span className="text-xs sm:text-sm text-gray-500 hidden md:block">
                 Last login: {new Date(user.lastLogin).toLocaleString()}
               </span>
+
+              {/* Branch Selector */}
+              <BranchSelector />
 
               {/* Fullscreen Toggle Button */}
               <button
