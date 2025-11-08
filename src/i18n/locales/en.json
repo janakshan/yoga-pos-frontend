@@ -220,7 +220,10 @@
     "branchAdded": "Branch added successfully",
     "branchUpdated": "Branch updated successfully",
     "branchDeleted": "Branch deleted successfully",
-    "selectBranch": "Select Branch"
+    "selectBranch": "Select Branch",
+    "selectBranchLocation": "Select Branch Location",
+    "currentBranch": "Current Branch",
+    "switchedTo": "Switched to"
   },
   "users": {
     "title": "Users",
