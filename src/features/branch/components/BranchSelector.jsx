@@ -28,6 +28,7 @@ const BranchSelector = () => {
     setCurrentBranch,
     getActiveBranches,
     fetchBranches,
+    initializeUserBranch,
     isLoading,
   } = useBranch();
 
@@ -40,6 +41,13 @@ const BranchSelector = () => {
       fetchBranches();
     }
   }, []);
+
+  // Initialize user's branch after branches are loaded
+  useEffect(() => {
+    if (branches.length > 0 && !currentBranch) {
+      initializeUserBranch();
+    }
+  }, [branches.length]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
