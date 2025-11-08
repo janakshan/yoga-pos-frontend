@@ -8,6 +8,7 @@
 import { useCallback } from 'react';
 import { useStore } from '@/store';
 import { branchService } from '../services';
+import { authApi } from '@/api/auth.api';
 import toast from 'react-hot-toast';
 
 /**
@@ -252,6 +253,52 @@ export const useBranch = () => {
   );
 
   /**
+   * Initialize user's branch from current user data
+   * Fetches current user from /auth/me and sets their branch as current
+   * @returns {Promise<Object|null>}
+   */
+  const initializeUserBranch = useCallback(async () => {
+    try {
+      setLoading(true);
+      clearError();
+
+      // Fetch current user data from /auth/me
+      const userData = await authApi.getCurrentUser();
+
+      // Check if user has a branch assigned
+      if (userData?.user?.branchId) {
+        const userBranchId = userData.user.branchId;
+
+        // Find the branch in the branches list
+        const userBranch = branches.find((b) => b.id === userBranchId);
+
+        if (userBranch) {
+          // Set the user's branch as current
+          setCurrentBranch(userBranch);
+          return userBranch;
+        } else {
+          // If branch not found in list, try to fetch it
+          const branch = await branchService.getById(userBranchId);
+          if (branch) {
+            setCurrentBranch(branch);
+            return branch;
+          }
+        }
+      }
+
+      return null;
+    } catch (err) {
+      const message = err.message || 'Failed to initialize user branch';
+      console.error(message, err);
+      // Don't show toast error for this - it's called automatically
+      setError(message);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, [branches, setCurrentBranch, setLoading, setError, clearError]);
+
+  /**
    * Get active branches from state
    * @returns {Array}
    */
@@ -289,6 +336,7 @@ export const useBranch = () => {
     fetchStats,
     assignManager,
     bulkUpdateStatus,
+    initializeUserBranch,
 
     // Selection
     selectBranch,
