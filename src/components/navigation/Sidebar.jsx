@@ -24,6 +24,7 @@ import {
   MapIcon,
   TableCellsIcon,
   BookOpenIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
 import { useBusinessType } from '../../hooks/useBusinessType';
@@ -49,6 +50,7 @@ const navigationItems = [
   { name: 'Floor Plan', path: '/floor-plan', icon: MapIcon },
   { name: 'Bookings', path: '/bookings', icon: CalendarIcon, businessType: BUSINESS_TYPES.YOGA },
   { name: 'Tables', path: '/tables', icon: TableCellsIcon, businessType: BUSINESS_TYPES.RESTAURANT },
+  { name: 'Server Management', path: '/server-management', icon: ClockIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Financial', path: '/financial', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
   { name: 'Settings', path: '/settings', icon: Cog6ToothIcon },
