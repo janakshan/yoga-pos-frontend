@@ -3,6 +3,10 @@
  * JSDoc type definitions for product-related data structures
  */
 
+// Import modifier and restaurant category types
+import './modifier.types.js';
+import './restaurant-category.types.js';
+
 /**
  * @typedef {'active'|'inactive'|'discontinued'} ProductStatus
  * Product availability status
@@ -68,6 +72,23 @@
  */
 
 /**
+ * @typedef {Object} NutritionalInfo
+ * @property {number} [calories] - Calories per serving
+ * @property {number} [protein] - Protein in grams
+ * @property {number} [carbohydrates] - Carbohydrates in grams
+ * @property {number} [fat] - Fat in grams
+ * @property {number} [fiber] - Fiber in grams
+ * @property {number} [sugar] - Sugar in grams
+ * @property {number} [sodium] - Sodium in milligrams
+ * @property {string} [servingSize] - Serving size description
+ * @property {string[]} [allergens] - List of allergens
+ * @property {boolean} [isVegan] - Vegan friendly
+ * @property {boolean} [isVegetarian] - Vegetarian friendly
+ * @property {boolean} [isGlutenFree] - Gluten free
+ * @property {boolean} [isDairyFree] - Dairy free
+ */
+
+/**
  * @typedef {Object} Product
  * @property {string} id - Unique product identifier
  * @property {string} sku - Stock Keeping Unit (unique product code)
@@ -97,6 +118,23 @@
  * @property {boolean} [isBundle] - Whether this is a bundled product
  * @property {ProductBundle} [bundle] - Bundle information if isBundle is true
  * @property {Object} [customFields] - Custom fields for extensibility
+ *
+ * === RESTAURANT-SPECIFIC FIELDS ===
+ * @property {string} [restaurantCategoryId] - Restaurant category ID (for restaurant mode)
+ * @property {string[]} [modifierGroupIds] - IDs of modifier groups that apply to this product
+ * @property {import('./modifier.types.js').ModifierGroup[]} [modifierGroups] - Modifier groups for customization
+ * @property {import('./restaurant-category.types.js').AvailabilitySchedule} [availability] - When this product is available
+ * @property {number} [preparationTime] - Estimated preparation time in minutes
+ * @property {string} [kdsStation] - Kitchen display station (hot_kitchen, cold_kitchen, grill, bar, dessert, prep)
+ * @property {NutritionalInfo} [nutritionalInfo] - Nutritional information
+ * @property {boolean} [allowSpecialInstructions] - Whether to allow special instructions
+ * @property {number} [courseOrder] - Order in which course is served (1=appetizer, 2=main, 3=dessert)
+ * @property {boolean} [isFeatured] - Featured item on menu
+ * @property {boolean} [isSpicy] - Has spicy ingredients
+ * @property {number} [spiceLevel] - Spice level (1-5)
+ * @property {boolean} [isChefSpecial] - Chef's special item
+ * @property {boolean} [isSeasonalItem] - Seasonal availability
+ *
  * @property {Date|string} createdAt - Creation timestamp
  * @property {Date|string} updatedAt - Last update timestamp
  * @property {string} createdBy - User ID who created the product
@@ -145,6 +183,21 @@
  * @property {boolean} [isBundle] - Whether this is a bundled product
  * @property {ProductBundle} [bundle] - Bundle information
  * @property {Object} [customFields] - Custom fields
+ *
+ * === RESTAURANT-SPECIFIC FIELDS ===
+ * @property {string} [restaurantCategoryId] - Restaurant category ID
+ * @property {string[]} [modifierGroupIds] - Modifier group IDs
+ * @property {import('./restaurant-category.types.js').AvailabilitySchedule} [availability] - Availability schedule
+ * @property {number} [preparationTime] - Preparation time in minutes
+ * @property {string} [kdsStation] - KDS station
+ * @property {NutritionalInfo} [nutritionalInfo] - Nutritional info
+ * @property {boolean} [allowSpecialInstructions] - Allow special instructions
+ * @property {number} [courseOrder] - Course order
+ * @property {boolean} [isFeatured] - Featured item
+ * @property {boolean} [isSpicy] - Has spicy ingredients
+ * @property {number} [spiceLevel] - Spice level
+ * @property {boolean} [isChefSpecial] - Chef's special
+ * @property {boolean} [isSeasonalItem] - Seasonal item
  */
 
 /**
@@ -176,6 +229,21 @@
  * @property {boolean} [isBundle] - Whether this is a bundled product
  * @property {ProductBundle} [bundle] - Bundle information
  * @property {Object} [customFields] - Custom fields
+ *
+ * === RESTAURANT-SPECIFIC FIELDS ===
+ * @property {string} [restaurantCategoryId] - Restaurant category ID
+ * @property {string[]} [modifierGroupIds] - Modifier group IDs
+ * @property {import('./restaurant-category.types.js').AvailabilitySchedule} [availability] - Availability schedule
+ * @property {number} [preparationTime] - Preparation time in minutes
+ * @property {string} [kdsStation] - KDS station
+ * @property {NutritionalInfo} [nutritionalInfo] - Nutritional info
+ * @property {boolean} [allowSpecialInstructions] - Allow special instructions
+ * @property {number} [courseOrder] - Course order
+ * @property {boolean} [isFeatured] - Featured item
+ * @property {boolean} [isSpicy] - Has spicy ingredients
+ * @property {number} [spiceLevel] - Spice level
+ * @property {boolean} [isChefSpecial] - Chef's special
+ * @property {boolean} [isSeasonalItem] - Seasonal item
  */
 
 /**
