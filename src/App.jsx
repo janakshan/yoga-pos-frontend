@@ -25,6 +25,13 @@ import TablesPage from './pages/TablesPage';
 import FloorPlanPage from './pages/FloorPlanPage';
 import autoBackupScheduler from './services/backup/autoBackupScheduler';
 import { useStore } from './store';
+// QR Ordering Components
+import QRLanding from './features/qr-ordering/components/customer/QRLanding';
+import MobileMenu from './features/qr-ordering/components/customer/MobileMenu';
+import Checkout from './features/qr-ordering/components/customer/Checkout';
+import OrderTracking from './features/qr-ordering/components/customer/OrderTracking';
+import QRCodeList from './features/qr-ordering/components/admin/QRCodeList';
+import QRAnalyticsDashboard from './features/qr-ordering/components/admin/QRAnalyticsDashboard';
 import './App.css';
 
 function App() {
@@ -77,6 +84,12 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/customer-display" element={<CustomerDisplayPage />} />
+
+        {/* QR Ordering - Public Routes */}
+        <Route path="/qr/:code" element={<QRLanding />} />
+        <Route path="/qr/menu" element={<MobileMenu />} />
+        <Route path="/qr/checkout" element={<Checkout />} />
+        <Route path="/qr/order-tracking" element={<OrderTracking />} />
 
         {/* Protected Routes with MainLayout */}
         <Route
@@ -141,9 +154,12 @@ function App() {
           <Route path="tables" element={<TablesPage />} />
           <Route path="floor-plan" element={<FloorPlanPage />} />
 
+          {/* QR Ordering Management */}
+          <Route path="qr-codes" element={<QRCodeList />} />
+          <Route path="qr-analytics" element={<QRAnalyticsDashboard />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
-          <Route path="tables" element={<PlaceholderPage module="Restaurant Tables" />} />
         </Route>
 
         {/* Catch all - redirect to dashboard */}
