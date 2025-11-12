@@ -38,6 +38,7 @@ import { createRestaurantCategorySlice } from '../features/products/store/restau
 import { createQROrderingSlice } from '../features/qr-ordering/store/qrOrderingSlice.js';
 import { createKitchenDisplaySlice } from '../features/kitchen-display/store/kitchenDisplaySlice.js';
 import { createRecipeSlice } from '../features/recipes/store/recipeSlice.js';
+import { createServerManagementSlice } from '../features/server-management/store/serverManagementSlice.js';
 
 /**
  * Main Application Store
@@ -81,6 +82,7 @@ export const useStore = create(
         ...createQROrderingSlice(set, get, api),
         ...createKitchenDisplaySlice(set, get, api),
         ...createRecipeSlice(set, get, api),
+        ...createServerManagementSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',

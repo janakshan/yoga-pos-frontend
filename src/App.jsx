@@ -41,6 +41,8 @@ import {
   RecipeDetails,
   RecipeCostingReport,
 } from './features/recipes/components';
+// Server Management
+import ServerManagement from './pages/ServerManagement';
 import './App.css';
 
 function App() {
@@ -176,6 +178,9 @@ function App() {
           <Route path="recipes/:id" element={<RecipeDetails />} />
           <Route path="recipes/:id/edit" element={<RecipeForm />} />
           <Route path="recipes/reports" element={<RecipeCostingReport />} />
+
+          {/* Server Management */}
+          <Route path="server-management" element={<ServerManagement />} />
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />

@@ -194,4 +194,51 @@ export const CompensationType = {
  * @property {WeekSchedule} [schedule] - Work schedule
  * @property {EmergencyContact} [emergencyContact] - Emergency contact information
  * @property {Address} [address] - Physical address
+ * @property {ServerProfile} [serverProfile] - Server-specific profile (for servers only)
+ */
+
+/**
+ * Server-specific profile for staff who work as servers
+ * @typedef {Object} ServerProfile
+ * @property {boolean} isServer - Whether this staff member is a server
+ * @property {string} [serverId] - Server-specific ID
+ * @property {string} [currentShiftId] - Current active shift ID
+ * @property {boolean} isOnShift - Whether server is currently on shift
+ * @property {string[]} assignedSections - Currently assigned section IDs
+ * @property {string[]} assignedTables - Currently assigned table IDs
+ * @property {number} maxTables - Maximum tables this server can handle
+ * @property {number} experienceLevel - Experience level (1-5 scale)
+ * @property {string[]} certifications - Server certifications (e.g., 'Alcohol Service', 'Food Safety')
+ * @property {ServerPerformanceMetrics} performanceMetrics - Lifetime performance metrics
+ * @property {ServerPreferences} preferences - Server preferences
+ * @property {Date|string} [lastShiftDate] - Last shift worked date
+ * @property {number} totalShifts - Total shifts worked
+ * @property {number} totalHours - Total hours worked
+ */
+
+/**
+ * Server performance metrics
+ * @typedef {Object} ServerPerformanceMetrics
+ * @property {number} lifetimeSales - Lifetime total sales
+ * @property {number} lifetimeTips - Lifetime total tips
+ * @property {number} averageTipPercentage - Average tip percentage
+ * @property {number} averageOrderValue - Average order value
+ * @property {number} totalOrders - Total orders handled
+ * @property {number} totalTables - Total tables served
+ * @property {number} totalGuests - Total guests served
+ * @property {number} averageServiceTime - Average service time in minutes
+ * @property {number} customerRating - Average customer rating (1-5)
+ * @property {number} orderAccuracy - Order accuracy percentage
+ * @property {number} upsellSuccess - Upsell success rate percentage
+ * @property {Date|string} lastUpdated - Last metrics update
+ */
+
+/**
+ * Server preferences
+ * @typedef {Object} ServerPreferences
+ * @property {string[]} preferredSections - Preferred section IDs
+ * @property {string[]} preferredShiftTimes - Preferred shift times (e.g., 'morning', 'evening')
+ * @property {number} preferredMaxTables - Preferred maximum tables
+ * @property {boolean} availableForExtraShifts - Available for extra shifts
+ * @property {Object} availability - Weekly availability
  */
