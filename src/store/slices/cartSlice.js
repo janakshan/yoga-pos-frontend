@@ -12,11 +12,23 @@ export const createCartSlice = (set, get) => ({
   taxRate: 0,
   note: '',
 
+  // Restaurant-specific fields
+  tableId: null,
+  tableName: null,
+  serviceType: 'dine_in', // 'dine_in', 'takeaway', 'delivery', 'online'
+  serverId: null,
+  serverName: null,
+  tip: 0,
+  tipType: 'percentage', // 'percentage' or 'fixed'
+  splitPayment: false,
+  splitPayments: [], // Array of split payment objects
+
   // Actions
   addItem: (product) =>
     set((state) => {
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === product.id
+        (item) => item.id === product.id &&
+        JSON.stringify(item.modifiers || []) === JSON.stringify(product.modifiers || [])
       );
 
       if (existingItemIndex >= 0) {
@@ -31,6 +43,11 @@ export const createCartSlice = (set, get) => ({
           quantity: 1,
           tax: product.tax || 0,
           image: product.image || null,
+          modifiers: product.modifiers || [],
+          course: product.courseOrder || null,
+          seatNumber: product.seatNumber || null,
+          specialInstructions: product.specialInstructions || '',
+          kdsStation: product.kdsStation || null,
         });
       }
     }),
@@ -93,6 +110,90 @@ export const createCartSlice = (set, get) => ({
       state.note = note;
     }),
 
+  // Restaurant-specific actions
+  setTable: (tableId, tableName) =>
+    set((state) => {
+      state.tableId = tableId;
+      state.tableName = tableName;
+    }),
+
+  setServiceType: (serviceType) =>
+    set((state) => {
+      state.serviceType = serviceType;
+      // Clear table selection if not dine-in
+      if (serviceType !== 'dine_in') {
+        state.tableId = null;
+        state.tableName = null;
+      }
+    }),
+
+  setServer: (serverId, serverName) =>
+    set((state) => {
+      state.serverId = serverId;
+      state.serverName = serverName;
+    }),
+
+  setTip: (tip, tipType = 'percentage') =>
+    set((state) => {
+      state.tip = tip;
+      state.tipType = tipType;
+    }),
+
+  setSplitPayment: (enabled) =>
+    set((state) => {
+      state.splitPayment = enabled;
+      if (!enabled) {
+        state.splitPayments = [];
+      }
+    }),
+
+  addSplitPayment: (payment) =>
+    set((state) => {
+      state.splitPayments.push(payment);
+    }),
+
+  removeSplitPayment: (index) =>
+    set((state) => {
+      state.splitPayments.splice(index, 1);
+    }),
+
+  clearSplitPayments: () =>
+    set((state) => {
+      state.splitPayments = [];
+    }),
+
+  updateItemModifiers: (itemId, modifiers) =>
+    set((state) => {
+      const item = state.items.find((item) => item.id === itemId);
+      if (item) {
+        item.modifiers = modifiers;
+      }
+    }),
+
+  updateItemCourse: (itemId, course) =>
+    set((state) => {
+      const item = state.items.find((item) => item.id === itemId);
+      if (item) {
+        item.course = course;
+      }
+    }),
+
+  updateItemSeat: (itemId, seatNumber) =>
+    set((state) => {
+      const item = state.items.find((item) => item.id === itemId);
+      if (item) {
+        item.seatNumber = seatNumber;
+      }
+    }),
+
+  updateItemInstructions: (itemId, instructions) =>
+    set((state) => {
+      const item = state.items.find((item) => item.id === itemId);
+      if (item) {
+        item.specialInstructions = instructions;
+      }
+    }),
+
   clearCart: () =>
     set((state) => {
       state.items = [];
@@ -100,6 +201,15 @@ export const createCartSlice = (set, get) => ({
       state.discount = 0;
       state.discountType = 'percentage';
       state.note = '';
+      state.tableId = null;
+      state.tableName = null;
+      state.serviceType = 'dine_in';
+      state.serverId = null;
+      state.serverName = null;
+      state.tip = 0;
+      state.tipType = 'percentage';
+      state.splitPayment = false;
+      state.splitPayments = [];
     }),
 
   // Computed values (getters)
@@ -127,12 +237,26 @@ export const createCartSlice = (set, get) => ({
     return (taxableAmount * taxRate) / 100;
   },
 
+  getTipAmount: () => {
+    const { tip, tipType } = get();
+    const subtotal = get().getSubtotal();
+    const discountAmount = get().getDiscountAmount();
+    const taxAmount = get().getTaxAmount();
+    const amountBeforeTip = subtotal - discountAmount + taxAmount;
+
+    if (tipType === 'percentage') {
+      return (amountBeforeTip * tip) / 100;
+    }
+    return tip;
+  },
+
   getTotal: () => {
     const subtotal = get().getSubtotal();
     const discountAmount = get().getDiscountAmount();
     const taxAmount = get().getTaxAmount();
+    const tipAmount = get().getTipAmount();
 
-    return subtotal - discountAmount + taxAmount;
+    return subtotal - discountAmount + taxAmount + tipAmount;
   },
 
   getItemCount: () => {

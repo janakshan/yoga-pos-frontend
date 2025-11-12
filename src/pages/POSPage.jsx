@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Zap, ArrowRight } from 'lucide-react';
 import { ProductSelector, Cart, CheckoutPanel } from '../features/pos/components';
+import RestaurantPOSHeader from '../features/pos/components/RestaurantPOSHeader';
+import QuickReorder from '../features/pos/components/QuickReorder';
 
 /**
  * POSPage
@@ -13,26 +15,33 @@ const POSPage = () => {
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-4">
-        <div className="flex items-center justify-between">
+      {/* Restaurant POS Header */}
+      <RestaurantPOSHeader />
+
+      {/* Quick Actions Bar */}
+      <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-3">
+        <div className="flex items-center justify-between gap-3">
           <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Point of Sale</h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">Point of Sale</h1>
+            <p className="text-xs text-gray-500 mt-0.5">
               Select products and complete transactions
             </p>
           </div>
 
-          {/* Fast Checkout Link */}
-          <button
-            onClick={() => navigate('/pos/fast-checkout')}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
-          >
-            <Zap className="h-5 w-5" />
-            <span className="hidden sm:inline font-semibold">Fast Checkout Mode</span>
-            <span className="sm:hidden font-semibold">Fast Mode</span>
-            <ArrowRight className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Quick Re-order */}
+            <QuickReorder />
+
+            {/* Fast Checkout Link */}
+            <button
+              onClick={() => navigate('/pos/fast-checkout')}
+              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+            >
+              <Zap className="h-5 w-5" />
+              <span className="hidden sm:inline font-semibold">Fast Checkout</span>
+              <span className="sm:hidden font-semibold">Fast</span>
+            </button>
+          </div>
         </div>
       </div>
 

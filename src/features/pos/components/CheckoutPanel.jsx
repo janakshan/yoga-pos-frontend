@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCard, DollarSign, Smartphone, Building2, Receipt, User } from 'lucide-react';
+import { CreditCard, DollarSign, Smartphone, Building2, Receipt, User, Users as UsersIcon } from 'lucide-react';
 import { usePos } from '../hooks/usePos';
 import { useCustomers } from '../../customers/hooks/useCustomers';
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABELS } from '../types';
@@ -7,6 +7,9 @@ import { formatCurrency, calculateChange } from '../utils/calculations';
 import toast from 'react-hot-toast';
 import BrandedReceipt from '../../../components/receipts/BrandedReceipt';
 import PrintModal from '../../../components/common/PrintModal';
+import TippingPanel from './TippingPanel';
+import SplitPaymentModal from './SplitPaymentModal';
+import { useStore } from '../../../store';
 
 /**
  * CheckoutPanel Component
@@ -36,8 +39,15 @@ export const CheckoutPanel = () => {
   const [lastTransaction, setLastTransaction] = useState(null);
   const [cashReceived, setCashReceived] = useState('');
   const [useCustomerSelection, setUseCustomerSelection] = useState(true);
+  const [showSplitPayment, setShowSplitPayment] = useState(false);
+
+  const splitPayment = useStore((state) => state.splitPayment);
+  const setSplitPaymentEnabled = useStore((state) => state.setSplitPayment);
+  const splitPayments = useStore((state) => state.splitPayments);
+  const getTipAmount = useStore((state) => state.getTipAmount);
 
   const totals = getCartTotals();
+  const tipAmount = getTipAmount();
 
   // Fetch customers on mount
   useEffect(() => {
@@ -77,8 +87,15 @@ export const CheckoutPanel = () => {
       return;
     }
 
-    // Validate cash payment
-    if (paymentMethod === PAYMENT_METHODS.CASH) {
+    // Validate split payment
+    if (splitPayment && splitPayments.length === 0) {
+      toast.error('Please configure split payment');
+      setShowSplitPayment(true);
+      return;
+    }
+
+    // Validate cash payment (if not split)
+    if (!splitPayment && paymentMethod === PAYMENT_METHODS.CASH) {
       const received = parseFloat(cashReceived);
       if (!received || received < totals.total) {
         toast.error('Insufficient cash amount');
@@ -110,6 +127,11 @@ export const CheckoutPanel = () => {
     } catch (error) {
       console.error('Checkout error:', error);
     }
+  };
+
+  const handleSplitPaymentComplete = (payments) => {
+    setSplitPaymentEnabled(false);
+    toast.success('Split payment configured');
   };
 
   const handlePrintReceipt = () => {
@@ -204,8 +226,9 @@ export const CheckoutPanel = () => {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">Checkout</h2>
+    <>
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Checkout</h2>
 
       {/* Customer Information */}
       <div className="mb-6">
@@ -309,36 +332,79 @@ export const CheckoutPanel = () => {
         )}
       </div>
 
+      {/* Tipping Panel */}
+      <div className="mb-6">
+        <TippingPanel />
+      </div>
+
       {/* Payment Method */}
       <div className="mb-6">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">
-          Payment Method
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          {Object.entries(PAYMENT_METHODS).map(([key, value]) => {
-            const Icon = paymentMethodIcons[value];
-            return (
-              <button
-                key={value}
-                onClick={() => updatePaymentMethod(value)}
-                className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                  paymentMethod === value
-                    ? 'border-blue-600 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="text-sm font-medium">
-                  {PAYMENT_METHOD_LABELS[value]}
-                </span>
-              </button>
-            );
-          })}
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-sm font-semibold text-gray-700">
+            Payment Method
+          </h3>
+          <button
+            onClick={() => {
+              setSplitPaymentEnabled(!splitPayment);
+              if (!splitPayment) {
+                setShowSplitPayment(true);
+              }
+            }}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg border-2 transition-all text-sm font-medium ${
+              splitPayment
+                ? 'border-purple-600 bg-purple-50 text-purple-700'
+                : 'border-gray-300 hover:border-gray-400 text-gray-700'
+            }`}
+          >
+            <UsersIcon className="h-4 w-4" />
+            Split Payment
+          </button>
         </div>
+
+        {splitPayment ? (
+          <div className="bg-purple-50 rounded-lg p-4 border-2 border-purple-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-semibold text-purple-900">Split Payment Enabled</span>
+              <button
+                onClick={() => setShowSplitPayment(true)}
+                className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                Configure
+              </button>
+            </div>
+            <div className="text-sm text-purple-700">
+              {splitPayments.length > 0
+                ? `${splitPayments.length} payment(s) configured`
+                : 'Click Configure to set up split payment'}
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {Object.entries(PAYMENT_METHODS).map(([key, value]) => {
+              const Icon = paymentMethodIcons[value];
+              return (
+                <button
+                  key={value}
+                  onClick={() => updatePaymentMethod(value)}
+                  className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                    paymentMethod === value
+                      ? 'border-blue-600 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                  }`}
+                >
+                  <Icon className="h-5 w-5" />
+                  <span className="text-sm font-medium">
+                    {PAYMENT_METHOD_LABELS[value]}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Cash Payment Input */}
-      {paymentMethod === PAYMENT_METHODS.CASH && (
+      {!splitPayment && paymentMethod === PAYMENT_METHODS.CASH && (
         <div className="mb-6">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Cash Received
@@ -401,7 +467,16 @@ export const CheckoutPanel = () => {
       >
         {isLoading ? 'Processing...' : `Complete Sale (${formatCurrency(totals.total)})`}
       </button>
-    </div>
+      </div>
+
+      {/* Split Payment Modal */}
+      <SplitPaymentModal
+        isOpen={showSplitPayment}
+        onClose={() => setShowSplitPayment(false)}
+        totalAmount={totals.total}
+        onComplete={handleSplitPaymentComplete}
+      />
+    </>
   );
 };
 

@@ -1,7 +1,8 @@
-import React from 'react';
-import { ShoppingCart, Trash2, Plus, Minus, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingCart, Trash2, Plus, Minus, X, MessageSquare, Users, ChefHat, Edit2 } from 'lucide-react';
 import { usePos } from '../hooks/usePos';
 import { formatCurrency } from '../utils/calculations';
+import { useStore } from '../../../store';
 
 /**
  * Cart Component
@@ -20,14 +21,42 @@ export const Cart = () => {
     updateDiscountPercentage,
   } = usePos();
 
+  const updateItemInstructions = useStore((state) => state.updateItemInstructions);
+  const updateItemCourse = useStore((state) => state.updateItemCourse);
+  const updateItemSeat = useStore((state) => state.updateItemSeat);
+  const getTipAmount = useStore((state) => state.getTipAmount);
+
+  const [editingInstructions, setEditingInstructions] = useState(null);
+  const [instructionsText, setInstructionsText] = useState('');
+
   const totals = getCartTotals();
   const itemCount = getCartItemCount();
+  const tipAmount = getTipAmount();
 
   const handleQuantityChange = (cartItemId, currentQuantity, change) => {
     const newQuantity = currentQuantity + change;
     if (newQuantity >= 1) {
       handleUpdateQuantity(cartItemId, newQuantity);
     }
+  };
+
+  const handleEditInstructions = (item) => {
+    setEditingInstructions(item.id);
+    setInstructionsText(item.specialInstructions || '');
+  };
+
+  const handleSaveInstructions = (itemId) => {
+    updateItemInstructions(itemId, instructionsText);
+    setEditingInstructions(null);
+    setInstructionsText('');
+  };
+
+  const courses = {
+    1: 'Appetizer',
+    2: 'Soup/Salad',
+    3: 'Main',
+    4: 'Dessert',
+    5: 'Beverage',
   };
 
   return (
@@ -73,6 +102,86 @@ export const Cart = () => {
                       {item.name}
                     </h3>
                     <p className="text-xs text-gray-500">{item.category}</p>
+
+                    {/* Restaurant-specific badges */}
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {item.course && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                          <ChefHat className="h-3 w-3" />
+                          {courses[item.course]}
+                        </span>
+                      )}
+                      {item.seatNumber && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                          <Users className="h-3 w-3" />
+                          Seat {item.seatNumber}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Modifiers */}
+                    {item.modifiers && item.modifiers.length > 0 && (
+                      <div className="mt-2 space-y-0.5">
+                        {item.modifiers.map((modifier, idx) => (
+                          <div key={idx} className="text-xs text-gray-600 flex items-center justify-between">
+                            <span>+ {modifier.name}</span>
+                            {modifier.price > 0 && (
+                              <span className="text-gray-500">
+                                +{formatCurrency(modifier.price)}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Special Instructions */}
+                    {editingInstructions === item.id ? (
+                      <div className="mt-2">
+                        <textarea
+                          value={instructionsText}
+                          onChange={(e) => setInstructionsText(e.target.value)}
+                          className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-orange-500 focus:border-transparent"
+                          rows={2}
+                          placeholder="Special instructions..."
+                        />
+                        <div className="flex gap-1 mt-1">
+                          <button
+                            onClick={() => handleSaveInstructions(item.id)}
+                            className="text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingInstructions(null)}
+                            className="text-xs px-2 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : item.specialInstructions ? (
+                      <div className="mt-2 flex items-start gap-1">
+                        <MessageSquare className="h-3 w-3 text-orange-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-gray-600 flex-1">
+                          {item.specialInstructions}
+                        </p>
+                        <button
+                          onClick={() => handleEditInstructions(item)}
+                          className="text-orange-500 hover:text-orange-700"
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleEditInstructions(item)}
+                        className="mt-1 text-xs text-orange-600 hover:text-orange-700 flex items-center gap-1"
+                      >
+                        <MessageSquare className="h-3 w-3" />
+                        Add instructions
+                      </button>
+                    )}
                   </div>
                   <button
                     onClick={() => handleRemoveFromCart(item.id)}
@@ -83,7 +192,7 @@ export const Cart = () => {
                 </div>
 
                 {/* Quantity and Price */}
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center mt-3">
                   {/* Quantity Controls */}
                   <div className="flex items-center gap-2">
                     <button
@@ -168,6 +277,15 @@ export const Cart = () => {
                 {formatCurrency(totals.tax)}
               </span>
             </div>
+
+            {tipAmount > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-600">Tip:</span>
+                <span className="font-medium text-pink-600">
+                  {formatCurrency(tipAmount)}
+                </span>
+              </div>
+            )}
 
             <div className="border-t border-gray-300 pt-2 mt-2">
               <div className="flex justify-between">
