@@ -130,6 +130,7 @@ function App() {
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
+          <Route path="tables" element={<PlaceholderPage module="Restaurant Tables" />} />
         </Route>
 
         {/* Catch all - redirect to dashboard */}

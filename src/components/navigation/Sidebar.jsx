@@ -18,8 +18,11 @@ import {
   TruckIcon,
   BuildingOffice2Icon,
   ArrowRightOnRectangleIcon,
+  TableCellsIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
+import { useBusinessType } from '../../hooks/useBusinessType';
+import { BUSINESS_TYPES } from '../../types/business.types';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
@@ -33,7 +36,8 @@ const navigationItems = [
   { name: 'Inventory', path: '/inventory', icon: ArchiveBoxIcon },
   { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
   { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
-  { name: 'Bookings', path: '/bookings', icon: CalendarIcon },
+  { name: 'Bookings', path: '/bookings', icon: CalendarIcon, businessType: BUSINESS_TYPES.YOGA },
+  { name: 'Tables', path: '/tables', icon: TableCellsIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Financial', path: '/financial', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
   { name: 'Settings', path: '/settings', icon: Cog6ToothIcon },
@@ -47,6 +51,15 @@ const navigationItems = [
 const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) => {
   const navigate = useNavigate();
   const { logout, isLoading } = useAuth();
+  const { businessType } = useBusinessType();
+
+  // Filter navigation items based on business type
+  const visibleNavigationItems = navigationItems.filter((item) => {
+    // If no businessType is specified for the item, show it for all business types
+    if (!item.businessType) return true;
+    // Otherwise, only show if it matches the current business type
+    return item.businessType === businessType;
+  });
 
   const handleLinkClick = () => {
     // Close mobile menu when a link is clicked
@@ -83,7 +96,7 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
 
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white">
-        {navigationItems.map((item) => {
+        {visibleNavigationItems.map((item) => {
           const Icon = item.icon;
           return (
             <NavLink
