@@ -20,6 +20,7 @@ import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
 import FinancialDashboard from './pages/FinancialDashboard';
 import SettingsPage from './features/settings/components/SettingsPage';
+import { OrdersList, OrderDetails, NewOrder, OrdersDashboard } from './pages/restaurant-orders';
 import TablesPage from './pages/TablesPage';
 import FloorPlanPage from './pages/FloorPlanPage';
 import autoBackupScheduler from './services/backup/autoBackupScheduler';
@@ -110,6 +111,12 @@ function App() {
           {/* POS (Point of Sale) */}
           <Route path="pos" element={<POSPage />} />
           <Route path="pos/fast-checkout" element={<FastCheckoutPOS />} />
+
+          {/* Restaurant Orders */}
+          <Route path="orders" element={<OrdersList />} />
+          <Route path="orders/new" element={<NewOrder />} />
+          <Route path="orders/:orderId" element={<OrderDetails />} />
+          <Route path="orders-dashboard" element={<OrdersDashboard />} />
 
           {/* Customers Management */}
           <Route path="customers" element={<CustomersPage />} />
