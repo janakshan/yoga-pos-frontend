@@ -35,6 +35,7 @@ import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/flo
 import { createRestaurantSlice } from '../features/restaurant/store/restaurantSlice.js';
 import { createModifierSlice } from '../features/products/store/modifierSlice.js';
 import { createRestaurantCategorySlice } from '../features/products/store/restaurantCategorySlice.js';
+import { createQROrderingSlice } from '../features/qr-ordering/store/qrOrderingSlice.js';
 
 /**
  * Main Application Store
@@ -75,6 +76,7 @@ export const useStore = create(
         ...createRestaurantSlice(set, get, api),
         ...createModifierSlice(set, get, api),
         ...createRestaurantCategorySlice(set, get, api),
+        ...createQROrderingSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -219,6 +221,12 @@ export const useStore = create(
           tables: state.tables,
           restaurantOrders: state.restaurantOrders,
           activeTableId: state.activeTableId,
+
+          // QR Ordering (persist QR codes and current session)
+          qrCodes: state.qrOrdering?.qrCodes,
+          currentQRCode: state.qrOrdering?.currentQRCode,
+          currentSession: state.qrOrdering?.currentSession,
+          customerCart: state.qrOrdering?.customerCart,
         }),
       }
     ),
