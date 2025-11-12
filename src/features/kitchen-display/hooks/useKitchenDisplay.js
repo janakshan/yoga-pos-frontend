@@ -6,8 +6,8 @@
 
 import { useEffect, useCallback, useRef } from 'react';
 import { useStore } from '@/store';
-import { kitchenService } from '../services/kitchenService';
-import { socketService } from '@/features/qr-ordering/services/socketService';
+import kitchenService from '../services/kitchenService';
+import socketService from '@/features/qr-ordering/services/socketService';
 import toast from 'react-hot-toast';
 
 /**

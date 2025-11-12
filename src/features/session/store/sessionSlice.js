@@ -2,7 +2,7 @@
  * @fileoverview Session state management slice
  */
 
-import { sessionService } from '../services/sessionService.js';
+import sessionService from '../services/sessionService.js';
 
 /**
  * Create session slice

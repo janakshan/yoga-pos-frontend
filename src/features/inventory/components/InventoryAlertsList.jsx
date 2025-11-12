@@ -8,7 +8,7 @@ import {
   Filter,
   RefreshCw
 } from 'lucide-react';
-import { inventoryAlertsService } from '../services/inventoryAlertsService';
+import inventoryAlertsService from '../services/inventoryAlertsService';
 
 /**
  * Inventory Alerts List Component

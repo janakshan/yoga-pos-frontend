@@ -4,7 +4,7 @@
 
 import { useCallback } from 'react';
 import { useStore } from '../../../store/index.js';
-import { permissionService } from '../services/permissionService.js';
+import permissionService from '../services/permissionService.js';
 import toast from 'react-hot-toast';
 
 /**

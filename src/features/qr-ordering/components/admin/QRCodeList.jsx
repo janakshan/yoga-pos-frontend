@@ -16,7 +16,7 @@ import {
   TrashIcon,
   CheckCircleIcon,
   XCircleIcon,
-  DownloadIcon,
+  ArrowDownTrayIcon,
   PrinterIcon
 } from '@heroicons/react/24/outline';
 import { useStore } from '@/store';
@@ -294,7 +294,7 @@ const QRCodeList = () => {
                     className="flex-1 flex items-center justify-center px-2 py-2 border border-gray-300 rounded-md text-xs hover:bg-gray-50"
                     title="Download"
                   >
-                    <DownloadIcon className="h-4 w-4" />
+                    <ArrowDownTrayIcon className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handlePrint(qrCode)}

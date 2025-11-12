@@ -5,7 +5,7 @@
 
 import { useCallback } from 'react';
 import { useStore } from '@/store';
-import { floorplanService } from '../services/floorplanService';
+import floorplanService from '../services/floorplanService';
 import toast from 'react-hot-toast';
 
 /**

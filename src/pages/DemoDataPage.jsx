@@ -17,9 +17,9 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { branchService } from '../features/branch/services/branchService';
-import { pricingService } from '../features/pricing/services/pricingService';
-import { inventoryService } from '../features/inventory/services/inventoryService';
-import { reportService } from '../features/reports/services/reportService';
+import pricingService from '../features/pricing/services/pricingService';
+import inventoryService from '../features/inventory/services/inventoryService';
+import reportService from '../features/reports/services/reportService';
 
 /**
  * DemoDataPage Component

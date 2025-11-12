@@ -11,7 +11,7 @@ import {
   UserGroupIcon,
   ShoppingCartIcon,
   CurrencyDollarIcon,
-  TrendingUpIcon,
+  ArrowTrendingUpIcon,
   ClockIcon,
   ArrowPathIcon
 } from '@heroicons/react/24/outline';
@@ -59,7 +59,7 @@ const QRAnalyticsDashboard = () => {
         </div>
         {trend && (
           <div className={`flex items-center text-sm ${trend > 0 ? 'text-green-600' : 'text-red-600'}`}>
-            <TrendingUpIcon className={`h-4 w-4 mr-1 ${trend < 0 ? 'transform rotate-180' : ''}`} />
+            <ArrowTrendingUpIcon className={`h-4 w-4 mr-1 ${trend < 0 ? 'transform rotate-180' : ''}`} />
             {Math.abs(trend)}%
           </div>
         )}
@@ -291,7 +291,7 @@ const QRAnalyticsDashboard = () => {
 
             <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow p-6 text-white">
               <div className="flex items-center mb-2">
-                <TrendingUpIcon className="h-5 w-5 mr-2" />
+                <ArrowTrendingUpIcon className="h-5 w-5 mr-2" />
                 <h4 className="font-semibold">Best Day</h4>
               </div>
               <p className="text-2xl font-bold mb-1">Friday</p>

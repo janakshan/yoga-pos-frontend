@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { PlusIcon, FireIcon, LeafIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, FireIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import ProductModal from './ProductModal';
 
@@ -59,7 +59,7 @@ const ProductCard = ({ product }) => {
             )}
             {product.isVegetarian && (
               <span className="px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full flex items-center">
-                <LeafIcon className="h-3 w-3 mr-1" />
+                <SparklesIcon className="h-3 w-3 mr-1" />
                 Veg
               </span>
             )}

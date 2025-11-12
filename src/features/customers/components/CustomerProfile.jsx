@@ -15,7 +15,7 @@ import {
   Tag
 } from 'lucide-react';
 import { useCustomerCredit, useCustomerNotes, usePurchaseHistory } from '../hooks';
-import { customerService } from '../services/customerService';
+import customerService from '../services/customerService';
 import {
   CUSTOMER_TYPE_LABELS,
   STATUS_LABELS,

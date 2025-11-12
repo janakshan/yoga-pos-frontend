@@ -1,5 +1,5 @@
 import { useStore } from '../../../store';
-import { orderService } from '../services/orderService';
+import orderService from '../services/orderService';
 import { useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 

@@ -2,7 +2,7 @@
  * @fileoverview Audit log state management slice
  */
 
-import { auditService } from '../services/auditService.js';
+import auditService from '../services/auditService.js';
 
 /**
  * Create audit slice

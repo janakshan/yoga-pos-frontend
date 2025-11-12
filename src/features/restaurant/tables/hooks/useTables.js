@@ -5,7 +5,7 @@
 
 import { useCallback } from 'react';
 import { useStore } from '@/store';
-import { tableService } from '../services/tableService';
+import tableService from '../services/tableService';
 import toast from 'react-hot-toast';
 
 /**

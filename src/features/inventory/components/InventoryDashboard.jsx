@@ -11,8 +11,8 @@ import {
   BarChart3,
   AlertCircle
 } from 'lucide-react';
-import { inventoryService } from '../services/inventoryService';
-import { inventoryAlertsService } from '../services/inventoryAlertsService';
+import inventoryService from '../services/inventoryService';
+import inventoryAlertsService from '../services/inventoryAlertsService';
 
 /**
  * Inventory Dashboard Component

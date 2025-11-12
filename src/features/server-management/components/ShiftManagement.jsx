@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, LogIn, LogOut, Coffee, Calendar, User, Timer } from 'lucide-react';
 import { useServerManagement } from '../hooks/useServerManagement';
-import useStore from '../../../store';
+import { useStore } from '../../../store';
 import { SHIFT_STATUS, formatShiftTime, getShiftStatusColor } from '../types/serverManagement.types';
 import Button from '../../../components/common/Button';
 import Card from '../../../components/common/Card';

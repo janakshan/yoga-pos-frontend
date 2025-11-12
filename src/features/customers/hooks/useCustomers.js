@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useStore } from '../../../store/index.js';
 import toast from 'react-hot-toast';
-import { customerService } from '../services/customerService.js';
+import customerService from '../services/customerService.js';
 
 /**
  * Custom hook for customer operations

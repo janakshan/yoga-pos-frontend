@@ -4,7 +4,7 @@
 
 import { useCallback } from 'react';
 import { useStore } from '../../../store/index.js';
-import { roleService } from '../services/roleService.js';
+import roleService from '../services/roleService.js';
 import toast from 'react-hot-toast';
 
 /**

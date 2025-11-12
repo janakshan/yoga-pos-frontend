@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useStore } from '../../../store/index.js';
-import { productService } from '../services/productService.js';
+import productService from '../services/productService.js';
 import toast from 'react-hot-toast';
 
 /**

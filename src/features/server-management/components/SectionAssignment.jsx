@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, User, Users, MapPin } from 'lucide-react';
 import { useServerManagement } from '../hooks/useServerManagement';
-import useStore from '../../../store';
+import { useStore } from '../../../store';
 import { getSectionTypeName, SECTION_TYPE } from '../types/serverManagement.types';
 import Button from '../../../components/common/Button';
 import Card from '../../../components/common/Card';

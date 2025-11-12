@@ -16,7 +16,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useServerManagement } from '../hooks/useServerManagement';
-import useStore from '../../../store';
+import { useStore } from '../../../store';
 import Button from '../../../components/common/Button';
 import Card from '../../../components/common/Card';
 import Badge from '../../../components/common/Badge';

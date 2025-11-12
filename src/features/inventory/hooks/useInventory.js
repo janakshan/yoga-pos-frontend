@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useStore } from '../../../store/index.js';
-import { inventoryService } from '../services/inventoryService.js';
+import inventoryService from '../services/inventoryService.js';
 import toast from 'react-hot-toast';
 
 /**

@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { XMarkIcon, MinusIcon, PlusIcon, FireIcon, LeafIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, MinusIcon, PlusIcon, FireIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import { useStore } from '@/store';
 import { createCartItem } from '../../types/qr.types';
 import toast from 'react-hot-toast';
@@ -146,7 +146,7 @@ const ProductModal = ({ product, isOpen, onClose }) => {
             )}
             {product.isVegetarian && (
               <span className="px-3 py-1 bg-green-500 text-white text-sm font-medium rounded-full flex items-center">
-                <LeafIcon className="h-4 w-4 mr-1" />
+                <SparklesIcon className="h-4 w-4 mr-1" />
                 Vegetarian
               </span>
             )}

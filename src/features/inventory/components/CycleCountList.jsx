@@ -10,7 +10,7 @@ import {
   RefreshCw,
   Plus
 } from 'lucide-react';
-import { cycleCountService } from '../services/cycleCountService';
+import cycleCountService from '../services/cycleCountService';
 
 /**
  * Cycle Count List Component
