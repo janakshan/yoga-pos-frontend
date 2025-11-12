@@ -29,6 +29,8 @@ import {
   createTransactionSlice,
   createFinancialSlice,
 } from '../features/financial/store/index.js';
+import { createTableSlice } from '../features/restaurant/tables/store/tableSlice.js';
+import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/floorplanSlice.js';
 import { createRestaurantSlice } from '../features/restaurant/store/restaurantSlice.js';
 
 /**
@@ -64,6 +66,8 @@ export const useStore = create(
         ...createExpenseSlice(set, get, api),
         ...createTransactionSlice(set, get, api),
         ...createFinancialSlice(set, get, api),
+        ...createTableSlice(set, get, api),
+        ...createFloorPlanSlice(set, get, api),
         ...createRestaurantSlice(set, get, api),
       })),
       {
@@ -193,6 +197,15 @@ export const useStore = create(
           backupStatus: state.backupStatus,
           backupStats: state.backupStats,
 
+          // Restaurant - Tables
+          tables: state.tables,
+          tableStats: state.tableStats,
+          sections: state.sections,
+          floors: state.floors,
+
+          // Restaurant - Floor Plans
+          floorPlans: state.floorPlans,
+          activeFloorPlan: state.activeFloorPlan,
           // Restaurant (persist tables and orders)
           tables: state.tables,
           restaurantOrders: state.restaurantOrders,
