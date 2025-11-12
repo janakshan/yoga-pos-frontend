@@ -31,6 +31,7 @@ import {
 } from '../features/financial/store/index.js';
 import { createTableSlice } from '../features/restaurant/tables/store/tableSlice.js';
 import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/floorplanSlice.js';
+import { createRestaurantSlice } from '../features/restaurant/store/restaurantSlice.js';
 
 /**
  * Main Application Store
@@ -67,6 +68,7 @@ export const useStore = create(
         ...createFinancialSlice(set, get, api),
         ...createTableSlice(set, get, api),
         ...createFloorPlanSlice(set, get, api),
+        ...createRestaurantSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -82,6 +84,7 @@ export const useStore = create(
           isSidebarCollapsed: state.isSidebarCollapsed,
 
           // Settings (persist all settings)
+          businessType: state.businessType,
           currency: state.currency,
           currencySymbol: state.currencySymbol,
           locale: state.locale,
@@ -95,6 +98,7 @@ export const useStore = create(
           receiptFooter: state.receiptFooter,
           receiptHeader: state.receiptHeader,
           businessInfo: state.businessInfo,
+          restaurantSettings: state.restaurantSettings,
           currencies: state.currencies,
           baseCurrency: state.baseCurrency,
           enableMultiCurrency: state.enableMultiCurrency,
@@ -202,6 +206,10 @@ export const useStore = create(
           // Restaurant - Floor Plans
           floorPlans: state.floorPlans,
           activeFloorPlan: state.activeFloorPlan,
+          // Restaurant (persist tables and orders)
+          tables: state.tables,
+          restaurantOrders: state.restaurantOrders,
+          activeTableId: state.activeTableId,
         }),
       }
     ),
