@@ -33,6 +33,8 @@ import { createOrderSlice } from '../features/restaurant-orders/store/orderSlice
 import { createTableSlice } from '../features/restaurant/tables/store/tableSlice.js';
 import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/floorplanSlice.js';
 import { createRestaurantSlice } from '../features/restaurant/store/restaurantSlice.js';
+import { createModifierSlice } from '../features/products/store/modifierSlice.js';
+import { createRestaurantCategorySlice } from '../features/products/store/restaurantCategorySlice.js';
 
 /**
  * Main Application Store
@@ -71,6 +73,8 @@ export const useStore = create(
         ...createTableSlice(set, get, api),
         ...createFloorPlanSlice(set, get, api),
         ...createRestaurantSlice(set, get, api),
+        ...createModifierSlice(set, get, api),
+        ...createRestaurantCategorySlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
