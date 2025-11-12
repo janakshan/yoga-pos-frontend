@@ -32,6 +32,8 @@ import Checkout from './features/qr-ordering/components/customer/Checkout';
 import OrderTracking from './features/qr-ordering/components/customer/OrderTracking';
 import QRCodeList from './features/qr-ordering/components/admin/QRCodeList';
 import QRAnalyticsDashboard from './features/qr-ordering/components/admin/QRAnalyticsDashboard';
+// Kitchen Display System
+import KitchenDisplayPage from './pages/KitchenDisplayPage';
 import './App.css';
 
 function App() {
@@ -157,6 +159,9 @@ function App() {
           {/* QR Ordering Management */}
           <Route path="qr-codes" element={<QRCodeList />} />
           <Route path="qr-analytics" element={<QRAnalyticsDashboard />} />
+
+          {/* Kitchen Display System */}
+          <Route path="kitchen-display" element={<KitchenDisplayPage />} />
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />

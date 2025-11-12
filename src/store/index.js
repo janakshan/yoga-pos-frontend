@@ -36,6 +36,7 @@ import { createRestaurantSlice } from '../features/restaurant/store/restaurantSl
 import { createModifierSlice } from '../features/products/store/modifierSlice.js';
 import { createRestaurantCategorySlice } from '../features/products/store/restaurantCategorySlice.js';
 import { createQROrderingSlice } from '../features/qr-ordering/store/qrOrderingSlice.js';
+import { createKitchenDisplaySlice } from '../features/kitchen-display/store/kitchenDisplaySlice.js';
 
 /**
  * Main Application Store
@@ -77,6 +78,7 @@ export const useStore = create(
         ...createModifierSlice(set, get, api),
         ...createRestaurantCategorySlice(set, get, api),
         ...createQROrderingSlice(set, get, api),
+        ...createKitchenDisplaySlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -227,6 +229,14 @@ export const useStore = create(
           currentQRCode: state.qrOrdering?.currentQRCode,
           currentSession: state.qrOrdering?.currentSession,
           customerCart: state.qrOrdering?.customerCart,
+
+          // Kitchen Display (persist station settings and view preferences)
+          stations: state.kitchenDisplay?.stations,
+          selectedStation: state.kitchenDisplay?.selectedStation,
+          viewMode: state.kitchenDisplay?.viewMode,
+          sortBy: state.kitchenDisplay?.sortBy,
+          soundEnabled: state.kitchenDisplay?.soundEnabled,
+          notificationsEnabled: state.kitchenDisplay?.notificationsEnabled,
         }),
       }
     ),
