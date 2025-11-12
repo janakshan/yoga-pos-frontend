@@ -64,9 +64,30 @@ const initialState = {
   notificationsEnabled: true,
   lastUpdate: null,
 
-  // Printer Status
-  printers: {},
-  printerStatus: 'connected', // connected, disconnected, error
+  // Hardware Status
+  hardware: {
+    printers: {
+      status: 'disconnected', // connected, disconnected, error
+      devices: [],
+      routing: [],
+      queue: [],
+    },
+    pager: {
+      status: 'disconnected',
+      enabled: false,
+      activePagers: [],
+    },
+    customerDisplay: {
+      status: 'disconnected',
+      enabled: false,
+      currentMessage: { line1: '', line2: '' },
+    },
+    healthStatus: {
+      lastCheck: null,
+      errors: [],
+      warnings: [],
+    },
+  },
 };
 
 /**
@@ -547,6 +568,162 @@ export const createKitchenDisplaySlice = (set, get) => ({
     set(
       produce((state) => {
         state.kitchenDisplay = initialState;
+      })
+    ),
+
+  // ==================== Hardware Management ====================
+
+  /**
+   * Update hardware printer status
+   */
+  setHardwarePrinterStatus: (status, devices = [], routing = []) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.printers = {
+          status,
+          devices,
+          routing,
+          queue: state.kitchenDisplay.hardware.printers.queue,
+        };
+      })
+    ),
+
+  /**
+   * Update printer queue
+   */
+  updatePrinterQueue: (queue) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.printers.queue = queue;
+      })
+    ),
+
+  /**
+   * Update pager status
+   */
+  setHardwarePagerStatus: (status, enabled, activePagers = []) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.pager = {
+          status,
+          enabled,
+          activePagers,
+        };
+      })
+    ),
+
+  /**
+   * Add active pager
+   */
+  addActivePager: (pagerInfo) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.pager.activePagers.push(pagerInfo);
+      })
+    ),
+
+  /**
+   * Remove active pager
+   */
+  removeActivePager: (pagerNumber) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.pager.activePagers =
+          state.kitchenDisplay.hardware.pager.activePagers.filter(
+            (p) => p.pagerNumber !== pagerNumber
+          );
+      })
+    ),
+
+  /**
+   * Update customer display status
+   */
+  setHardwareCustomerDisplayStatus: (status, enabled, currentMessage = null) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.customerDisplay = {
+          status,
+          enabled,
+          currentMessage: currentMessage || state.kitchenDisplay.hardware.customerDisplay.currentMessage,
+        };
+      })
+    ),
+
+  /**
+   * Update customer display message
+   */
+  updateCustomerDisplayMessage: (line1, line2) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.customerDisplay.currentMessage = {
+          line1,
+          line2,
+        };
+      })
+    ),
+
+  /**
+   * Update hardware health status
+   */
+  setHardwareHealthStatus: (healthStatus) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.healthStatus = {
+          ...state.kitchenDisplay.hardware.healthStatus,
+          ...healthStatus,
+        };
+      })
+    ),
+
+  /**
+   * Add hardware error
+   */
+  addHardwareError: (error) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.healthStatus.errors = [
+          ...state.kitchenDisplay.hardware.healthStatus.errors.slice(-9),
+          {
+            ...error,
+            timestamp: new Date(),
+          },
+        ];
+      })
+    ),
+
+  /**
+   * Add hardware warning
+   */
+  addHardwareWarning: (warning) =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.healthStatus.warnings = [
+          ...state.kitchenDisplay.hardware.healthStatus.warnings.slice(-9),
+          {
+            ...warning,
+            timestamp: new Date(),
+          },
+        ];
+      })
+    ),
+
+  /**
+   * Clear hardware errors
+   */
+  clearHardwareErrors: () =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.healthStatus.errors = [];
+      })
+    ),
+
+  /**
+   * Clear hardware warnings
+   */
+  clearHardwareWarnings: () =>
+    set(
+      produce((state) => {
+        state.kitchenDisplay.hardware.healthStatus.warnings = [];
       })
     ),
 });

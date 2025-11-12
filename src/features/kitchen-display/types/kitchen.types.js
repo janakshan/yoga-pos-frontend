@@ -250,6 +250,108 @@ export const METRIC_TYPE = {
  */
 
 /**
+ * Hardware Types
+ */
+export const HARDWARE_TYPE = {
+  PRINTER: 'printer',
+  DISPLAY: 'display',
+  PAGER: 'pager',
+  BUZZER: 'buzzer',
+};
+
+/**
+ * Hardware Connection Types
+ */
+export const CONNECTION_TYPE = {
+  USB: 'usb',
+  NETWORK: 'network',
+  SERIAL: 'serial',
+  BLUETOOTH: 'bluetooth',
+  API: 'api',
+};
+
+/**
+ * Hardware Status
+ */
+export const HARDWARE_STATUS = {
+  ONLINE: 'online',
+  OFFLINE: 'offline',
+  ERROR: 'error',
+  CONNECTING: 'connecting',
+  DISCONNECTED: 'disconnected',
+};
+
+/**
+ * Printer Configuration Type
+ * @typedef {Object} PrinterConfig
+ * @property {string} name - Printer name
+ * @property {string} connectionType - CONNECTION_TYPE
+ * @property {string} ipAddress - IP address for network printers
+ * @property {number} port - Port number for network printers
+ * @property {number} baudRate - Baud rate for serial printers
+ * @property {number} paperWidth - Paper width in characters
+ * @property {boolean} autoCut - Auto-cut paper
+ * @property {boolean} enabled - Enabled status
+ */
+
+/**
+ * Printer Routing Rule Type
+ * @typedef {Object} PrinterRoutingRule
+ * @property {string} station - KITCHEN_STATION
+ * @property {string} printerName - Printer name
+ * @property {number} priority - Priority (higher = primary)
+ * @property {boolean} enabled - Rule enabled
+ */
+
+/**
+ * Pager System Configuration
+ * @typedef {Object} PagerConfig
+ * @property {boolean} enabled - System enabled
+ * @property {string} systemType - CONNECTION_TYPE
+ * @property {string} ipAddress - Network address
+ * @property {number} port - Port number
+ * @property {number} baudRate - Serial baud rate
+ * @property {string} apiEndpoint - API endpoint URL
+ * @property {string} apiKey - API key
+ */
+
+/**
+ * Customer Display Configuration
+ * @typedef {Object} CustomerDisplayConfig
+ * @property {boolean} enabled - Display enabled
+ * @property {string} connectionType - CONNECTION_TYPE
+ * @property {string} ipAddress - Network address
+ * @property {number} port - Port number
+ * @property {number} baudRate - Serial baud rate
+ * @property {number} lines - Number of display lines
+ * @property {number} columns - Number of display columns
+ * @property {number} brightness - Brightness level (0-100)
+ */
+
+/**
+ * Kitchen Display Configuration
+ * @typedef {Object} KitchenDisplayConfig
+ * @property {string} displayId - Display identifier
+ * @property {string} station - Assigned KITCHEN_STATION
+ * @property {string} mode - Display mode (full, compact, expeditor)
+ * @property {boolean} autoAdvance - Auto-advance completed orders
+ * @property {boolean} soundEnabled - Sound notifications
+ * @property {number} fontSize - Font size
+ * @property {string} theme - Display theme
+ */
+
+/**
+ * Hardware Health Check
+ * @typedef {Object} HardwareHealth
+ * @property {string} type - HARDWARE_TYPE
+ * @property {string} name - Hardware name
+ * @property {string} status - HARDWARE_STATUS
+ * @property {Date} lastCheck - Last health check time
+ * @property {number} errorCount - Error count
+ * @property {string} lastError - Last error message
+ */
+
+/**
  * Default Station Configuration
  */
 export const DEFAULT_STATIONS = [
@@ -339,6 +441,105 @@ export const DEFAULT_STATIONS = [
   },
 ];
 
+/**
+ * Default Printer Configurations
+ */
+export const DEFAULT_PRINTERS = [
+  {
+    name: 'Hot Kitchen Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.101',
+    port: 9100,
+    paperWidth: 32,
+    autoCut: true,
+    enabled: true,
+  },
+  {
+    name: 'Cold Kitchen Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.102',
+    port: 9100,
+    paperWidth: 32,
+    autoCut: true,
+    enabled: true,
+  },
+  {
+    name: 'Grill Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.103',
+    port: 9100,
+    paperWidth: 32,
+    autoCut: true,
+    enabled: true,
+  },
+  {
+    name: 'Bar Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.104',
+    port: 9100,
+    paperWidth: 32,
+    autoCut: true,
+    enabled: true,
+  },
+  {
+    name: 'Dessert Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.105',
+    port: 9100,
+    paperWidth: 32,
+    autoCut: true,
+    enabled: true,
+  },
+  {
+    name: 'Expeditor Printer',
+    connectionType: CONNECTION_TYPE.NETWORK,
+    ipAddress: '192.168.1.110',
+    port: 9100,
+    paperWidth: 48,
+    autoCut: true,
+    enabled: true,
+  },
+];
+
+/**
+ * Default Printer Routing Rules
+ */
+export const DEFAULT_PRINTER_ROUTING = [
+  { station: KITCHEN_STATION.HOT_KITCHEN, printerName: 'Hot Kitchen Printer', priority: 1, enabled: true },
+  { station: KITCHEN_STATION.COLD_KITCHEN, printerName: 'Cold Kitchen Printer', priority: 1, enabled: true },
+  { station: KITCHEN_STATION.GRILL, printerName: 'Grill Printer', priority: 1, enabled: true },
+  { station: KITCHEN_STATION.BAR, printerName: 'Bar Printer', priority: 1, enabled: true },
+  { station: KITCHEN_STATION.DESSERT, printerName: 'Dessert Printer', priority: 1, enabled: true },
+  { station: KITCHEN_STATION.PREP, printerName: 'Hot Kitchen Printer', priority: 1, enabled: true },
+];
+
+/**
+ * Default Pager Configuration
+ */
+export const DEFAULT_PAGER_CONFIG = {
+  enabled: false,
+  systemType: CONNECTION_TYPE.NETWORK,
+  ipAddress: '192.168.1.200',
+  port: 8080,
+  baudRate: 9600,
+  apiEndpoint: '',
+  apiKey: '',
+};
+
+/**
+ * Default Customer Display Configuration
+ */
+export const DEFAULT_CUSTOMER_DISPLAY_CONFIG = {
+  enabled: false,
+  connectionType: CONNECTION_TYPE.SERIAL,
+  ipAddress: '192.168.1.201',
+  port: 8080,
+  baudRate: 9600,
+  lines: 2,
+  columns: 20,
+  brightness: 80,
+};
+
 export default {
   KITCHEN_STATION,
   KITCHEN_STATION_LABELS,
@@ -358,4 +559,11 @@ export default {
   PRINTER_ACTION,
   METRIC_TYPE,
   DEFAULT_STATIONS,
+  HARDWARE_TYPE,
+  CONNECTION_TYPE,
+  HARDWARE_STATUS,
+  DEFAULT_PRINTERS,
+  DEFAULT_PRINTER_ROUTING,
+  DEFAULT_PAGER_CONFIG,
+  DEFAULT_CUSTOMER_DISPLAY_CONFIG,
 };
