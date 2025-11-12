@@ -29,6 +29,7 @@ import {
   createTransactionSlice,
   createFinancialSlice,
 } from '../features/financial/store/index.js';
+import { createOrderSlice } from '../features/restaurant-orders/store/orderSlice.js';
 
 /**
  * Main Application Store
@@ -63,6 +64,7 @@ export const useStore = create(
         ...createExpenseSlice(set, get, api),
         ...createTransactionSlice(set, get, api),
         ...createFinancialSlice(set, get, api),
+        ...createOrderSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -188,6 +190,10 @@ export const useStore = create(
           backupSettings: state.backupSettings,
           backupStatus: state.backupStatus,
           backupStats: state.backupStats,
+
+          // Restaurant Orders (persist active orders only)
+          orders: state.orders,
+          activeOrders: state.activeOrders,
         }),
       }
     ),
