@@ -20,6 +20,8 @@ import { SuppliersPage } from './pages/SuppliersPage';
 import { PurchaseOrdersPage } from './pages/PurchaseOrdersPage';
 import FinancialDashboard from './pages/FinancialDashboard';
 import SettingsPage from './features/settings/components/SettingsPage';
+import TablesPage from './pages/TablesPage';
+import FloorPlanPage from './pages/FloorPlanPage';
 import autoBackupScheduler from './services/backup/autoBackupScheduler';
 import { useStore } from './store';
 import './App.css';
@@ -128,8 +130,13 @@ function App() {
           {/* Settings */}
           <Route path="settings" element={<SettingsPage />} />
 
+          {/* Restaurant Management */}
+          <Route path="tables" element={<TablesPage />} />
+          <Route path="floor-plan" element={<FloorPlanPage />} />
+
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
+          <Route path="tables" element={<PlaceholderPage module="Restaurant Tables" />} />
         </Route>
 
         {/* Catch all - redirect to dashboard */}

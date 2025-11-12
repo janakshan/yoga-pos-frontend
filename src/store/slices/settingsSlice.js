@@ -5,6 +5,7 @@
 
 export const createSettingsSlice = (set, get) => ({
   // State
+  businessType: 'yoga', // 'yoga' or 'restaurant'
   currency: 'USD',
   currencySymbol: '$',
   locale: 'en-US',
@@ -52,6 +53,20 @@ export const createSettingsSlice = (set, get) => ({
     logo: null,
   },
 
+  // Restaurant-specific settings
+  restaurantSettings: {
+    enableTableService: false,
+    enableKitchenDisplay: false,
+    enableCourseManagement: false,
+    autoAssignTables: false,
+    defaultServiceCharge: 0,
+    enableTipping: true,
+    tipSuggestions: [10, 15, 20],
+    requireServerAssignment: false,
+    defaultOrderStatus: 'open',
+    enableReservations: false,
+  },
+
   // Hardware settings
   hardware: {
     receiptPrinter: {
@@ -94,6 +109,11 @@ export const createSettingsSlice = (set, get) => ({
   },
 
   // Actions
+  setBusinessType: (businessType) =>
+    set((state) => {
+      state.businessType = businessType;
+    }),
+
   setCurrency: (currency, symbol) =>
     set((state) => {
       state.currency = currency;
@@ -198,6 +218,11 @@ export const createSettingsSlice = (set, get) => ({
       state.businessInfo = { ...state.businessInfo, ...info };
     }),
 
+  updateRestaurantSettings: (settings) =>
+    set((state) => {
+      state.restaurantSettings = { ...state.restaurantSettings, ...settings };
+    }),
+
   updateHardwareSettings: (category, settings) =>
     set((state) => {
       if (state.hardware[category]) {
@@ -214,6 +239,7 @@ export const createSettingsSlice = (set, get) => ({
 
   resetSettings: () =>
     set((state) => {
+      state.businessType = 'yoga';
       state.currency = 'USD';
       state.currencySymbol = '$';
       state.locale = 'en-US';
