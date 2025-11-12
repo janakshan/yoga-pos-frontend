@@ -23,6 +23,7 @@ import {
   Square3Stack3DIcon,
   MapIcon,
   TableCellsIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
 import { useBusinessType } from '../../hooks/useBusinessType';
@@ -38,6 +39,7 @@ const navigationItems = [
   { name: 'Products', path: '/products', icon: CubeIcon },
   { name: 'Customers', path: '/customers', icon: UserIcon },
   { name: 'Inventory', path: '/inventory', icon: ArchiveBoxIcon },
+  { name: 'Recipes', path: '/recipes', icon: BookOpenIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
   { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
   { name: 'Orders Dashboard', path: '/orders-dashboard', icon: RectangleStackIcon },

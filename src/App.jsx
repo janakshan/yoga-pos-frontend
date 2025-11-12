@@ -34,6 +34,13 @@ import QRCodeList from './features/qr-ordering/components/admin/QRCodeList';
 import QRAnalyticsDashboard from './features/qr-ordering/components/admin/QRAnalyticsDashboard';
 // Kitchen Display System
 import KitchenDisplayPage from './pages/KitchenDisplayPage';
+// Recipe Management
+import {
+  RecipeList,
+  RecipeForm,
+  RecipeDetails,
+  RecipeCostingReport,
+} from './features/recipes/components';
 import './App.css';
 
 function App() {
@@ -162,6 +169,13 @@ function App() {
 
           {/* Kitchen Display System */}
           <Route path="kitchen-display" element={<KitchenDisplayPage />} />
+
+          {/* Recipe Management */}
+          <Route path="recipes" element={<RecipeList />} />
+          <Route path="recipes/new" element={<RecipeForm />} />
+          <Route path="recipes/:id" element={<RecipeDetails />} />
+          <Route path="recipes/:id/edit" element={<RecipeForm />} />
+          <Route path="recipes/reports" element={<RecipeCostingReport />} />
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
