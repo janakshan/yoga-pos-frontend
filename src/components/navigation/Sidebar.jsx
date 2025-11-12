@@ -18,6 +18,8 @@ import {
   TruckIcon,
   BuildingOffice2Icon,
   ArrowRightOnRectangleIcon,
+  Square3Stack3DIcon,
+  MapIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
 
@@ -34,6 +36,8 @@ const navigationItems = [
   { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
   { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
   { name: 'Bookings', path: '/bookings', icon: CalendarIcon },
+  { name: 'Tables', path: '/tables', icon: Square3Stack3DIcon },
+  { name: 'Floor Plan', path: '/floor-plan', icon: MapIcon },
   { name: 'Financial', path: '/financial', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
   { name: 'Settings', path: '/settings', icon: Cog6ToothIcon },

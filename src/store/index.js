@@ -29,6 +29,8 @@ import {
   createTransactionSlice,
   createFinancialSlice,
 } from '../features/financial/store/index.js';
+import { createTableSlice } from '../features/restaurant/tables/store/tableSlice.js';
+import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/floorplanSlice.js';
 
 /**
  * Main Application Store
@@ -63,6 +65,8 @@ export const useStore = create(
         ...createExpenseSlice(set, get, api),
         ...createTransactionSlice(set, get, api),
         ...createFinancialSlice(set, get, api),
+        ...createTableSlice(set, get, api),
+        ...createFloorPlanSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -188,6 +192,16 @@ export const useStore = create(
           backupSettings: state.backupSettings,
           backupStatus: state.backupStatus,
           backupStats: state.backupStats,
+
+          // Restaurant - Tables
+          tables: state.tables,
+          tableStats: state.tableStats,
+          sections: state.sections,
+          floors: state.floors,
+
+          // Restaurant - Floor Plans
+          floorPlans: state.floorPlans,
+          activeFloorPlan: state.activeFloorPlan,
         }),
       }
     ),
