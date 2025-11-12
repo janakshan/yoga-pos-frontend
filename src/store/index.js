@@ -30,6 +30,9 @@ import {
   createFinancialSlice,
 } from '../features/financial/store/index.js';
 import { createOrderSlice } from '../features/restaurant-orders/store/orderSlice.js';
+import { createTableSlice } from '../features/restaurant/tables/store/tableSlice.js';
+import { createFloorPlanSlice } from '../features/restaurant/floorplan/store/floorplanSlice.js';
+import { createRestaurantSlice } from '../features/restaurant/store/restaurantSlice.js';
 
 /**
  * Main Application Store
@@ -65,6 +68,9 @@ export const useStore = create(
         ...createTransactionSlice(set, get, api),
         ...createFinancialSlice(set, get, api),
         ...createOrderSlice(set, get, api),
+        ...createTableSlice(set, get, api),
+        ...createFloorPlanSlice(set, get, api),
+        ...createRestaurantSlice(set, get, api),
       })),
       {
         name: 'yoga-pos-storage',
@@ -80,6 +86,7 @@ export const useStore = create(
           isSidebarCollapsed: state.isSidebarCollapsed,
 
           // Settings (persist all settings)
+          businessType: state.businessType,
           currency: state.currency,
           currencySymbol: state.currencySymbol,
           locale: state.locale,
@@ -93,6 +100,7 @@ export const useStore = create(
           receiptFooter: state.receiptFooter,
           receiptHeader: state.receiptHeader,
           businessInfo: state.businessInfo,
+          restaurantSettings: state.restaurantSettings,
           currencies: state.currencies,
           baseCurrency: state.baseCurrency,
           enableMultiCurrency: state.enableMultiCurrency,
@@ -194,6 +202,19 @@ export const useStore = create(
           // Restaurant Orders (persist active orders only)
           orders: state.orders,
           activeOrders: state.activeOrders,
+          // Restaurant - Tables
+          tables: state.tables,
+          tableStats: state.tableStats,
+          sections: state.sections,
+          floors: state.floors,
+
+          // Restaurant - Floor Plans
+          floorPlans: state.floorPlans,
+          activeFloorPlan: state.activeFloorPlan,
+          // Restaurant (persist tables and orders)
+          tables: state.tables,
+          restaurantOrders: state.restaurantOrders,
+          activeTableId: state.activeTableId,
         }),
       }
     ),
