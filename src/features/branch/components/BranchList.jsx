@@ -76,6 +76,23 @@ export const BranchList = ({ onBranchSelect }) => {
     }
   };
 
+  // Handle toggle active
+  const handleToggleActive = async (branch) => {
+    const newStatus = !branch.isActive;
+    const action = newStatus ? 'activate' : 'deactivate';
+
+    if (!window.confirm(`Are you sure you want to ${action} this branch?`)) {
+      return;
+    }
+
+    try {
+      await updateBranch(branch.id, { isActive: newStatus });
+    } catch (error) {
+      // Error is handled in the hook
+      console.error('Toggle active error:', error);
+    }
+  };
+
   // Handle cancel
   const handleCancel = () => {
     setShowForm(false);
@@ -242,6 +259,7 @@ export const BranchList = ({ onBranchSelect }) => {
                     onEdit={handleEdit}
                     onDelete={handleDelete}
                     onSelect={handleBranchSelect}
+                    onToggleActive={handleToggleActive}
                     isSelected={selectedBranch?.id === branch.id}
                   />
                 ))}

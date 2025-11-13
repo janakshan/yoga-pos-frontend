@@ -5,6 +5,7 @@
  */
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Building2,
   MapPin,
@@ -14,6 +15,7 @@ import {
   Users,
   Clock,
   MoreVertical,
+  Eye,
 } from 'lucide-react';
 
 /**
@@ -23,6 +25,7 @@ import {
  * @param {Function} props.onDelete - Delete handler
  * @param {Function} props.onSelect - Select handler
  * @param {Function} props.onAssignManager - Assign manager handler
+ * @param {Function} props.onToggleActive - Toggle active status handler
  * @param {boolean} props.isSelected - Whether branch is selected
  */
 export const BranchCard = ({
@@ -31,8 +34,10 @@ export const BranchCard = ({
   onDelete,
   onSelect,
   onAssignManager,
+  onToggleActive,
   isSelected = false,
 }) => {
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = React.useState(false);
 
   const handleMenuClick = (e) => {
@@ -60,7 +65,22 @@ export const BranchCard = ({
     onAssignManager?.(branch);
   };
 
+  const handleViewDetails = (e) => {
+    e.stopPropagation();
+    setShowMenu(false);
+    navigate(`/branches/${branch.id}`);
+  };
+
+  const handleToggleActive = (e) => {
+    e.stopPropagation();
+    setShowMenu(false);
+    onToggleActive?.(branch);
+  };
+
   const handleCardClick = () => {
+    // Navigate to details page when card is clicked
+    navigate(`/branches/${branch.id}`);
+    // Also trigger the select handler if provided
     onSelect?.(branch);
   };
 
@@ -113,12 +133,27 @@ export const BranchCard = ({
 
               {/* Menu */}
               <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-20 py-1">
+                <button
+                  onClick={handleViewDetails}
+                  className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  <Eye size={16} className="mr-2" />
+                  View Details
+                </button>
                 {onEdit && (
                   <button
                     onClick={handleEdit}
                     className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >
                     Edit
+                  </button>
+                )}
+                {onToggleActive && (
+                  <button
+                    onClick={handleToggleActive}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    {branch.isActive ? 'Deactivate' : 'Activate'}
                   </button>
                 )}
                 {onAssignManager && (

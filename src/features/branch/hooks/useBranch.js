@@ -7,9 +7,15 @@
 
 import { useCallback } from 'react';
 import { useStore } from '@/store';
-import { branchService } from '../services';
+import { branchApiService } from '../services/branchApiService';
+import { branchService as mockBranchService } from '../services/branchService';
 import { authApi } from '@/api/auth.api';
 import toast from 'react-hot-toast';
+
+// Use environment variable to switch between mock and real API
+// Set VITE_USE_MOCK_API=true to use mock data
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === 'true';
+const branchService = USE_MOCK_API ? mockBranchService : branchApiService;
 
 /**
  * Hook for managing branches
@@ -190,7 +196,7 @@ export const useBranch = () => {
    * Assign a manager to a branch
    * @param {string} branchId - Branch ID
    * @param {string} managerId - Manager user ID
-   * @param {string} managerName - Manager name
+   * @param {string} managerName - Manager name (optional, for mock service)
    * @returns {Promise<Object>}
    */
   const assignManager = useCallback(
@@ -198,11 +204,13 @@ export const useBranch = () => {
       try {
         setLoading(true);
         clearError();
-        const updated = await branchService.assignManager(
-          branchId,
-          managerId,
-          managerName
-        );
+
+        // Real API service only needs branchId and managerId
+        // Mock service needs managerName as well
+        const updated = USE_MOCK_API
+          ? await branchService.assignManager(branchId, managerId, managerName)
+          : await branchService.assignManager(branchId, managerId);
+
         updateBranch(branchId, {
           managerId,
           managerName,

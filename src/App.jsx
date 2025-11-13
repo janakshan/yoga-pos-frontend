@@ -7,6 +7,7 @@ import { BUSINESS_TYPES } from './types/business.types';
 import { LoginPage, UnauthorizedPage } from './pages';
 import MainLayout from './layouts/MainLayout';
 import BranchPage from './pages/BranchPage';
+import BranchDetailsPage from './pages/BranchDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
@@ -119,6 +120,7 @@ function App() {
 
           {/* Branch Management */}
           <Route path="branches" element={<BranchPage />} />
+          <Route path="branches/:id" element={<BranchDetailsPage />} />
 
           {/* User & Role Management */}
           <Route path="users" element={<UsersPage />} />
