@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useBranch } from '../hooks';
 import { BranchCard } from './BranchCard';
 import { BranchForm } from './BranchForm';
+import { AssignManagerModal } from './AssignManagerModal';
 import { Search, Plus, Filter, Loader2 } from 'lucide-react';
 
 /**
@@ -30,8 +31,17 @@ export const BranchList = ({ onBranchSelect }) => {
 
   const [showForm, setShowForm] = useState(false);
   const [editingBranch, setEditingBranch] = useState(null);
+  const [showAssignManager, setShowAssignManager] = useState(false);
+  const [assigningBranch, setAssigningBranch] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterActive, setFilterActive] = useState('all'); // 'all', 'active', 'inactive'
+
+  // Mock users for manager assignment - In real app, fetch from API
+  const [users] = useState([
+    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'MANAGER' },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'MANAGER' },
+    { id: '3', name: 'Bob Wilson', email: 'bob@example.com', role: 'ADMIN' },
+  ]);
 
   // Fetch branches on mount
   useEffect(() => {
@@ -91,6 +101,17 @@ export const BranchList = ({ onBranchSelect }) => {
       // Error is handled in the hook
       console.error('Toggle active error:', error);
     }
+  };
+
+  // Handle assign manager
+  const handleAssignManager = (branch) => {
+    setAssigningBranch(branch);
+    setShowAssignManager(true);
+  };
+
+  // Handle assign manager success
+  const handleAssignManagerSuccess = () => {
+    fetchBranches(); // Refresh branches to show updated manager
   };
 
   // Handle cancel
@@ -218,6 +239,19 @@ export const BranchList = ({ onBranchSelect }) => {
         </div>
       )}
 
+      {/* Assign Manager Modal */}
+      {showAssignManager && assigningBranch && (
+        <AssignManagerModal
+          branch={assigningBranch}
+          users={users}
+          onClose={() => {
+            setShowAssignManager(false);
+            setAssigningBranch(null);
+          }}
+          onSuccess={handleAssignManagerSuccess}
+        />
+      )}
+
       {/* Branch Grid */}
       {!isLoading && !showForm && (
         <>
@@ -260,6 +294,7 @@ export const BranchList = ({ onBranchSelect }) => {
                     onDelete={handleDelete}
                     onSelect={handleBranchSelect}
                     onToggleActive={handleToggleActive}
+                    onAssignManager={handleAssignManager}
                     isSelected={selectedBranch?.id === branch.id}
                   />
                 ))}

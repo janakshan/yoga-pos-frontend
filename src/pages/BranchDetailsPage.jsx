@@ -8,7 +8,7 @@
  * - Performance (analytics and metrics)
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeftIcon,
@@ -28,6 +28,7 @@ import {
 import { useBranch } from '../features/branch/hooks';
 import { branchApiService } from '../features/branch/services/branchApiService';
 import { BranchForm } from '../features/branch/components/BranchForm';
+import { AssignManagerModal } from '../features/branch/components/AssignManagerModal';
 import toast from 'react-hot-toast';
 
 const BranchDetailsPage = () => {
@@ -42,44 +43,69 @@ const BranchDetailsPage = () => {
   const [performance, setPerformance] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [showAssignManager, setShowAssignManager] = useState(false);
+
+  // Mock users for manager assignment - In real app, fetch from API
+  const [users] = useState([
+    { id: '1', name: 'John Doe', email: 'john@example.com', role: 'MANAGER' },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'MANAGER' },
+    { id: '3', name: 'Bob Wilson', email: 'bob@example.com', role: 'ADMIN' },
+  ]);
 
   // Fetch branch details
-  useEffect(() => {
-    const fetchBranchDetails = async () => {
-      if (!id) return;
+  const fetchBranchDetails = useCallback(async () => {
+    if (!id) return;
 
-      setLoading(true);
-      try {
-        // Fetch main branch data
-        const branchData = await branchApiService.getById(id);
-        setBranch(branchData);
+    setLoading(true);
+    try {
+      // Fetch main branch data
+      const branchData = await branchApiService.getById(id);
+      console.log('Branch data loaded:', branchData);
+      setBranch(branchData);
 
-        // Fetch additional data in parallel
-        const [settingsData, hoursData, perfData] = await Promise.allSettled([
-          branchApiService.getSettings(id),
-          branchApiService.getOperatingHours(id),
-          branchApiService.getPerformance(id),
-        ]);
+      // Fetch additional data in parallel
+      const [settingsData, hoursData, perfData] = await Promise.allSettled([
+        branchApiService.getSettings(id),
+        branchApiService.getOperatingHours(id),
+        branchApiService.getPerformance(id),
+      ]);
 
-        if (settingsData.status === 'fulfilled') {
-          setBranchSettings(settingsData.value);
+      if (settingsData.status === 'fulfilled') {
+        // Extract settings from the response - handle nested structure
+        // API might return: { settings: { settings: {...} } } or { settings: {...} } or {...}
+        let settings = settingsData.value;
+        if (settings?.settings) {
+          settings = settings.settings;
         }
-        if (hoursData.status === 'fulfilled') {
-          setOperatingHours(hoursData.value);
+        // Check if there's another nested level
+        if (settings?.settings) {
+          settings = settings.settings;
         }
-        if (perfData.status === 'fulfilled') {
-          setPerformance(perfData.value);
-        }
-      } catch (error) {
-        console.error('Error fetching branch details:', error);
-        toast.error('Failed to load branch details');
-      } finally {
-        setLoading(false);
+        setBranchSettings(settings);
+        console.log('Settings loaded:', settings);
       }
-    };
-
-    fetchBranchDetails();
+      if (hoursData.status === 'fulfilled') {
+        // Extract operatingHours from the response if it's nested
+        const hours = hoursData.value?.operatingHours || hoursData.value;
+        setOperatingHours(hours);
+        console.log('Operating hours loaded:', hours);
+      } else if (hoursData.status === 'rejected') {
+        console.error('Failed to load operating hours:', hoursData.reason);
+      }
+      if (perfData.status === 'fulfilled') {
+        setPerformance(perfData.value);
+      }
+    } catch (error) {
+      console.error('Error fetching branch details:', error);
+      toast.error('Failed to load branch details');
+    } finally {
+      setLoading(false);
+    }
   }, [id]);
+
+  useEffect(() => {
+    fetchBranchDetails();
+  }, [fetchBranchDetails]);
 
   const handleEdit = () => {
     setShowEditForm(true);
@@ -122,6 +148,14 @@ const BranchDetailsPage = () => {
       console.error(`Error ${action}ing branch:`, error);
       toast.error(`Failed to ${action} branch`);
     }
+  };
+
+  const handleAssignManager = () => {
+    setShowAssignManager(true);
+  };
+
+  const handleAssignManagerSuccess = () => {
+    fetchBranchDetails(); // Refresh branch data to show updated manager
   };
 
   const handleDelete = async () => {
@@ -191,6 +225,16 @@ const BranchDetailsPage = () => {
         </div>
       )}
 
+      {/* Assign Manager Modal */}
+      {showAssignManager && branch && (
+        <AssignManagerModal
+          branch={branch}
+          users={users}
+          onClose={() => setShowAssignManager(false)}
+          onSuccess={handleAssignManagerSuccess}
+        />
+      )}
+
       {/* Header */}
       <div className="mb-6">
         <button
@@ -234,6 +278,13 @@ const BranchDetailsPage = () => {
                   Inactive
                 </>
               )}
+            </button>
+            <button
+              onClick={handleAssignManager}
+              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <UserIcon className="h-5 w-5 mr-2" />
+              Assign Manager
             </button>
             <button
               onClick={handleEdit}
@@ -282,8 +333,8 @@ const BranchDetailsPage = () => {
       {/* Tab Content */}
       <div>
         {activeTab === 'overview' && <OverviewTab branch={branch} performance={performance} />}
-        {activeTab === 'settings' && <SettingsTab settings={branchSettings || branch.settings} />}
-        {activeTab === 'hours' && <OperatingHoursTab hours={operatingHours || branch.settings?.operatingHours} />}
+        {activeTab === 'settings' && <SettingsTab settings={branchSettings || branch.settings} branchId={id} onUpdate={fetchBranchDetails} />}
+        {activeTab === 'hours' && <OperatingHoursTab hours={operatingHours || branch.settings?.operatingHours} branchId={id} onUpdate={fetchBranchDetails} />}
         {activeTab === 'performance' && <PerformanceTab performance={performance} />}
       </div>
     </div>
@@ -350,15 +401,15 @@ const OverviewTab = ({ branch, performance }) => {
               {branch.email}
             </a>
           </div>
-          {branch.managerId && (
-            <div className="flex items-center">
-              <UserIcon className="h-5 w-5 text-gray-400 mr-3" />
-              <div>
-                <span className="text-gray-500">Manager: </span>
-                <span className="text-gray-900">{branch.managerName || 'Assigned'}</span>
-              </div>
+          <div className="flex items-center">
+            <UserIcon className="h-5 w-5 text-gray-400 mr-3" />
+            <div>
+              <span className="text-gray-500">Manager: </span>
+              <span className="text-gray-900">
+                {branch.managerName || branch.manager?.name || (branch.managerId ? 'Assigned' : 'No manager assigned')}
+              </span>
             </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -385,7 +436,15 @@ const OverviewTab = ({ branch, performance }) => {
 };
 
 // Settings Tab Component
-const SettingsTab = ({ settings }) => {
+const SettingsTab = ({ settings, branchId, onUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(settings || {});
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setFormData(settings || {});
+  }, [settings]);
+
   if (!settings) {
     return (
       <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
@@ -394,66 +453,292 @@ const SettingsTab = ({ settings }) => {
     );
   }
 
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await branchApiService.updateBranchSettings(branchId, formData);
+      toast.success('Settings updated successfully');
+      setIsEditing(false);
+      onUpdate?.();
+    } catch (error) {
+      console.error('Error updating settings:', error);
+      toast.error('Failed to update settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(settings);
+    setIsEditing(false);
+  };
+
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Branch Settings</h2>
-      <div className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <div className="text-sm text-gray-500">Timezone</div>
-            <div className="text-gray-900">{settings.timezone || 'Not set'}</div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Branch Settings</h2>
+        {!isEditing ? (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          >
+            <PencilIcon className="h-4 w-4 mr-1" />
+            Edit
+          </button>
+        ) : (
+          <div className="flex space-x-2">
+            <button
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
           </div>
-          <div>
-            <div className="text-sm text-gray-500">Currency</div>
-            <div className="text-gray-900">{settings.currency || 'Not set'}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Tax Rate</div>
-            <div className="text-gray-900">{settings.taxRate ? `${settings.taxRate}%` : 'Not set'}</div>
-          </div>
-          <div>
-            <div className="text-sm text-gray-500">Allow Walk-ins</div>
-            <div className="text-gray-900">
-              {settings.allowWalkins !== undefined ? (settings.allowWalkins ? 'Yes' : 'No') : 'Not set'}
+        )}
+      </div>
+
+      {!isEditing ? (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div className="text-sm text-gray-500">Timezone</div>
+              <div className="text-gray-900">{settings.timezone || 'Not set'}</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Currency</div>
+              <div className="text-gray-900">{settings.currency || 'Not set'}</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Tax Rate</div>
+              <div className="text-gray-900">{settings.taxRate ? `${(settings.taxRate * 100).toFixed(2)}%` : 'Not set'}</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500">Allow Walk-ins</div>
+              <div className="text-gray-900">
+                {settings.allowWalkins !== undefined ? (settings.allowWalkins ? 'Yes' : 'No') : 'Not set'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
+              <select
+                value={formData.timezone || 'America/Los_Angeles'}
+                onChange={(e) => setFormData({ ...formData, timezone: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="America/Los_Angeles">Pacific Time</option>
+                <option value="America/Denver">Mountain Time</option>
+                <option value="America/Chicago">Central Time</option>
+                <option value="America/New_York">Eastern Time</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
+              <select
+                value={formData.currency || 'USD'}
+                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tax Rate (%)</label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max="100"
+                value={formData.taxRate ? (formData.taxRate * 100).toFixed(2) : 0}
+                onChange={(e) => setFormData({ ...formData, taxRate: parseFloat(e.target.value) / 100 })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                placeholder="e.g., 8.75"
+              />
+            </div>
+            <div className="flex items-center pt-6">
+              <input
+                type="checkbox"
+                id="allowWalkins"
+                checked={formData.allowWalkins || false}
+                onChange={(e) => setFormData({ ...formData, allowWalkins: e.target.checked })}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="allowWalkins" className="ml-2 block text-sm text-gray-700">
+                Allow Walk-in Customers
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 // Operating Hours Tab Component
-const OperatingHoursTab = ({ hours }) => {
+const OperatingHoursTab = ({ hours, branchId, onUpdate }) => {
   const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState(hours || {});
+  const [isSaving, setIsSaving] = useState(false);
 
-  if (!hours || Object.keys(hours).length === 0) {
-    return (
-      <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-        <p className="text-gray-500">No operating hours configured</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    setFormData(hours || {});
+  }, [hours]);
+
+  const handleDayToggle = (day) => {
+    setFormData({
+      ...formData,
+      [day]: formData[day] ? null : { open: '09:00', close: '17:00' }
+    });
+  };
+
+  const handleTimeChange = (day, field, value) => {
+    setFormData({
+      ...formData,
+      [day]: {
+        ...formData[day],
+        [field]: value
+      }
+    });
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Clean formData - remove null values and only send days with valid hours
+      const cleanedData = Object.keys(formData).reduce((acc, day) => {
+        if (formData[day] && formData[day].open && formData[day].close) {
+          acc[day] = formData[day];
+        }
+        return acc;
+      }, {});
+
+      const response = await branchApiService.updateOperatingHours(branchId, cleanedData);
+      console.log('Operating hours updated:', response);
+
+      toast.success('Operating hours updated successfully');
+      setIsEditing(false);
+
+      // Call onUpdate to refresh parent data
+      if (onUpdate) {
+        await onUpdate();
+      }
+    } catch (error) {
+      console.error('Error updating operating hours:', error);
+      toast.error(error?.response?.data?.message || 'Failed to update operating hours');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(hours || {});
+    setIsEditing(false);
+  };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow border border-gray-200">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Operating Hours</h2>
-      <div className="space-y-3">
-        {days.map((day) => (
-          <div key={day} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-            <div className="font-medium text-gray-900 capitalize w-32">{day}</div>
-            <div className="text-gray-600">
-              {hours[day] ? (
-                <>
-                  {hours[day].open} - {hours[day].close}
-                </>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Operating Hours</h2>
+        {!isEditing ? (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          >
+            <PencilIcon className="h-4 w-4 mr-1" />
+            Edit
+          </button>
+        ) : (
+          <div className="flex space-x-2">
+            <button
+              onClick={handleCancel}
+              disabled={isSaving}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="px-3 py-1.5 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+            >
+              {isSaving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {!isEditing ? (
+        <div className="space-y-3">
+          {days.map((day) => (
+            <div key={day} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+              <div className="font-medium text-gray-900 capitalize w-32">{day}</div>
+              <div className="text-gray-600">
+                {hours && hours[day] ? (
+                  <>
+                    {hours[day].open} - {hours[day].close}
+                  </>
+                ) : (
+                  <span className="text-gray-400">Closed</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {days.map((day) => (
+            <div key={day} className="flex items-center gap-4 py-2 border-b border-gray-100 last:border-0">
+              <div className="flex items-center w-32">
+                <input
+                  type="checkbox"
+                  id={`${day}-open`}
+                  checked={!!formData[day]}
+                  onChange={() => handleDayToggle(day)}
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <label htmlFor={`${day}-open`} className="ml-2 font-medium text-gray-900 capitalize">
+                  {day}
+                </label>
+              </div>
+              {formData[day] ? (
+                <div className="flex items-center gap-2 flex-1">
+                  <input
+                    type="time"
+                    value={formData[day].open || '09:00'}
+                    onChange={(e) => handleTimeChange(day, 'open', e.target.value)}
+                    className="px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                  <span className="text-gray-500">to</span>
+                  <input
+                    type="time"
+                    value={formData[day].close || '17:00'}
+                    onChange={(e) => handleTimeChange(day, 'close', e.target.value)}
+                    className="px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  />
+                </div>
               ) : (
-                <span className="text-gray-400">Closed</span>
+                <div className="flex-1 text-gray-400">Closed</div>
               )}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
