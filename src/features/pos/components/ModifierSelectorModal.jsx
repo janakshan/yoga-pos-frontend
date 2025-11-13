@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus, Check, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '../utils/calculations';
 import toast from 'react-hot-toast';
+import { useBusinessType } from '../../../hooks/useBusinessType';
 
 /**
  * ModifierSelectorModal Component
@@ -25,6 +26,7 @@ export const ModifierSelectorModal = ({
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [seatNumber, setSeatNumber] = useState('');
   const [course, setCourse] = useState(product?.courseOrder || null);
+  const { isRestaurant } = useBusinessType();
 
   if (!isOpen || !product) return null;
 
@@ -266,38 +268,42 @@ export const ModifierSelectorModal = ({
             </div>
           )}
 
-          {/* Course Assignment */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Course (Optional)
-            </label>
-            <select
-              value={course || ''}
-              onChange={(e) => setCourse(e.target.value ? parseInt(e.target.value) : null)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            >
-              <option value="">No specific course</option>
-              {courses.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Course Assignment - Restaurant only */}
+          {isRestaurant && (
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Course (Optional)
+              </label>
+              <select
+                value={course || ''}
+                onChange={(e) => setCourse(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              >
+                <option value="">No specific course</option>
+                {courses.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-          {/* Seat Number */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Seat Number (Optional)
-            </label>
-            <input
-              type="text"
-              value={seatNumber}
-              onChange={(e) => setSeatNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="e.g., 1, 2, A, B"
-            />
-          </div>
+          {/* Seat Number - Restaurant only */}
+          {isRestaurant && (
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Seat Number (Optional)
+              </label>
+              <input
+                type="text"
+                value={seatNumber}
+                onChange={(e) => setSeatNumber(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                placeholder="e.g., 1, 2, A, B"
+              />
+            </div>
+          )}
 
           {/* Special Instructions */}
           <div className="mb-6">

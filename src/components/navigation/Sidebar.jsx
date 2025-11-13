@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import {
   HomeIcon,
   BuildingStorefrontIcon,
-  UserGroupIcon,
   ShoppingCartIcon,
   CubeIcon,
   UserIcon,
@@ -17,14 +16,14 @@ import {
   BeakerIcon,
   TruckIcon,
   BuildingOffice2Icon,
-  ArrowRightOnRectangleIcon,
+  ArrowRightStartOnRectangleIcon,
   ClipboardDocumentListIcon,
   RectangleStackIcon,
-  Square3Stack3DIcon,
   MapIcon,
   TableCellsIcon,
   BookOpenIcon,
   ClockIcon,
+  ComputerDesktopIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
 import { useBusinessType } from '../../hooks/useBusinessType';
@@ -43,14 +42,16 @@ const navigationItems = [
   { name: 'Recipes', path: '/recipes', icon: BookOpenIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Suppliers', path: '/suppliers', icon: BuildingOffice2Icon },
   { name: 'Purchase Orders', path: '/purchase-orders', icon: TruckIcon },
-  { name: 'Orders Dashboard', path: '/orders-dashboard', icon: RectangleStackIcon },
-  { name: 'Restaurant Orders', path: '/orders', icon: ClipboardDocumentListIcon },
-  { name: 'Bookings', path: '/bookings', icon: CalendarIcon },
-  { name: 'Tables', path: '/tables', icon: Square3Stack3DIcon },
-  { name: 'Floor Plan', path: '/floor-plan', icon: MapIcon },
-  { name: 'Bookings', path: '/bookings', icon: CalendarIcon, businessType: BUSINESS_TYPES.YOGA },
+  // Restaurant-specific features
+  { name: 'Orders Dashboard', path: '/orders-dashboard', icon: RectangleStackIcon, businessType: BUSINESS_TYPES.RESTAURANT },
+  { name: 'Restaurant Orders', path: '/orders', icon: ClipboardDocumentListIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Tables', path: '/tables', icon: TableCellsIcon, businessType: BUSINESS_TYPES.RESTAURANT },
+  { name: 'Floor Plan', path: '/floor-plan', icon: MapIcon, businessType: BUSINESS_TYPES.RESTAURANT },
+  { name: 'Kitchen Display', path: '/kitchen-display', icon: ComputerDesktopIcon, businessType: BUSINESS_TYPES.RESTAURANT },
   { name: 'Server Management', path: '/server-management', icon: ClockIcon, businessType: BUSINESS_TYPES.RESTAURANT },
+  // Yoga-specific features
+  { name: 'Bookings', path: '/bookings', icon: CalendarIcon, businessType: BUSINESS_TYPES.YOGA },
+  // Common features
   { name: 'Financial', path: '/financial', icon: CreditCardIcon },
   { name: 'Reports', path: '/reports', icon: ChartBarIcon },
   { name: 'Settings', path: '/settings', icon: Cog6ToothIcon },
@@ -108,7 +109,7 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white">
+      <nav key={businessType} className="flex-1 px-3 py-4 space-y-1 overflow-y-auto bg-white">
         {visibleNavigationItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -124,7 +125,7 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
                 }`
               }
             >
-              <Icon className="w-5 h-5 mr-3 flex-shrink-0" />
+              <Icon className="w-5 h-5 mr-3 shrink-0" />
               <span className="font-medium text-sm">{item.name}</span>
             </NavLink>
           );
@@ -138,7 +139,7 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
           disabled={isLoading}
           className="w-full flex items-center justify-center px-4 py-3 mb-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
+          <ArrowRightStartOnRectangleIcon className="w-5 h-5 mr-3" />
           {isLoading ? 'Logging out...' : 'Logout'}
         </button>
         <p className="text-xs text-gray-500 text-center">

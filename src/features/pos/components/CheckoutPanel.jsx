@@ -10,6 +10,7 @@ import PrintModal from '../../../components/common/PrintModal';
 import TippingPanel from './TippingPanel';
 import SplitPaymentModal from './SplitPaymentModal';
 import { useStore } from '../../../store';
+import { useBusinessType } from '../../../hooks/useBusinessType';
 
 /**
  * CheckoutPanel Component
@@ -45,6 +46,7 @@ export const CheckoutPanel = () => {
   const setSplitPaymentEnabled = useStore((state) => state.setSplitPayment);
   const splitPayments = useStore((state) => state.splitPayments);
   const getTipAmount = useStore((state) => state.getTipAmount);
+  const { isRestaurant } = useBusinessType();
 
   const totals = getCartTotals();
   const tipAmount = getTipAmount();
@@ -332,10 +334,12 @@ export const CheckoutPanel = () => {
         )}
       </div>
 
-      {/* Tipping Panel */}
-      <div className="mb-6">
-        <TippingPanel />
-      </div>
+      {/* Tipping Panel - Only show for restaurant business type */}
+      {isRestaurant && (
+        <div className="mb-6">
+          <TippingPanel />
+        </div>
+      )}
 
       {/* Payment Method */}
       <div className="mb-6">

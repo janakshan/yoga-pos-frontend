@@ -3,6 +3,7 @@ import { ShoppingCart, Trash2, Plus, Minus, X, MessageSquare, Users, ChefHat, Ed
 import { usePos } from '../hooks/usePos';
 import { formatCurrency } from '../utils/calculations';
 import { useStore } from '../../../store';
+import { useBusinessType } from '../../../hooks/useBusinessType';
 
 /**
  * Cart Component
@@ -25,6 +26,7 @@ export const Cart = () => {
   const updateItemCourse = useStore((state) => state.updateItemCourse);
   const updateItemSeat = useStore((state) => state.updateItemSeat);
   const getTipAmount = useStore((state) => state.getTipAmount);
+  const { isRestaurant } = useBusinessType();
 
   const [editingInstructions, setEditingInstructions] = useState(null);
   const [instructionsText, setInstructionsText] = useState('');
@@ -103,21 +105,23 @@ export const Cart = () => {
                     </h3>
                     <p className="text-xs text-gray-500">{item.category}</p>
 
-                    {/* Restaurant-specific badges */}
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {item.course && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
-                          <ChefHat className="h-3 w-3" />
-                          {courses[item.course]}
-                        </span>
-                      )}
-                      {item.seatNumber && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
-                          <Users className="h-3 w-3" />
-                          Seat {item.seatNumber}
-                        </span>
-                      )}
-                    </div>
+                    {/* Restaurant-specific badges - Only show for restaurant business type */}
+                    {isRestaurant && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {item.course && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full">
+                            <ChefHat className="h-3 w-3" />
+                            {courses[item.course]}
+                          </span>
+                        )}
+                        {item.seatNumber && (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                            <Users className="h-3 w-3" />
+                            Seat {item.seatNumber}
+                          </span>
+                        )}
+                      </div>
+                    )}
 
                     {/* Modifiers */}
                     {item.modifiers && item.modifiers.length > 0 && (

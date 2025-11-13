@@ -4,6 +4,7 @@ import { Zap, ArrowRight } from 'lucide-react';
 import { ProductSelector, Cart, CheckoutPanel } from '../features/pos/components';
 import RestaurantPOSHeader from '../features/pos/components/RestaurantPOSHeader';
 import QuickReorder from '../features/pos/components/QuickReorder';
+import { useBusinessType } from '../hooks/useBusinessType';
 
 /**
  * POSPage
@@ -12,11 +13,12 @@ import QuickReorder from '../features/pos/components/QuickReorder';
  */
 const POSPage = () => {
   const navigate = useNavigate();
+  const { isRestaurant } = useBusinessType();
 
   return (
     <div className="h-full flex flex-col bg-gray-50">
-      {/* Restaurant POS Header */}
-      <RestaurantPOSHeader />
+      {/* Restaurant POS Header - Only show for restaurant business type */}
+      {isRestaurant && <RestaurantPOSHeader />}
 
       {/* Quick Actions Bar */}
       <div className="bg-white shadow-sm border-b border-gray-200 px-4 sm:px-6 py-3">

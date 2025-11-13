@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
+import BusinessTypeRoute from './components/common/BusinessTypeRoute';
+import { BUSINESS_TYPES } from './types/business.types';
 import { LoginPage, UnauthorizedPage } from './pages';
 import MainLayout from './layouts/MainLayout';
 import BranchPage from './pages/BranchPage';
@@ -137,10 +139,10 @@ function App() {
           <Route path="pos/fast-checkout" element={<FastCheckoutPOS />} />
 
           {/* Restaurant Orders */}
-          <Route path="orders" element={<OrdersList />} />
-          <Route path="orders/new" element={<NewOrder />} />
-          <Route path="orders/:orderId" element={<OrderDetails />} />
-          <Route path="orders-dashboard" element={<OrdersDashboard />} />
+          <Route path="orders" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><OrdersList /></BusinessTypeRoute>} />
+          <Route path="orders/new" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><NewOrder /></BusinessTypeRoute>} />
+          <Route path="orders/:orderId" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><OrderDetails /></BusinessTypeRoute>} />
+          <Route path="orders-dashboard" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><OrdersDashboard /></BusinessTypeRoute>} />
 
           {/* Customers Management */}
           <Route path="customers" element={<CustomersPage />} />
@@ -162,25 +164,25 @@ function App() {
           <Route path="settings" element={<SettingsPage />} />
 
           {/* Restaurant Management */}
-          <Route path="tables" element={<TablesPage />} />
-          <Route path="floor-plan" element={<FloorPlanPage />} />
+          <Route path="tables" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><TablesPage /></BusinessTypeRoute>} />
+          <Route path="floor-plan" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><FloorPlanPage /></BusinessTypeRoute>} />
 
           {/* QR Ordering Management */}
-          <Route path="qr-codes" element={<QRCodeList />} />
-          <Route path="qr-analytics" element={<QRAnalyticsDashboard />} />
+          <Route path="qr-codes" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><QRCodeList /></BusinessTypeRoute>} />
+          <Route path="qr-analytics" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><QRAnalyticsDashboard /></BusinessTypeRoute>} />
 
           {/* Kitchen Display System */}
-          <Route path="kitchen-display" element={<KitchenDisplayPage />} />
+          <Route path="kitchen-display" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><KitchenDisplayPage /></BusinessTypeRoute>} />
 
           {/* Recipe Management */}
-          <Route path="recipes" element={<RecipeList />} />
-          <Route path="recipes/new" element={<RecipeForm />} />
-          <Route path="recipes/:id" element={<RecipeDetails />} />
-          <Route path="recipes/:id/edit" element={<RecipeForm />} />
-          <Route path="recipes/reports" element={<RecipeCostingReport />} />
+          <Route path="recipes" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><RecipeList /></BusinessTypeRoute>} />
+          <Route path="recipes/new" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><RecipeForm /></BusinessTypeRoute>} />
+          <Route path="recipes/:id" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><RecipeDetails /></BusinessTypeRoute>} />
+          <Route path="recipes/:id/edit" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><RecipeForm /></BusinessTypeRoute>} />
+          <Route path="recipes/reports" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><RecipeCostingReport /></BusinessTypeRoute>} />
 
           {/* Server Management */}
-          <Route path="server-management" element={<ServerManagement />} />
+          <Route path="server-management" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><ServerManagement /></BusinessTypeRoute>} />
 
           {/* Placeholder routes for other modules */}
           <Route path="bookings" element={<PlaceholderPage module="Bookings" />} />
