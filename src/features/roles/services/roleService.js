@@ -1,33 +1,16 @@
 /**
  * @fileoverview Role service for managing roles
- * This is a mock service that simulates API calls with local data
+ * Service layer with API integration
  */
 
-import { DEFAULT_ROLES } from '../types/role.types.js';
-
-// Generate mock role data with IDs
-const generateMockRoles = () => {
-  return DEFAULT_ROLES.map((role, index) => ({
-    id: `role_${index + 1}`,
-    ...role,
-    isActive: true,
-    userCount: Math.floor(Math.random() * 20) + 1,
-    createdAt: new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: 'system',
-  }));
-};
-
-// Mock data store
-let MOCK_ROLES = generateMockRoles();
-
-/**
- * Simulate API delay
- * @param {number} min - Minimum delay in ms
- * @param {number} max - Maximum delay in ms
- */
-const delay = (min = 300, max = 600) =>
-  new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * (max - min) + min)));
+import {
+  createRole as apiCreateRole,
+  getAllRoles as apiGetAllRoles,
+  getRoleById as apiGetRoleById,
+  updateRole as apiUpdateRole,
+  deleteRole as apiDeleteRole,
+  assignPermissionsToRole as apiAssignPermissionsToRole,
+} from '../../../api/roles.api.js';
 
 /**
  * Role Service
@@ -39,44 +22,13 @@ export const roleService = {
    * @returns {Promise<import('../types').Role[]>}
    */
   async getAll(filters = {}) {
-    await delay();
-
-    let result = [...MOCK_ROLES];
-
-    // Apply search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      result = result.filter(
-        role =>
-          role.name.toLowerCase().includes(searchLower) ||
-          role.code.toLowerCase().includes(searchLower) ||
-          role.description.toLowerCase().includes(searchLower)
-      );
+    try {
+      const response = await apiGetAllRoles(filters);
+      return Array.isArray(response) ? response : response.data || response;
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+      throw error;
     }
-
-    // Apply active status filter
-    if (typeof filters.isActive === 'boolean') {
-      result = result.filter(role => role.isActive === filters.isActive);
-    }
-
-    // Apply system filter
-    if (typeof filters.isSystem === 'boolean') {
-      result = result.filter(role => role.isSystem === filters.isSystem);
-    }
-
-    // Apply sorting
-    if (filters.sortBy) {
-      const sortOrder = filters.sortOrder === 'desc' ? -1 : 1;
-      result.sort((a, b) => {
-        const aVal = a[filters.sortBy];
-        const bVal = b[filters.sortBy];
-        if (aVal < bVal) return -1 * sortOrder;
-        if (aVal > bVal) return 1 * sortOrder;
-        return 0;
-      });
-    }
-
-    return result;
   },
 
   /**
@@ -85,14 +37,13 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async getById(id) {
-    await delay();
-
-    const role = MOCK_ROLES.find(r => r.id === id);
-    if (!role) {
-      throw new Error(`Role with ID ${id} not found`);
+    try {
+      const response = await apiGetRoleById(id);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error fetching role ${id}:`, error);
+      throw error;
     }
-
-    return { ...role };
   },
 
   /**
@@ -101,14 +52,18 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async getByCode(code) {
-    await delay();
-
-    const role = MOCK_ROLES.find(r => r.code === code);
-    if (!role) {
-      throw new Error(`Role with code ${code} not found`);
+    try {
+      // Get all roles and filter by code (API doesn't have getByCode endpoint)
+      const roles = await this.getAll();
+      const role = roles.find(r => r.code === code);
+      if (!role) {
+        throw new Error(`Role with code ${code} not found`);
+      }
+      return role;
+    } catch (error) {
+      console.error(`Error fetching role by code ${code}:`, error);
+      throw error;
     }
-
-    return { ...role };
   },
 
   /**
@@ -117,39 +72,15 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async create(data) {
-    await delay();
-
-    // Validate required fields
-    if (!data.name || !data.code || !data.description) {
-      throw new Error('Name, code, and description are required');
+    try {
+      const response = await apiCreateRole(data);
+      return response.data || response;
+    } catch (error) {
+      console.error('Error creating role:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Request data:', data);
+      throw error;
     }
-
-    // Check if role code already exists
-    if (MOCK_ROLES.some(r => r.code === data.code)) {
-      throw new Error(`Role with code ${data.code} already exists`);
-    }
-
-    // Validate code format (lowercase, no spaces)
-    if (!/^[a-z_]+$/.test(data.code)) {
-      throw new Error('Role code must be lowercase letters and underscores only');
-    }
-
-    const newRole = {
-      id: `role_${Date.now()}`,
-      name: data.name,
-      code: data.code,
-      description: data.description,
-      permissions: data.permissions || [],
-      isSystem: false, // Custom roles are never system roles
-      isActive: data.isActive ?? true,
-      userCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: 'current_user', // Would be actual user ID in real app
-    };
-
-    MOCK_ROLES.push(newRole);
-    return { ...newRole };
   },
 
   /**
@@ -159,26 +90,13 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async update(id, data) {
-    await delay();
-
-    const index = MOCK_ROLES.findIndex(r => r.id === id);
-    if (index === -1) {
-      throw new Error(`Role with ID ${id} not found`);
+    try {
+      const response = await apiUpdateRole(id, data);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error updating role ${id}:`, error);
+      throw error;
     }
-
-    // Prevent updating system roles
-    if (MOCK_ROLES[index].isSystem && data.permissions) {
-      throw new Error('Cannot modify permissions of system roles');
-    }
-
-    const updated = {
-      ...MOCK_ROLES[index],
-      ...data,
-      updatedAt: new Date().toISOString(),
-    };
-
-    MOCK_ROLES[index] = updated;
-    return { ...updated };
   },
 
   /**
@@ -187,27 +105,13 @@ export const roleService = {
    * @returns {Promise<{success: boolean, message: string}>}
    */
   async delete(id) {
-    await delay();
-
-    const index = MOCK_ROLES.findIndex(r => r.id === id);
-    if (index === -1) {
-      throw new Error(`Role with ID ${id} not found`);
+    try {
+      const response = await apiDeleteRole(id);
+      return response;
+    } catch (error) {
+      console.error(`Error deleting role ${id}:`, error);
+      throw error;
     }
-
-    const role = MOCK_ROLES[index];
-
-    // Prevent deleting system roles
-    if (role.isSystem) {
-      throw new Error('Cannot delete system roles');
-    }
-
-    // Check if role has assigned users
-    if (role.userCount > 0) {
-      throw new Error(`Cannot delete role with ${role.userCount} assigned user(s). Reassign users first.`);
-    }
-
-    MOCK_ROLES.splice(index, 1);
-    return { success: true, message: 'Role deleted successfully' };
   },
 
   /**
@@ -217,25 +121,19 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async addPermissions(roleId, permissionIds) {
-    await delay();
+    try {
+      // Get current role to merge permissions
+      const role = await this.getById(roleId);
+      const existingPermissions = role.permissions?.map(p => p.id || p) || [];
+      const allPermissions = [...new Set([...existingPermissions, ...permissionIds])];
 
-    const index = MOCK_ROLES.findIndex(r => r.id === roleId);
-    if (index === -1) {
-      throw new Error(`Role with ID ${roleId} not found`);
+      // Use setPermissions API endpoint
+      const response = await apiAssignPermissionsToRole(roleId, allPermissions);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error adding permissions to role ${roleId}:`, error);
+      throw error;
     }
-
-    const role = MOCK_ROLES[index];
-    const existingPermissions = new Set(role.permissions);
-    permissionIds.forEach(id => existingPermissions.add(id));
-
-    const updated = {
-      ...role,
-      permissions: Array.from(existingPermissions),
-      updatedAt: new Date().toISOString(),
-    };
-
-    MOCK_ROLES[index] = updated;
-    return { ...updated };
   },
 
   /**
@@ -245,25 +143,20 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async removePermissions(roleId, permissionIds) {
-    await delay();
+    try {
+      // Get current role and filter out permissions to remove
+      const role = await this.getById(roleId);
+      const existingPermissions = role.permissions?.map(p => p.id || p) || [];
+      const permissionsToRemove = new Set(permissionIds);
+      const updatedPermissions = existingPermissions.filter(p => !permissionsToRemove.has(p));
 
-    const index = MOCK_ROLES.findIndex(r => r.id === roleId);
-    if (index === -1) {
-      throw new Error(`Role with ID ${roleId} not found`);
+      // Use setPermissions API endpoint
+      const response = await apiAssignPermissionsToRole(roleId, updatedPermissions);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error removing permissions from role ${roleId}:`, error);
+      throw error;
     }
-
-    const role = MOCK_ROLES[index];
-    const permissionsToRemove = new Set(permissionIds);
-    const updatedPermissions = role.permissions.filter(p => !permissionsToRemove.has(p));
-
-    const updated = {
-      ...role,
-      permissions: updatedPermissions,
-      updatedAt: new Date().toISOString(),
-    };
-
-    MOCK_ROLES[index] = updated;
-    return { ...updated };
   },
 
   /**
@@ -273,21 +166,13 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async setPermissions(roleId, permissionIds) {
-    await delay();
-
-    const index = MOCK_ROLES.findIndex(r => r.id === roleId);
-    if (index === -1) {
-      throw new Error(`Role with ID ${roleId} not found`);
+    try {
+      const response = await apiAssignPermissionsToRole(roleId, permissionIds);
+      return response.data || response;
+    } catch (error) {
+      console.error(`Error assigning permissions to role ${roleId}:`, error);
+      throw error;
     }
-
-    const updated = {
-      ...MOCK_ROLES[index],
-      permissions: permissionIds,
-      updatedAt: new Date().toISOString(),
-    };
-
-    MOCK_ROLES[index] = updated;
-    return { ...updated };
   },
 
   /**
@@ -295,17 +180,23 @@ export const roleService = {
    * @returns {Promise<import('../types').RoleStats>}
    */
   async getStats() {
-    await delay();
+    try {
+      // Get all roles and calculate stats (API doesn't have stats endpoint)
+      const roles = await this.getAll();
 
-    const stats = {
-      total: MOCK_ROLES.length,
-      active: MOCK_ROLES.filter(r => r.isActive).length,
-      inactive: MOCK_ROLES.filter(r => !r.isActive).length,
-      system: MOCK_ROLES.filter(r => r.isSystem).length,
-      custom: MOCK_ROLES.filter(r => !r.isSystem).length,
-    };
+      const stats = {
+        total: roles.length,
+        active: roles.filter(r => r.isActive).length,
+        inactive: roles.filter(r => !r.isActive).length,
+        system: roles.filter(r => r.isSystem).length,
+        custom: roles.filter(r => !r.isSystem).length,
+      };
 
-    return stats;
+      return stats;
+    } catch (error) {
+      console.error('Error fetching role statistics:', error);
+      throw error;
+    }
   },
 
   /**
@@ -315,47 +206,50 @@ export const roleService = {
    * @returns {Promise<import('../types').Role>}
    */
   async clone(roleId, newName) {
-    await delay();
+    try {
+      // Get the role to clone
+      const role = await this.getById(roleId);
 
-    const role = MOCK_ROLES.find(r => r.id === roleId);
-    if (!role) {
-      throw new Error(`Role with ID ${roleId} not found`);
+      const newCode = newName.toLowerCase().replace(/\s+/g, '_');
+
+      // Create new role with same permissions
+      const permissionIds = role.permissions?.map(p => p.id || p) || [];
+      const clonedRoleData = {
+        name: newName,
+        code: newCode,
+        description: `Cloned from ${role.name}`,
+        isActive: true,
+      };
+
+      const clonedRole = await this.create(clonedRoleData);
+
+      // Assign the same permissions
+      if (permissionIds.length > 0) {
+        await this.setPermissions(clonedRole.id, permissionIds);
+      }
+
+      return clonedRole;
+    } catch (error) {
+      console.error(`Error cloning role ${roleId}:`, error);
+      throw error;
     }
-
-    const newCode = newName.toLowerCase().replace(/\s+/g, '_');
-
-    // Check if code already exists
-    if (MOCK_ROLES.some(r => r.code === newCode)) {
-      throw new Error(`Role with code ${newCode} already exists`);
-    }
-
-    const clonedRole = {
-      id: `role_${Date.now()}`,
-      name: newName,
-      code: newCode,
-      description: `Cloned from ${role.name}`,
-      permissions: [...role.permissions],
-      isSystem: false,
-      isActive: true,
-      userCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: 'current_user',
-    };
-
-    MOCK_ROLES.push(clonedRole);
-    return { ...clonedRole };
   },
 
   /**
-   * Get roles by user ID (mock - would query user-role relationships)
+   * Get roles by user ID (would query user-role relationships via users API)
    * @param {string} userId - User ID
    * @returns {Promise<import('../types').Role[]>}
    */
   async getByUserId(userId) {
-    await delay();
-    // Mock implementation - would actually query user-role relationships
-    return MOCK_ROLES.filter(r => r.isActive).slice(0, 2);
+    try {
+      // This would typically be handled by the users API
+      // For now, return empty array as placeholder
+      console.warn('getByUserId not yet implemented - would use users API');
+      return [];
+    } catch (error) {
+      console.error(`Error fetching roles for user ${userId}:`, error);
+      throw error;
+    }
   },
 };
 

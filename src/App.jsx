@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './features/auth';
+import { RouteGuard } from './components/guards';
 import BusinessTypeRoute from './components/common/BusinessTypeRoute';
 import { BUSINESS_TYPES } from './types/business.types';
 import { LoginPage, UnauthorizedPage } from './pages';
@@ -11,6 +12,8 @@ import BranchDetailsPage from './pages/BranchDetailsPage';
 import DashboardPage from './pages/DashboardPage';
 import RolesPage from './pages/RolesPage';
 import UsersPage from './pages/UsersPage';
+import UserDetailPage from './pages/UserDetailPage';
+import PermissionsPage from './pages/PermissionsPage';
 import ProductsPage from './pages/ProductsPage';
 import InventoryPage from './pages/InventoryPage';
 import POSPage from './pages/POSPage';
@@ -119,26 +122,28 @@ function App() {
           <Route path="dashboard" element={<DashboardPage />} />
 
           {/* Branch Management */}
-          <Route path="branches" element={<BranchPage />} />
-          <Route path="branches/:id" element={<BranchDetailsPage />} />
+          <Route path="branches" element={<RouteGuard routePath="/branches"><BranchPage /></RouteGuard>} />
+          <Route path="branches/:id" element={<RouteGuard routePath="/branches/:id"><BranchDetailsPage /></RouteGuard>} />
 
           {/* User & Role Management */}
-          <Route path="users" element={<UsersPage />} />
-          <Route path="roles" element={<RolesPage />} />
+          <Route path="users" element={<RouteGuard routePath="/users"><UsersPage /></RouteGuard>} />
+          <Route path="users/:id" element={<RouteGuard routePath="/users/:id"><UserDetailPage /></RouteGuard>} />
+          <Route path="roles" element={<RouteGuard routePath="/roles"><RolesPage /></RouteGuard>} />
+          <Route path="permissions" element={<RouteGuard routePath="/permissions"><PermissionsPage /></RouteGuard>} />
 
           {/* Products Management */}
-          <Route path="products" element={<ProductsPage />} />
+          <Route path="products" element={<RouteGuard routePath="/products"><ProductsPage /></RouteGuard>} />
 
           {/* Inventory Management */}
-          <Route path="inventory" element={<InventoryPage />} />
+          <Route path="inventory" element={<RouteGuard routePath="/inventory"><InventoryPage /></RouteGuard>} />
 
           {/* Purchase/Procurement Management */}
-          <Route path="suppliers" element={<SuppliersPage />} />
-          <Route path="purchase-orders" element={<PurchaseOrdersPage />} />
+          <Route path="suppliers" element={<RouteGuard routePath="/suppliers"><SuppliersPage /></RouteGuard>} />
+          <Route path="purchase-orders" element={<RouteGuard routePath="/purchase-orders"><PurchaseOrdersPage /></RouteGuard>} />
 
           {/* POS (Point of Sale) */}
-          <Route path="pos" element={<POSPage />} />
-          <Route path="pos/fast-checkout" element={<FastCheckoutPOS />} />
+          <Route path="pos" element={<RouteGuard routePath="/pos"><POSPage /></RouteGuard>} />
+          <Route path="pos/fast-checkout" element={<RouteGuard routePath="/pos/fast-checkout"><FastCheckoutPOS /></RouteGuard>} />
 
           {/* Restaurant Orders */}
           <Route path="orders" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><OrdersList /></BusinessTypeRoute>} />
@@ -147,23 +152,23 @@ function App() {
           <Route path="orders-dashboard" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><OrdersDashboard /></BusinessTypeRoute>} />
 
           {/* Customers Management */}
-          <Route path="customers" element={<CustomersPage />} />
+          <Route path="customers" element={<RouteGuard routePath="/customers"><CustomersPage /></RouteGuard>} />
 
           {/* Reports Management */}
-          <Route path="reports" element={<ReportsPage />} />
+          <Route path="reports" element={<RouteGuard routePath="/reports"><ReportsPage /></RouteGuard>} />
 
           {/* Demo Data Overview */}
           <Route path="demo-data" element={<DemoDataPage />} />
 
           {/* Financial Management */}
-          <Route path="financial" element={<FinancialDashboard />} />
-          <Route path="invoices" element={<FinancialDashboard />} />
-          <Route path="payments" element={<FinancialDashboard />} />
-          <Route path="expenses" element={<FinancialDashboard />} />
-          <Route path="financial-reports" element={<FinancialDashboard />} />
+          <Route path="financial" element={<RouteGuard routePath="/financial"><FinancialDashboard /></RouteGuard>} />
+          <Route path="invoices" element={<RouteGuard routePath="/invoices"><FinancialDashboard /></RouteGuard>} />
+          <Route path="payments" element={<RouteGuard routePath="/payments"><FinancialDashboard /></RouteGuard>} />
+          <Route path="expenses" element={<RouteGuard routePath="/expenses"><FinancialDashboard /></RouteGuard>} />
+          <Route path="financial-reports" element={<RouteGuard routePath="/financial-reports"><FinancialDashboard /></RouteGuard>} />
 
           {/* Settings */}
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="settings" element={<RouteGuard routePath="/settings"><SettingsPage /></RouteGuard>} />
 
           {/* Restaurant Management */}
           <Route path="tables" element={<BusinessTypeRoute requiredType={BUSINESS_TYPES.RESTAURANT}><TablesPage /></BusinessTypeRoute>} />

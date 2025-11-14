@@ -13,7 +13,6 @@ import {
   ArchiveBoxIcon,
   ShieldCheckIcon,
   UsersIcon,
-  BeakerIcon,
   TruckIcon,
   BuildingOffice2Icon,
   ArrowRightStartOnRectangleIcon,
@@ -27,14 +26,15 @@ import {
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../features/auth/hooks';
 import { useBusinessType } from '../../hooks/useBusinessType';
+import { usePermissions } from '../../hooks/usePermissions';
 import { BUSINESS_TYPES } from '../../types/business.types';
 
 const navigationItems = [
   { name: 'Dashboard', path: '/dashboard', icon: HomeIcon },
-  { name: 'Demo Data', path: '/demo-data', icon: BeakerIcon },
   { name: 'Branches', path: '/branches', icon: BuildingStorefrontIcon },
   { name: 'Users', path: '/users', icon: UsersIcon },
   { name: 'Roles', path: '/roles', icon: ShieldCheckIcon },
+  { name: 'Permissions', path: '/permissions', icon: ShieldCheckIcon },
   { name: 'POS', path: '/pos', icon: ShoppingCartIcon },
   { name: 'Products', path: '/products', icon: CubeIcon },
   { name: 'Customers', path: '/customers', icon: UserIcon },
@@ -66,13 +66,21 @@ const Sidebar = ({ isMobileMenuOpen = false, setIsMobileMenuOpen = () => {} }) =
   const navigate = useNavigate();
   const { logout, isLoading } = useAuth();
   const { businessType } = useBusinessType();
+  const { canAccessRoute } = usePermissions();
 
-  // Filter navigation items based on business type
+  // Filter navigation items based on business type and permissions
   const visibleNavigationItems = navigationItems.filter((item) => {
-    // If no businessType is specified for the item, show it for all business types
-    if (!item.businessType) return true;
-    // Otherwise, only show if it matches the current business type
-    return item.businessType === businessType;
+    // Check business type filter
+    if (item.businessType && item.businessType !== businessType) {
+      return false;
+    }
+
+    // Check permission-based access
+    if (!canAccessRoute(item.path)) {
+      return false;
+    }
+
+    return true;
   });
 
   const handleLinkClick = () => {

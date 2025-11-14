@@ -39,9 +39,11 @@ export const useUsers = () => {
       try {
         setLoading(true);
         clearError();
-        const data = await userService.getAll(filters);
-        setUsers(data);
-        return data;
+        const response = await userService.getAll(filters);
+        // API returns {data: [], meta: {}} structure
+        const users = response.data || response;
+        setUsers(Array.isArray(users) ? users : []);
+        return users;
       } catch (err) {
         const message = err.message || 'Failed to fetch users';
         setError(message);

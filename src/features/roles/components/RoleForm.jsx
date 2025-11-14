@@ -77,9 +77,11 @@ const RoleForm = ({ role, mode, onClose }) => {
       if (mode === 'edit') {
         await updateRoleById(role.id, formData);
       } else {
+        // Don't include permissions in create request - they should be assigned separately
+        // Explicitly set isSystem to false for custom roles
         await createRole({
           ...formData,
-          permissions: [], // Initially no permissions
+          isSystem: false
         });
       }
       onClose(true); // Reload data

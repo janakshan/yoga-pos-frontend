@@ -5,18 +5,20 @@ import {
   CheckIcon,
 } from '@heroicons/react/24/outline';
 import { useBranch } from '../hooks';
+import { useStore } from '@/store';
+import { selectUser } from '@/store/selectors';
 import toast from 'react-hot-toast';
 
 /**
  * BranchSelector Component
  *
  * Dropdown component for selecting the current branch/location.
- * Displays active branches and allows users to switch between them.
+ * Only displays branches associated with the logged-in user.
  * The selected branch is persisted to localStorage automatically.
  *
  * Features:
  * - Shows current branch with indicator
- * - Dropdown list of all active branches
+ * - Dropdown list of user's assigned branches only
  * - Automatic persistence
  * - Click outside to close
  * - Keyboard accessible
@@ -32,6 +34,7 @@ const BranchSelector = () => {
     isLoading,
   } = useBranch();
 
+  const user = useStore(selectUser);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -65,7 +68,11 @@ const BranchSelector = () => {
     }
   }, [isOpen]);
 
+  // Filter branches to only show those associated with the current user
   const activeBranches = getActiveBranches();
+  const userBranches = user?.branchId
+    ? activeBranches.filter(branch => branch.id === user.branchId)
+    : activeBranches;
 
   const handleBranchSelect = (branch) => {
     setCurrentBranch(branch);
@@ -77,9 +84,19 @@ const BranchSelector = () => {
     setIsOpen(!isOpen);
   };
 
-  // Don't render if no branches available
-  if (activeBranches.length === 0) {
+  // Don't render if no branches available or user has no branch assigned
+  if (userBranches.length === 0) {
     return null;
+  }
+
+  // If user only has one branch, don't show dropdown - just display the branch name
+  if (userBranches.length === 1) {
+    return (
+      <div className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg">
+        <BuildingStorefrontIcon className="w-5 h-5" />
+        <span className="hidden md:inline">{userBranches[0].name}</span>
+      </div>
+    );
   }
 
   return (
@@ -110,7 +127,7 @@ const BranchSelector = () => {
               Select Branch Location
             </div>
             <div className="space-y-1">
-              {activeBranches.map((branch) => {
+              {userBranches.map((branch) => {
                 const isSelected = currentBranch?.id === branch.id;
                 return (
                   <button

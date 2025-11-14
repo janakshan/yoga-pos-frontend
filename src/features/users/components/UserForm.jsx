@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { X, Briefcase } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useRoles } from '../../roles/hooks/useRoles';
+import { useBranch } from '../../branch/hooks/useBranch';
 import { UserStatus, EmploymentType, EmploymentStatus, CompensationType } from '../types/user.types';
 
 const UserForm = ({ user, mode, onClose }) => {
   const { createUser, updateUserById, isLoading } = useUsers();
   const { roles, fetchRoles } = useRoles();
+  const { branches, fetchBranches } = useBranch();
 
   const [isStaff, setIsStaff] = useState(false);
   const [formData, setFormData] = useState({
@@ -16,6 +18,7 @@ const UserForm = ({ user, mode, onClose }) => {
     firstName: '',
     lastName: '',
     phone: '',
+    branchId: null,
     roles: [],
     status: UserStatus.ACTIVE,
     staffProfile: null,
@@ -25,12 +28,18 @@ const UserForm = ({ user, mode, onClose }) => {
 
   useEffect(() => {
     fetchRoles();
-  }, []);
+    fetchBranches();
+  }, [fetchRoles, fetchBranches]);
 
   useEffect(() => {
     if (user && mode === 'edit') {
       const hasStaffProfile = user.staffProfile != null;
       setIsStaff(hasStaffProfile);
+
+      // Extract role IDs from role objects or use role IDs directly
+      const roleIds = (user.roles || []).map(role =>
+        typeof role === 'string' ? role : role.id
+      );
 
       setFormData({
         username: user.username || '',
@@ -39,7 +48,8 @@ const UserForm = ({ user, mode, onClose }) => {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         phone: user.phone || '',
-        roles: user.roles || [],
+        branchId: user.branchId || null,
+        roles: roleIds,
         status: user.status || UserStatus.ACTIVE,
         staffProfile: hasStaffProfile ? user.staffProfile : null,
       });
@@ -266,19 +276,45 @@ const UserForm = ({ user, mode, onClose }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2">Roles *</label>
-          <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg">
-            {roles.filter((r) => r.isActive).map((role) => (
-              <label key={role.id} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.roles.includes(role.id)}
-                  onChange={() => handleRoleToggle(role.id)}
-                  className="w-4 h-4 text-blue-600 rounded"
-                />
-                <span className="text-sm">{role.name}</span>
-              </label>
+          <label className="block text-sm font-medium mb-2">Branch</label>
+          <select
+            name="branchId"
+            value={formData.branchId || ''}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="">No Branch</option>
+            {(Array.isArray(branches) ? branches : []).map((branch) => (
+              <option key={branch.id} value={branch.id}>
+                {branch.name}
+              </option>
             ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-2">Roles *</label>
+          <div className="grid grid-cols-2 gap-2 p-3 border border-gray-300 rounded-lg max-h-48 overflow-y-auto">
+            {(Array.isArray(roles) ? roles : [])
+              .map((role) => (
+                <label key={role.id} className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.roles.includes(role.id)}
+                    onChange={() => handleRoleToggle(role.id)}
+                    className="w-4 h-4 text-blue-600 rounded"
+                    disabled={role.isSystem && mode === 'create'}
+                  />
+                  <span className={`text-sm ${role.isActive === false ? 'text-gray-400 line-through' : ''}`}>
+                    {role.name}
+                    {role.isSystem && <span className="ml-1 text-xs text-gray-500">(System)</span>}
+                    {role.isActive === false && <span className="ml-1 text-xs text-red-500">(Inactive)</span>}
+                  </span>
+                </label>
+              ))}
+            {(!roles || roles.length === 0) && (
+              <p className="text-sm text-gray-500 col-span-2">No roles available. Please create roles first.</p>
+            )}
           </div>
           {errors.roles && <p className="mt-1 text-sm text-red-600">{errors.roles}</p>}
         </div>

@@ -3,6 +3,17 @@
  * Manages application settings and preferences
  */
 
+// Load permission guards setting from localStorage
+const loadPermissionGuardsSetting = () => {
+  try {
+    const saved = localStorage.getItem('enablePermissionGuards');
+    return saved !== null ? JSON.parse(saved) : false;
+  } catch (error) {
+    console.error('Error loading permission guards setting:', error);
+    return false;
+  }
+};
+
 export const createSettingsSlice = (set, get) => ({
   // State
   businessType: 'yoga', // 'yoga' or 'restaurant'
@@ -18,6 +29,9 @@ export const createSettingsSlice = (set, get) => ({
   soundEnabled: true,
   receiptFooter: '',
   receiptHeader: '',
+
+  // Security & Access Control
+  enablePermissionGuards: loadPermissionGuardsSetting(), // Toggle for permission-based route/UI guards
 
   // Multi-currency settings
   currencies: [
@@ -237,6 +251,28 @@ export const createSettingsSlice = (set, get) => ({
       }
     }),
 
+  togglePermissionGuards: () =>
+    set((state) => {
+      state.enablePermissionGuards = !state.enablePermissionGuards;
+      // Persist to localStorage
+      try {
+        localStorage.setItem('enablePermissionGuards', JSON.stringify(state.enablePermissionGuards));
+      } catch (error) {
+        console.error('Error saving permission guards setting:', error);
+      }
+    }),
+
+  setPermissionGuards: (enabled) =>
+    set((state) => {
+      state.enablePermissionGuards = enabled;
+      // Persist to localStorage
+      try {
+        localStorage.setItem('enablePermissionGuards', JSON.stringify(enabled));
+      } catch (error) {
+        console.error('Error saving permission guards setting:', error);
+      }
+    }),
+
   resetSettings: () =>
     set((state) => {
       state.businessType = 'yoga';
@@ -252,5 +288,6 @@ export const createSettingsSlice = (set, get) => ({
       state.soundEnabled = true;
       state.receiptFooter = '';
       state.receiptHeader = '';
+      state.enablePermissionGuards = false;
     }),
 });

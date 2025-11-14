@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Shield, Key } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Search, Edit, Trash2, Shield, Key, Eye, RotateCw } from 'lucide-react';
 import { useUsers } from '../hooks/useUsers';
 import { useRoles } from '../../roles/hooks/useRoles';
+import { useBranch } from '../../branch/hooks/useBranch';
 import UserForm from './UserForm';
+import ResetPasswordModal from './ResetPasswordModal';
 
 const UserList = ({ staffOnly = false }) => {
-  const { users, isLoading, error, stats, fetchUsers, fetchStats, deleteUser, clearError } = useUsers();
+  const navigate = useNavigate();
+  const { users, isLoading, error, stats, fetchUsers, fetchStats, deleteUser, resetPassword, clearError } = useUsers();
   const { roles, fetchRoles } = useRoles();
+  const { branches, fetchBranches } = useBranch();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -14,6 +19,8 @@ const UserList = ({ staffOnly = false }) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mode, setMode] = useState('create');
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [userToResetPassword, setUserToResetPassword] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -23,12 +30,17 @@ const UserList = ({ staffOnly = false }) => {
     await fetchUsers();
     await fetchStats();
     await fetchRoles();
+    await fetchBranches();
   };
 
   const handleCreate = () => {
     setSelectedUser(null);
     setMode('create');
     setIsFormOpen(true);
+  };
+
+  const handleView = (user) => {
+    navigate(`/users/${user.id}`);
   };
 
   const handleEdit = (user) => {
@@ -49,6 +61,20 @@ const UserList = ({ staffOnly = false }) => {
     }
   };
 
+  const handleResetPassword = (user) => {
+    setUserToResetPassword(user);
+    setIsResetPasswordOpen(true);
+  };
+
+  const handleResetPasswordSubmit = async (userId, newPassword) => {
+    await resetPassword(userId, newPassword);
+  };
+
+  const handleResetPasswordClose = () => {
+    setIsResetPasswordOpen(false);
+    setUserToResetPassword(null);
+  };
+
   const handleFormClose = async (shouldReload) => {
     setIsFormOpen(false);
     setSelectedUser(null);
@@ -57,17 +83,19 @@ const UserList = ({ staffOnly = false }) => {
     }
   };
 
-  // Filter users
-  const filteredUsers = users.filter((user) => {
+  // Filter users - ensure users is an array
+  const filteredUsers = (Array.isArray(users) ? users : []).filter((user) => {
     // Filter by staffOnly prop
     if (staffOnly && !user.staffProfile) {
       return false;
     }
 
     const matchesSearch =
-      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.username || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.email || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.fullName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.firstName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (user.lastName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.staffProfile?.employeeId || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
       (user.staffProfile?.position || '').toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -75,14 +103,39 @@ const UserList = ({ staffOnly = false }) => {
       filterStatus === 'all' || user.status === filterStatus;
 
     const matchesRole =
-      filterRole === 'all' || user.roles.includes(filterRole);
+      filterRole === 'all' ||
+      (user.roles && Array.isArray(user.roles) && user.roles.some(role => {
+        const roleId = typeof role === 'string' ? role : role?.id;
+        return roleId === filterRole;
+      }));
 
     return matchesSearch && matchesStatus && matchesRole;
   });
 
   const getRoleName = (roleId) => {
+    if (!roleId) return 'Unknown Role';
+    if (!Array.isArray(roles) || roles.length === 0) {
+      console.warn('Roles not loaded yet, showing role ID:', roleId);
+      return roleId;
+    }
     const role = roles.find((r) => r.id === roleId);
-    return role ? role.name : roleId;
+    if (!role) {
+      console.warn('Role not found for ID:', roleId);
+      return roleId;
+    }
+    return role.name;
+  };
+
+  const getBranchName = (user) => {
+    // Handle different API response formats
+    if (user.branchName) return user.branchName;
+    if (user.branch && typeof user.branch === 'object') return user.branch.name;
+    if (user.branchId) {
+      if (!Array.isArray(branches) || branches.length === 0) return user.branchId;
+      const branch = branches.find((b) => b.id === user.branchId);
+      return branch ? branch.name : user.branchId;
+    }
+    return '-';
   };
 
   return (
@@ -91,27 +144,27 @@ const UserList = ({ staffOnly = false }) => {
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Total Users</div>
-          <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+          <div className="text-2xl font-bold text-gray-900">{stats?.total || stats?.totalUsers || 0}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Active</div>
-          <div className="text-2xl font-bold text-green-600">{stats.active}</div>
+          <div className="text-2xl font-bold text-green-600">{stats?.active || stats?.activeUsers || 0}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Inactive</div>
-          <div className="text-2xl font-bold text-gray-600">{stats.inactive}</div>
+          <div className="text-2xl font-bold text-gray-600">{stats?.inactive || stats?.inactiveUsers || 0}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Suspended</div>
-          <div className="text-2xl font-bold text-red-600">{stats.suspended}</div>
+          <div className="text-2xl font-bold text-red-600">{stats?.suspended || stats?.suspendedUsers || 0}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Pending</div>
-          <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+          <div className="text-2xl font-bold text-yellow-600">{stats?.pending || 0}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow-md">
           <div className="text-sm text-gray-600">Online Today</div>
-          <div className="text-2xl font-bold text-blue-600">{stats.loggedInToday}</div>
+          <div className="text-2xl font-bold text-blue-600">{stats?.loggedInToday || 0}</div>
         </div>
       </div>
 
@@ -171,7 +224,6 @@ const UserList = ({ staffOnly = false }) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff Info</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
@@ -189,32 +241,27 @@ const UserList = ({ staffOnly = false }) => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-1">
-                    {user.roles.map((roleId) => (
-                      <span
-                        key={roleId}
-                        className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-600 rounded"
-                      >
-                        {getRoleName(roleId)}
-                      </span>
-                    ))}
+                    {(user.roles && user.roles.length > 0) ? (
+                      user.roles.map((role) => {
+                        // Handle both role objects and role IDs
+                        const roleId = typeof role === 'string' ? role : role?.id;
+                        const roleName = typeof role === 'string' ? getRoleName(role) : (role?.name || role?.id || 'Unknown');
+                        return (
+                          <span
+                            key={roleId || Math.random()}
+                            className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-600 rounded"
+                          >
+                            {roleName}
+                          </span>
+                        );
+                      })
+                    ) : (
+                      <span className="text-sm text-gray-400">No roles assigned</span>
+                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-900">
-                  {user.branchName || '-'}
-                </td>
-                <td className="px-6 py-4 text-sm">
-                  {user.staffProfile ? (
-                    <div>
-                      <div className="font-medium text-gray-900">
-                        {user.staffProfile.employeeId}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        {user.staffProfile.position}
-                      </div>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
+                  {getBranchName(user)}
                 </td>
                 <td className="px-6 py-4">
                   <span
@@ -234,14 +281,30 @@ const UserList = ({ staffOnly = false }) => {
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button
+                      onClick={() => handleView(user)}
+                      className="p-2 text-gray-600 hover:text-indigo-600"
+                      title="View Details"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => handleEdit(user)}
                       className="p-2 text-gray-600 hover:text-blue-600"
+                      title="Edit User"
                     >
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
+                      onClick={() => handleResetPassword(user)}
+                      className="p-2 text-gray-600 hover:text-orange-600"
+                      title="Reset Password"
+                    >
+                      <RotateCw className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => handleDelete(user)}
                       className="p-2 text-gray-600 hover:text-red-600"
+                      title="Delete User"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -261,6 +324,14 @@ const UserList = ({ staffOnly = false }) => {
           </div>
         </div>
       )}
+
+      {/* Reset Password Modal */}
+      <ResetPasswordModal
+        isOpen={isResetPasswordOpen}
+        onClose={handleResetPasswordClose}
+        user={userToResetPassword}
+        onResetPassword={handleResetPasswordSubmit}
+      />
     </div>
   );
 };

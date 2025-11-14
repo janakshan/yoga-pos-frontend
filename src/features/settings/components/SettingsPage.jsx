@@ -8,6 +8,7 @@ import HardwareSettings from './HardwareSettings';
 import NotificationSettings from './NotificationSettings';
 import BackupSettings from './BackupSettings';
 import BusinessTypeSettings from './BusinessTypeSettings';
+import SecuritySettings from './SecuritySettings';
 import { toast } from 'react-hot-toast';
 
 const SettingsPage = () => {
@@ -17,6 +18,7 @@ const SettingsPage = () => {
   const tabs = [
     { id: 'business-type', label: 'Business Type', icon: '🏢' },
     { id: 'general', label: t('settings.general'), icon: '⚙️' },
+    { id: 'security', label: 'Security & Access', icon: '🔒' },
     { id: 'localization', label: t('settings.localization'), icon: '🌍' },
     { id: 'branding', label: t('settings.branding'), icon: '🎨' },
     { id: 'hardware', label: t('settings.hardware'), icon: '🖨️' },
@@ -59,6 +61,7 @@ const SettingsPage = () => {
         <div className="bg-white rounded-lg shadow p-6">
           {activeTab === 'business-type' && <BusinessTypeSettings />}
           {activeTab === 'general' && <GeneralSettings />}
+          {activeTab === 'security' && <SecuritySettings />}
           {activeTab === 'localization' && <LocalizationSettings />}
           {activeTab === 'branding' && <BrandingSettings />}
           {activeTab === 'hardware' && <HardwareSettings />}

@@ -270,11 +270,11 @@ const RoleList = () => {
               <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
                 <div className="flex items-center gap-1">
                   <Users className="w-4 h-4" />
-                  <span>{role.userCount} users</span>
+                  <span>{role.userCount || 0} users</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Shield className="w-4 h-4" />
-                  <span>{role.permissions.length} permissions</span>
+                  <span>{role.permissions?.length || 0} permissions</span>
                 </div>
               </div>
 

@@ -80,10 +80,12 @@ export const LoginForm = () => {
 
   const fillDemoCredentials = (role) => {
     const credentials = {
-      admin: { email: 'admin@yoga.com', password: 'admin123' },
-      manager: { email: 'manager@yoga.com', password: 'manager123' },
-      staff: { email: 'staff@yoga.com', password: 'staff123' },
-      instructor: { email: 'instructor@yoga.com', password: 'instructor123' },
+      admin: { email: 'admin@yogapos.com', password: 'Manager1@3' },
+      manager: { email: 'manager1@yogapos.com', password: 'Manager1@3' },
+      cashier: { email: 'cashier1@yogapos.com', password: 'Manager1@3' },
+      inventory: { email: 'inventory@yogapos.com', password: 'Manager1@3' },
+      sales: { email: 'sales@yogapos.com', password: 'Manager1@3' },
+      accountant: { email: 'accountant@yogapos.com', password: 'Manager1@3' },
     };
 
     setFormData((prev) => ({
@@ -221,8 +223,8 @@ export const LoginForm = () => {
         {/* Demo Credentials */}
         <div className="mt-8 pt-6 border-t border-gray-200">
           <p className="text-xs text-gray-600 mb-3 text-center">Demo Credentials:</p>
-          <div className="grid grid-cols-2 gap-2">
-            {['admin', 'manager', 'staff', 'instructor'].map((role) => (
+          <div className="grid grid-cols-3 gap-2">
+            {['admin', 'manager', 'cashier', 'inventory', 'sales', 'accountant'].map((role) => (
               <button
                 key={role}
                 type="button"
